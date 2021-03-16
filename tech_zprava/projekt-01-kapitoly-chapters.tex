@@ -2,22 +2,34 @@
 %===============================================================================
 
 \chapter{Úvod}
-\blindtext[4]
+Odpovídání na otázky je dobře prozkoumaný a populární úkol z oblasti zpracování přirozeného jazyka. Využití kolem nás, v běžném životě, můžeme vidět třeba u vyhledávacích nástrojů, komunikačních agentů nebo hlasových asistentů.\par 
+Výzkum se v dané oblasti soustředí na metody strojového učení pro vyznačení odpovědi na otázku v daném textu. Pro trénink neuronové sítě, která by byla schopná spolehlivě vykonávat takový úkol, je zapotřebí velké množství anotovaných dat.\par 
+Kromě porozumění textu jsou v oblasti důležité také algoritmy pro zhodnocení relevantnosti dokumentů používané všemi vyhledávacími nástroji a metody zpracování textu, které jsou užitečné pro optimální funkci vyhledávácích algoritmů.\par
+Pro češtinu je množství i velikost dostupných datových sad oproti angličtině malé a~je tedy obtížné dosáhnout s ní podobných výsledků, jako u jazyků s mnoha zdroji (angličtina, němčina, francouzština \dots). Obvzlášť v kontextu toho, že pro většinu úkolů na poli zpracování přirozeného jazyka se v posledních letech nejlépe osvědčily velké modely předtrénované na velmi rozsáhlých korpusech textu. Ty pro češtinu prozatím bohužel nejsou dostupné v~dostatečné kvalitě.\par
+V této práci se snažím otestovat přístup, který využívá strojový překlad češtiny do angličtiny, aby mohlo být použito jednoho z robustních předtrénovaných modelů pro porozumění textu. Kromě metod pro porozumění textu a extrakci odpovědi v práci rozebírám algoritmy řazení dokumentů dle jejich relevance k otázce. Jako báze znalostí pro systém schopný na otázky odpovídat je použita česká Wikipedie, jejíž články jsou pro nalezení vhodné odpovědi prohledávány.\par
+Začal jsem popsáním metod pro zpracování textu v kapitole \ref{text_processing}. Popsány jsou zde metody reprezentace slov a způsoby zpracování textu vhodné pro porozumění textu a pro algoritmy řazení relevantních dokumentů.\par
+Kapitola \ref{language_comprehension} se zabývá popisem neuronových sítí pro porozumění textu a extrakci odpovědi. Popsány jsou zde moderní architektury a modely použité v práci. V kapitole \ref{available_datasets} jsou poté popsány datové sady vhodné pro trénink a vyhodnocení výsledného systému.
+Následuje kapitola \ref{design_and_implementation}, kde je popsán návrh a implementace systému založeného na zmíněných postupech a kapitola \ref{system_evaluation}, kde je výsledný systém vyhodnocen s použitím standardních metrik.
+
 
 
 
 %=========================================================================
 %===============================================================================
 
-\chapter{Předzpracování textu}
+\chapter{Reprezentace slov a zpracování textu}
+\label{text_processing}
 
-\blindtext[2]
+\blindtext[2]\cite{Pravidla}
+
 %=========================================================================
 \section{Reprezentace slov}
 \blindtext[4]
+
 %=========================================================================
 \section{Tokenizace textu}
 \blindtext[3]
+
 %=========================================================================
 \section{Lemmatizace a odstranění stopslov}
 \blindtext[3]
@@ -28,18 +40,21 @@
 %===============================================================================
 
 \chapter{Strojové učení pro extrakci odpovědi}
+\label{language_comprehension}
 
 \blindtext[2]
+
 %=========================================================================
 \section{Neuronové sítě}
 \blindtext[6]
+
 %=========================================================================
 \section{Nejlepší architektury pro porozumění textu}
 \blindtext[8]
+
 %=========================================================================
 \section{Předtrénované modely BERT a ALBERT}
 \blindtext[8]
-
 
 
 
@@ -47,86 +62,119 @@
 %===============================================================================
 
 \chapter{Vyhledávání relevantních dokumentů}
+\label{document_retrieval}
 
 \blindtext[2]
+
 %=========================================================================
 \section{Algoritmy pro řazení dokumentů}
 \blindtext[8]
+
 %=========================================================================
 \section{Vyznačení pojmenovaných entit v otázce}
 \blindtext[8]
+
 %=========================================================================
 \section{Úskalí velké báze dat jako Wikipedie}
 \blindtext[4]
+
+
 
 
 %=========================================================================
 %===============================================================================
 
 \chapter{Dostupné datové sady a výběr}
+\label{available_datasets}
 
 \blindtext[2]
+
 %=========================================================================
 \section{Úskalí dostupných zdrojů pro češtinu oproti angličtině}
 \blindtext[6]
+
 %=========================================================================
 \section{Datové sady pro češtinu}
 \blindtext[4]
+
 %=========================================================================
 \section{Datové sady pro angličtinu}
 \blindtext[4]
+
 %=========================================================================
 \section{Výběr trénovacích a testovacích dat}
 \blindtext[4]
+
+
+
 
 %=========================================================================
 %===============================================================================
 
 \chapter{Návrh systému a implementace jednotlivých komponent}
+\label{design_and_implementation}
 
 \blindtext[2]
+
 %=========================================================================
 \section{Zvolený přístup k problému}
 \blindtext[6]
+
 %=========================================================================
 \section{Návrh jednotlivých částí systému}
 \blindtext[15]
+
 %=========================================================================
 \section{Použité nástroje a technologie pro implementaci}
 \blindtext[6]
+
 %=========================================================================
 \section{Implementace a trénink readeru}
 \blindtext[8]
+
 %=========================================================================
 \section{Implementace retrieveru}
 \blindtext[10]
+
 %=========================================================================
 \section{Popis výsledného systému}
 \blindtext[8]
+
+
+
 
 %=========================================================================
 %===============================================================================
 
 \chapter{Vyhodnocení systému a rozbor chyb}
+\label{system_evaluation}
+
 \blindtext[2]
+
 %=========================================================================
 \section{Vysvětlení základních metrik}
 \blindtext[4]
+
 %=========================================================================
 \section{Postup při vyhodnocování výsledného systému}
 \blindtext[3]
+
 %=========================================================================
 \section{Porovnání výsledků se současným stavem poznání}
 \blindtext[8]
+
 %=========================================================================
 \section{Rozbor chyb a možnosti dalšího vývoje}
 \blindtext[5]
+
+
 
 
 %=========================================================================
 %===============================================================================
 
 \chapter{Závěr}
+\label{conclusion}
 \blindtext[4]
 
 %=========================================================================
