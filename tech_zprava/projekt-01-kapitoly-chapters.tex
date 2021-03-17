@@ -4,8 +4,8 @@
 \chapter{Úvod}
 Odpovídání na otázky je dobře prozkoumaný a populární úkol z oblasti zpracování přirozeného jazyka. Využití kolem nás, v běžném životě, můžeme vidět třeba u vyhledávacích nástrojů, komunikačních agentů nebo hlasových asistentů.\par 
 Výzkum se v dané oblasti soustředí na metody strojového učení pro vyznačení odpovědi na otázku v daném textu. Pro trénink neuronové sítě, která by byla schopná spolehlivě vykonávat takový úkol, je zapotřebí velké množství anotovaných dat.\par 
-Kromě porozumění textu jsou v oblasti důležité také algoritmy pro zhodnocení relevantnosti dokumentů používané všemi vyhledávacími nástroji a metody zpracování textu, které jsou užitečné pro optimální funkci vyhledávácích algoritmů.\par
-Pro češtinu je množství i velikost dostupných datových sad oproti angličtině malé a~je tedy obtížné dosáhnout s ní podobných výsledků, jako u jazyků s mnoha zdroji (angličtina, němčina, francouzština \dots). Obvzlášť v kontextu toho, že pro většinu úkolů na poli zpracování přirozeného jazyka se v posledních letech nejlépe osvědčily velké modely předtrénované na velmi rozsáhlých korpusech textu. Ty pro češtinu prozatím bohužel nejsou dostupné v~dostatečné kvalitě.\par
+Kromě porozumění textu jsou v oblasti důležité také algoritmy pro zhodnocení relevantnosti dokumentů používané všemi vyhledávacími nástroji a metody zpracování textu, které jsou užitečné pro optimální funkci vyhledávacích algoritmů.\par
+Pro češtinu je množství i velikost dostupných datových sad oproti angličtině malé a~je tedy obtížné dosáhnout s ní podobných výsledků, jako u jazyků s mnoha zdroji (angličtina, němčina, francouzština \dots). Obzvlášť v kontextu toho, že pro většinu úkolů na poli zpracování přirozeného jazyka se v posledních letech nejlépe osvědčily velké modely předtrénované na velmi rozsáhlých korpusech textu. Ty pro češtinu prozatím bohužel nejsou dostupné v~dostatečné kvalitě.\par
 V této práci se snažím otestovat přístup, který využívá strojový překlad češtiny do angličtiny, aby mohlo být použito jednoho z robustních předtrénovaných modelů pro porozumění textu. Kromě metod pro porozumění textu a extrakci odpovědi v práci rozebírám algoritmy řazení dokumentů dle jejich relevance k otázce. Jako báze znalostí pro systém schopný na otázky odpovídat je použita česká Wikipedie, jejíž články jsou pro nalezení vhodné odpovědi prohledávány.\par
 Začal jsem popsáním metod pro zpracování textu v kapitole \ref{text_processing}. Popsány jsou zde metody reprezentace slov a způsoby zpracování textu vhodné pro porozumění textu a pro algoritmy řazení relevantních dokumentů.\par
 Kapitola \ref{language_comprehension} se zabývá popisem neuronových sítí pro porozumění textu a extrakci odpovědi. Popsány jsou zde moderní architektury a modely použité v práci. V kapitole \ref{available_datasets} jsou poté popsány datové sady vhodné pro trénink a vyhodnocení výsledného systému.
@@ -20,19 +20,46 @@ Následuje kapitola \ref{design_and_implementation}, kde je popsán návrh a imp
 \chapter{Reprezentace slov a zpracování textu}
 \label{text_processing}
 
-\blindtext[2]\cite{Pravidla}
+Předtím, než se vrhneme na vysvětlení poměrně složitých jazykových modelů a vyhledávacích algoritmů, bude v této kapitole vysvětleno pár základních pojmů a technik.\par 
+Počítač lidské řeči na elementární úrovni příliš nerozumí, jsou mu ale mnohem bližší čísla a statistika. Proto musíme nejdříve porozumět tomu, s jakou reprezentací slov moderní jazykové modely pracují a do jaké podoby je tedy potřeba zdrojový text dostat. Vysvětleny jsou tedy termíny související s reprezentací slov pomocí vektorů, neboli \uv{word embeddings} a tokenizace textu.\par 
+Také je potřeba prozkoumat možnosti zpracování textů a slov na jejich morfologické úrovni. Tato úloha je na pomezí informatiky a lingvistiky a používají se pro ni speciální nástroje. Použité techniky jako lemmatizace a odstranění stop-slov zajistí optimální funkčnost některých použitých algoritmů.\par
+Po přečtení kapitoly by měl být čtenář teoreticky vybaven pro pochopení konceptů vysvětlených v kapitolách \ref{language_comprehension} a \ref{document_retrieval}, které na zde popsaných technologiích staví a částečně se s nimi překrývají.
 
 %=========================================================================
 \section{Reprezentace slov}
+Jak už bylo řečeno, je složité pracovat s textem v takové podobě, na jakou jsou lidé zvyklí. Počítač v ní nedokáže vidět důležité sémantické souvislosti, které jsou pro přirozený jazyk tak důležité. Musíme tedy z textu a slov v něm získat nějakou matematickou reprezentaci, která je počítači bližší a se kterou dokáží dále pracovat neuronové sítě. \par
+Pro takovou reprezentaci jsou nejpoužívanější vektory pevně dané dimenze známé jako \uv{word embeddings}. Pro představu např. 300 desetinných čísel pro popis každého slova v textu. Vektory slov ve slovníku nesou důležitou informaci o sémantické příbuznosti jednotlivých slov. Po promítnutí do spojitého prostoru jsou si vektory, které reprezentující sémanticky podobná slova, blízko.\par
+Po aplikaci těchto myšlenek zmíněných v článcích \cite{mikolov2013embeddings} a \cite{mikolov2013_2} byl zaznamenán výrazný pokrok v úlohách z oblasti zpracování přirozeného jazyka, jako strojový překlad, porozumění textu, odhad emocí, klasifikace atp.
+Vektory reprezentující slova jsou většinou získávány analýzou rozsáhlých textových korpusů. Snaží se zachytit sémantickou blízkost slov na základě jejich koexistence v podobných kontextech.\par 
+Například slova \uv{pohovka} a \uv{gauč} se nejspíše budou vyskytovat v podobných situacích, protože jsou to synonyma a jejich sémantika je téměř totožná.\par
+V následující části budou popsány vlastnosti a nejznámější metody pro získání vektorových reprezentací.
+
+%=========================================================================
+
+\subsection{Word2vec}
+
+Word2vec je technika prezentována v článku \cite{mikolov2013_2}.
+
+%=========================================================================
+
+\subsection{GloVe}
+
+GloVe je technika prezentována v článku \cite{GloVe}
+
+%=========================================================================
+
+\subsection{Wordpiece embeddings}
 \blindtext[4]
 
 %=========================================================================
-\section{Tokenizace textu}
-\blindtext[3]
-
-%=========================================================================
-\section{Lemmatizace a odstranění stopslov}
-\blindtext[3]
+\section{Tokenizace a předzpracování}
+\blindtext[2]
+\subsection{Tokenizace vstupního textu}
+\blindtext[2]
+\subsection{Získání lemmat}
+\blindtext[1]
+\subsection{Odstranění stopslov a převod na malá písmena}
+\blindtext[1]
 
 
 
