@@ -69,6 +69,9 @@
 
 \usepackage{url}
 
+\usepackage{float}
+\restylefloat{table}
+
 % =======================================================================
 % balíček "hyperref" vytváří klikací odkazy v pdf, pokud tedy použijeme pdflatex
 % problém je, že balíček hyperref musí být uveden jako poslední, takže nemůže
@@ -139,7 +142,7 @@
   keywords.en={natural language processing, NLP, question answering, machine learning, Wikipedia, open domain, ALBERT, knowledge mining}, % klíčová slova v anglickém jazyce / keywords in english
   %keywords.en={Here, individual keywords separated by commas will be written in English.},
   % Abstrakt / Abstract
-  abstract.cs={Práce se zabývá odpovídáním na otázky v přirozeném jazyce s pomocí strojového učení a~využitím české wikipedie jako báze znalostí. Popsány jsou dostupné metody, state of the art a výběr vhodných metod pro daný úkol. Prozkoumány jsou dostupné datové sady pro trénink i vyhodnocení výsledného řešení. Poté je představen návrh výsledného systému a popis implementace jeho jednotlivých komponent. Diskutovány jsou metody vyhledávání relevantních dokumentů a vhodné předzpracování prohledávaných textů i nalezení odpovědi v získaném kontextu. Celý systém je vyhodnocen na známém datasetu s použitím základních metrik. Výsledkem je systém schopný odpovídat na otázky v přirozeném jazyce.}, % abstrakt v českém či slovenském jazyce / abstract in czech or slovak language
+  abstract.cs={Práce se zabývá odpovídáním na otázky v přirozeném jazyce s pomocí strojového učení a~využitím české Wikipedie jako báze znalostí. Popsány jsou dostupné metody, state of the art a výběr vhodných metod pro daný úkol. Prozkoumány jsou dostupné datové sady pro trénink i vyhodnocení výsledného řešení. Poté je představen návrh výsledného systému a popis implementace jeho jednotlivých komponent. Diskutovány jsou metody vyhledávání relevantních dokumentů a vhodné předzpracování prohledávaných textů i nalezení odpovědi v získaném kontextu. Celý systém je vyhodnocen na známém datasetu s použitím základních metrik. Výsledkem je systém schopný odpovídat na otázky v přirozeném jazyce.}, % abstrakt v českém či slovenském jazyce / abstract in czech or slovak language
   abstract.en={This thesis describes natural language question answering using machine learning and\linebreak searching Czech Wikipedia as its knowledge base. Existing methods, state of the art and choosing a suitable method for the given task is described. Available datasets for training and final system evaluation are explored. The system design is then introduced and the implementation of its individual components is described. Methods for relevant document retrieval, preprocessing the searched corpus as well as finding the answer span in the acquired context are discussed. The whole system is then evaluated on a well known dataset using the basic metrics. The result is a system being able to answer natural language questions.}, % abstrakt v anglickém jazyce / abstract in english
   %abstract.en={An abstract of the work in English will be written in this paragraph.},
   % Prohlášení (u anglicky psané práce anglicky, u slovensky psané práce slovensky) / Declaration (for thesis in english should be in english)

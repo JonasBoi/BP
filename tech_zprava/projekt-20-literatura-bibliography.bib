@@ -120,6 +120,24 @@
         bibsource = {dblp computer science bibliography, https://dblp.org}
     }
     
+    @article{attention_mechanism,
+        author = {Bahdanau, Dzmitry and Cho, Kyunghyun and Bengio, Y.},
+        year = {2014},
+        month = {09},
+        pages = {},
+        title = {Neural Machine Translation by Jointly Learning to Align and Translate},
+        volume = {1409},
+        journal = {ArXiv}
+    }
+    
+    @misc{Transformers-explained,
+        author = "{Jay Alammar}",
+        title = "The Illustrated Transformer",
+        year = "2018",
+        url = "http://jalammar.github.io/illustrated-transformer/",
+        note = "[Online; accessed 17-March-2021]"
+    }
+    
     @article{LSTM,
         author = {Hochreiter, Sepp and Schmidhuber, Jürgen},
         year = {1997},
@@ -168,20 +186,56 @@
         doi = {10.3115/v1/D14-1162}
     }
     
-    @article{tfidf,
-        author = {Ramos, Juan},
-        year = {2003},
-        month = {01},
-        pages = {},
-        title = {Using TF-IDF to determine word relevance in document queries}
+    @article{wordpiece,
+        author    = {Yonghui Wu and
+                   Mike Schuster and
+                   Zhifeng Chen and
+                   Quoc V. Le and
+                   Mohammad Norouzi and
+                   Wolfgang Macherey and
+                   Maxim Krikun and
+                   Yuan Cao and
+                   Qin Gao and
+                   Klaus Macherey and
+                   Jeff Klingner and
+                   Apurva Shah and
+                   Melvin Johnson and
+                   Xiaobing Liu and
+                   Lukasz Kaiser and
+                   Stephan Gouws and
+                   Yoshikiyo Kato and
+                   Taku Kudo and
+                   Hideto Kazawa and
+                   Keith Stevens and
+                   George Kurian and
+                   Nishant Patil and
+                   Wei Wang and
+                   Cliff Young and
+                   Jason Smith and
+                   Jason Riesa and
+                   Alex Rudnick and
+                   Oriol Vinyals and
+                   Greg Corrado and
+                   Macduff Hughes and
+                   Jeffrey Dean},
+        title     = {Google's Neural Machine Translation System: Bridging the Gap between
+                   Human and Machine Translation},
+        journal   = {CoRR},
+        volume    = {abs/1609.08144},
+        year      = {2016},
+        url       = {http://arxiv.org/abs/1609.08144},
+        archivePrefix = {arXiv},
+        eprint    = {1609.08144},
+        timestamp = {Thu, 14 Jan 2021 12:12:19 +0100},
+        biburl    = {https://dblp.org/rec/journals/corr/WuSCLNMKCGMKSJL16.bib},
+        bibsource = {dblp computer science bibliography, https://dblp.org}
     }
     
     @inproceedings{bm25,
         author = {Robertson, Stephen and Walker, Steve and Jones, Susan and Hancock-Beaulieu, Micheline and Gatford, Mike},
         year = {1994},
-        month = {01},
-        pages = {0-},
-        title = {Okapi at TREC-3.}
+        title = {Okapi at TREC-3.},
+        url = "https://www.researchgate.net/publication/221037764_Okapi_at_TREC-3"
     }
     
     @misc{ wiki:stopwords,
@@ -199,3 +253,150 @@
         url = "https://cs.wiktionary.org/wiki/P\%C5\%99\%C3\%ADloha:Frekven\%C4\%8Dn\%C3\%AD_seznam_(\%C4\%8De\%C5\%A1tina)",
         note = "[Online; accessed 17-March-2021]"
     }
+    
+    @misc{ wiki:lemmatizator,
+        author = "{Wikipedia contributors}",
+        title = "Lemmatizátor --- {W}ikipedia{,} The Free Encyclopedia",
+        year = "2021",
+        url = "https://cs.wikipedia.org/wiki/Lemmatiz\%C3\%A1tor",
+        note = "[Online; accessed 19-March-2021]"
+    }
+    
+    @misc{ wiki:neuron,
+        author = "{Wikipedia contributors}",
+        title = "Neuron --- {W}ikipedia{,} The Free Encyclopedia",
+        year = "2020",
+        url = "https://cs.wikipedia.org/wiki/Neuron",
+        note = "[Online; accessed 19-March-2021]"
+    }
+    
+    @misc{ medium:activation_function,
+        author = "{Avinash Sharma V}",
+        title = "Understanding Activation Functions in Neural Networks",
+        year = "2017",
+        url = "https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0",
+        note = "[Online; accessed 20-March-2021]"
+    }
+    
+    @misc{ understandingLSTM,
+        author = "{Christopher Olah}",
+        title = "Understanding LSTM Networks",
+        year = "2015",
+        url = "http://colah.github.io/posts/2015-08-Understanding-LSTMs/",
+        note = "[Online; accessed 20-March-2021]"
+    }
+    
+    @inproceedings{bm25_too_long,
+        author = {Lv, Yuanhua and Zhai, ChengXiang},
+        title = {When Documents Are Very Long, BM25 Fails!},
+        year = {2011},
+        isbn = {9781450307574},
+        publisher = {Association for Computing Machinery},
+        address = {New York, NY, USA},
+        url = {https://doi.org/10.1145/2009916.2010070},
+        doi = {10.1145/2009916.2010070},
+        pages = {1103–1104},
+        numpages = {2},
+        keywords = {very long documents, bm25, term frequency, bm25l},
+        location = {Beijing, China},
+        series = {SIGIR '11}
+    }
+    
+    @inproceedings{bm25_plus,
+        author = {Lv, Yuanhua and Zhai, ChengXiang},
+        title = {Lower-Bounding Term Frequency Normalization},
+        year = {2011},
+        isbn = {9781450307178},
+        publisher = {Association for Computing Machinery},
+        address = {New York, NY, USA},
+        url = {https://doi.org/10.1145/2063576.2063584},
+        doi = {10.1145/2063576.2063584},
+        pages = {7–16},
+        numpages = {10},
+        keywords = {formal constraints, lower bound, BM25+, DIR+, term frequency, Pl2+, data analysis, document length},
+        location = {Glasgow, Scotland, UK},
+        series = {CIKM '11}
+    }
+    
+    @inproceedings{QA_long_multiple_span,
+        title = "Question Answering with Long Multiple-Span Answers",
+        author = "Zhu, Ming  and
+          Ahuja, Aman  and
+          Juan, Da-Cheng  and
+          Wei, Wei  and
+          Reddy, Chandan K.",
+        booktitle = "Findings of the Association for Computational Linguistics: EMNLP 2020",
+        month = nov,
+        year = "2020",
+        address = "Online",
+        publisher = "Association for Computational Linguistics",
+        url = "https://www.aclweb.org/anthology/2020.findings-emnlp.342",
+        doi = "10.18653/v1/2020.findings-emnlp.342",
+        pages = "3840--3849",
+    }
+    
+    @misc{neural_nets,
+        author = "{Tony Yiu}",
+        title = "Understanding Neural Networks",
+        year = "2019",
+        url = "https://towardsdatascience.com/understanding-neural-networks-19020b758230",
+        note = "[Online; accessed 19-March-2021]"
+    }
+    
+    @book{information_retrieval,
+        added-at = {2010-12-20T06:06:48.000+0100},
+        address = {Cambridge, UK},
+        author = {Manning, Christopher D. and Raghavan, Prabhakar and Schütze, Hinrich},
+        interhash = {2e574e46b7668a7268e7f02b46f4d9bb},
+        intrahash = {9f4ab13e07b48b9723113aa74224be65},
+        isbn = {978-0-521-86571-5},
+        keywords = {book information introduction ir retrieval},
+        publisher = {Cambridge University Press},
+        timestamp = {2010-12-20T06:06:48.000+0100},
+        title = {Introduction to Information Retrieval},
+        url = {http://nlp.stanford.edu/IR-book/information-retrieval-book.html},
+        year = 2008
+    }
+    
+    @article{squad,
+        author    = {Pranav Rajpurkar and
+                   Jian Zhang and
+                   Konstantin Lopyrev and
+                   Percy Liang},
+        title     = {SQuAD: 100, 000+ Questions for Machine Comprehension of Text},
+        journal   = {CoRR},
+        volume    = {abs/1606.05250},
+        year      = {2016},
+        url       = {http://arxiv.org/abs/1606.05250},
+        archivePrefix = {arXiv},
+        eprint    = {1606.05250},
+        timestamp = {Mon, 24 Aug 2020 14:01:25 +0200},
+        biburl    = {https://dblp.org/rec/journals/corr/RajpurkarZLL16.bib},
+        bibsource = {dblp computer science bibliography, https://dblp.org}
+    }
+    
+    @misc{czech_squad,
+        title={Reading Comprehension in Czech via Machine Translation and Cross-lingual Transfer}, 
+        author={Kateřina Macková and Milan Straka},
+        year={2020},
+        eprint={2007.01667},
+        archivePrefix={arXiv},
+        primaryClass={cs.CL}
+    }
+    
+    @article{squad_v2,
+        author    = {Pranav Rajpurkar and
+                   Robin Jia and
+                   Percy Liang},
+        title     = {Know What You Don't Know: Unanswerable Questions for SQuAD},
+        journal   = {CoRR},
+        volume    = {abs/1806.03822},
+        year      = {2018},
+        url       = {http://arxiv.org/abs/1806.03822},
+        archivePrefix = {arXiv},
+        eprint    = {1806.03822},
+        timestamp = {Mon, 13 Aug 2018 16:48:21 +0200},
+        biburl    = {https://dblp.org/rec/journals/corr/abs-1806-03822.bib},
+        bibsource = {dblp computer science bibliography, https://dblp.org}
+    }
+    
