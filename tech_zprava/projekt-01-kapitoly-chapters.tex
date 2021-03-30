@@ -127,7 +127,7 @@ Nejužívanější slova daného jazyka je možno například ve frekvenčních 
     ulicí běžely děti $\longrightarrow$ ulice běžet dítě\\
     ostrovy Středozemního moře $\longrightarrow$ ostrov Středozemní moře
 \end{center}
-Pro získání lemmat se používají speciální nástroje pro zpracování přirozeného jazyka. \emph{Lemma\-tizátory} mohou poskytovat také některé doplňkové informace o mluvnichkých kategoriích jako rod, pád nebo slovní druh. Hlavním úskalím lemmatizátorů je mnohoznačnost jazyků jako je čeština, kdy může být více základních tvarů daného slova dle kontextu\cite{wiki:lemmatizator}.\par
+Pro získání lemmat se používají speciální nástroje pro zpracování přirozeného jazyka. \emph{Lemma\-tizátory} mohou poskytovat také některé doplňkové informace o mluvnichkých kategoriích jako rod, pád nebo slovní druh. Hlavním úskalím lemmatizátorů je mnohoznačnost jazyků jako je čeština, kdy může být více základních tvarů daného slova dle kontextu \cite{wiki:lemmatizator}.\par
 Využití lemmatizace je různé, ale v případě této práce je podobné, jako účel postupu uvedeného v sekci \ref{prevod_na_mala}. Jednoduše se hodí, když pro dotaz obsahující \uv{\dots Liparských ostrovů} budou nalezeny i dokumenty obsahující základní tvar hledaného výrazu \uv{Liparské ostrovy}\par
 Lemmatizace je také užitečným nástrojem při odstranění stop slov, kdy můžeme například odstranit všechny tvary slovesa \uv{být}, zatímco seznam stop slov může obsahovat pouze jeho základní tvar.
 
@@ -159,7 +159,7 @@ Každá z těchto vrstev, ať už je vstupní, výstupní, nebo skrytá, se skl�
 \end{figure}
 
 \subsection{Umělý neuron a aktivační funkce}
-Umělý neuron je primitivní jednotka inspirována neuronem skutečným. Ten vypadá asi tak, že má tělo, do kterého přichází krátkými výběžky, tzv. \emph{dendrity} elektrické signály z ostatním neuronů. Z těla tohoto neuronu pak vychází jediný dlouhý výběžek, tzv. \emph{axon}. Neuron se tedy na základě signálů, které do něj přichází dendrity rozhodne (na základě nějaké minimální hranice přijatého signálu), zda-li bude, nebo nebude vysílat signál dál\cite{wiki:neuron}.\par
+Umělý neuron je primitivní jednotka inspirována neuronem skutečným. Ten vypadá asi tak, že má tělo, do kterého přichází krátkými výběžky, tzv. \emph{dendrity} elektrické signály z ostatním neuronů. Z těla tohoto neuronu pak vychází jediný dlouhý výběžek, tzv. \emph{axon}. Neuron se tedy na základě signálů, které do něj přichází dendrity rozhodne (na základě nějaké minimální hranice přijatého signálu), zda-li bude, nebo nebude vysílat signál dál \cite{wiki:neuron}.\par
 Funkce umělého neuronu je analogická. Jak už bylo popsáno v úvodu sekce \ref{neuronove_site}, každý neuron je propojen s každým neuronem vrstvy předcházející i vrstvy další. Na rozdíl od skutečného neuronu má tedy \uv{více axonů}, kterými je propojen s další vrstvou.\par
 Každé propojení mezi každým neuronem má svoji váhu \emph{w}, která ovlivňuje důležitost jednotlivého vstupu do neuronu. Každý neuron má pak svůj práh \emph{B} a aktivační funkci. Výstupem neuronu je tedy vážená suma vstupů do neuronu s přičteným prahem a aplikovanou aktivační funkcí, neboli 
 $$F({\sum_{i=1}^n ({x_n}w_n)} + B)$$
@@ -174,7 +174,7 @@ Všechny propojení jednotlivých neuronů a jejich prahy v dávají dohromady p
     \item ReLU (Rectified Linear Unit)
 \end{itemize}
 
-Funkce jsou znázorněny na obrázku \ref{aktivacni_funkce}. Vhodnost použití každé z nich může být různé. Výhodou sigmoidální funkce je normalizace výstupu do rozmezí $(0,1)$. Nejpoužívanější funkcí pro skrytou vrstvou je však funkce ReLU. Kvůli její charakteristice je aktivováno méně neuronů, což vede k rychlejšímu tréninku a konvergenci. Použití ReLU funkce je také méně výpočetně náročné\cite{medium:activation_function}.
+Funkce jsou znázorněny na obrázku \ref{aktivacni_funkce}. Vhodnost použití každé z nich může být různé. Výhodou sigmoidální funkce je normalizace výstupu do rozmezí $(0,1)$. Nejpoužívanější funkcí pro skrytou vrstvou je však funkce ReLU. Kvůli její charakteristice je aktivováno méně neuronů, což vede k rychlejšímu tréninku a konvergenci. Použití ReLU funkce je také méně výpočetně náročné \cite{medium:activation_function}.
 
 
 \begin{figure}[hbt]
@@ -244,7 +244,7 @@ Jednotlivé LSTM buňky jsou za sebou sekvenčně propojeny stejně jako RNN. P�
 
 \subsection{Transformers}
 \label{transformers}
-Informace v této sekci byly převzaty z originální práce \emph{Attention Is All You Need}\cite{Transformers}, práce \cite{attention_mechanism} a článku \cite{Transformers-explained}. Sekce popisuje Transformer model používaný pro zpracování přirozeného jazyka a mechanismus pozornosti, který s ním úzce souvisí.\par
+Informace v této sekci byly převzaty z originální práce \emph{Attention Is All You Need} \cite{Transformers}, práce \cite{attention_mechanism} a článku \cite{Transformers-explained}. Sekce popisuje Transformer model používaný pro zpracování přirozeného jazyka a mechanismus pozornosti, který s ním úzce souvisí.\par
 Přístup použitý tímto modelem se dokázal oprostit od rekurentních modelů jako LSTM a nahradil je na poli zpracování přirozeného jazyka jako nová state of the art architektura. Transformers nepoužívá sekvenční zpracování slov, ale zpracování paralelní.\par
 Jeho nejdůležitější myšlenkou je tzv. \textbf{mechanismus pozornosti} (anglicky \emph{attention mechanism}) představený článkem \cite{attention_mechanism} původně pro strojový překlad. Mechanismus pozornosti se však dále rozvíjel a popularizoval do dalších odvětví strojového učení. Stručně bude tedy popsán.\par \medskip
 
@@ -359,7 +359,7 @@ Informace v této kapitole jsou převzaty z prezentací Stanfordského kurzu \em
 \section{Indexování dokumentů}
 Pro vyhledávání dokumentů s použitím webových zdrojů jako Wikipedie jsou typické rozsáhlé texty které by bylo náročné procházet sekvenčně. Proto je důležité vytvořit strukturu, která je dále použita metodami pro řazení dokumentů a umožní optimalizované vyhledávání. Taková struktura se nazývá \textbf{index}.\par
 Index poskytuje informace o výskytu jednotlivých termů v prohledávaných dokumentech a je vytvořen ještě před začátkem vyhledávání. Nejpoužívanější variantou je tzv. \emph{invertovaný index}.\par
-Před vytvořením indexu je užitečné provést co nejlepší normalizaci prohledávaných dokumentů. Metody pro zpracování textu byly podrobně popsány v kapitole \ref{preprocessing} (převod na malá písmena, lemmatizace, odstranění stopslov).\par
+Před vytvořením indexu je užitečné provést co nejlepší normalizaci prohledávaných dokumentů. Metody pro zpracování textu byly podrobně popsány v kapitole \ref{preprocessing} (převod na malá písmena, lemmatizace, odstranění stop slov).\par
 \textbf{invertovaný index} je struktura obsahující všechny slova (termy) prohledávaného korpusu. Pro každý term je uložen seznam dokumentů (označených \emph{docID}), které daný výraz obsahují. Může obsahovat doplňující informace o počtu výskytů termu v dokumentu a jeho délce. Informace jsou poté využity při řazení dokumentů, tzv. \emph{ohodnoceném vyhledávání}.
 
 \subsection{Úskalí velké báze dat jako Wikipedie}
@@ -375,7 +375,7 @@ Při dotazování na vytvořený index nestačí výčet dokumentů, které term
 \label{tf-idf}
 
 \textbf{Četnost termu} (TF) je počet výskytů vyhledávaného termu v daném dokumentu. Vycházíme z předpokladu, že dokument s deseti výskyty termu bude pro dotaz více relevantní, než dokument obsahující vyhledávaný term pouze jednou. Neznamená to však, že bude dokument $10\times$ více relevantní -- růst relevance není přímo úměrný TF.\par
-Jednotlivé termy nenesou stejnou informační hodnotu (např. stopslova \ref{stopwords}) a ojedinělé výrazy jsou často zásadní pro relevanci k dotazu (což souvisí i s neúměrným růstem relevance s růstem TF).\par
+Jednotlivé termy nenesou stejnou informační hodnotu (např. stop slova \ref{stopwords}) a ojedinělé výrazy jsou často zásadní pro relevanci k dotazu (což souvisí i s neúměrným růstem relevance s růstem TF).\par
 
 $$
     TF_{t,d} = log(1+tf_{t,d})
@@ -401,6 +401,7 @@ $$
 $$
 
 \subsection{BM25 (Best Match 25)}
+\label{bm25}
 (Okapi) BM25 představeno v \cite{bm25} je vylepšením klasické hodnotící funkce TF-IDF. Využívá poznatky statistiky a pravděpodobnosti pro řazení dokumentů dle jejich relevance s ohledem na vztah délky dokumntu a četnost výskytů termu v něm.\par
 Delší dokumenty budou mít pravděpodobně větší $tf_{t,d}$. To je potřeba ve výsledném ohodnocení zohlednit, aby nebyly delší dokumenty nutně zvýhodněny.
 Výsedný vzorec pro ohodnocení dokumentu \emph{d} pomocí BM25 vzhledem k otázce \emph{q} je:
@@ -472,11 +473,12 @@ Pro angličtinu existuje celá řada datových sad zaměřených na odpovídán�
 %=========================================================================
 \section{Datové sady pro češtinu}
 Čeština nabízí poměrně omezené zdroje oproti anglickým datovým sadám.\par 
-Nejznámější je datová sada SQADv3 (Simple Question Answering Database)\cite{sqad}. Obsahuje přes 13 000 příkladů otázek s odpovědí v přiloženém kontextu pocházejícím z české Wikipedie. Datová sada otázky směřované na časový údaj, entitu, lokaci, osobu \dots \,včetně 16\,\% ano/ne otázek.\par
+Nejznámější je datová sada SQADv3 (Simple Question Answering Database) \cite{sqad}. Obsahuje přes 13 000 příkladů otázek s odpovědí v přiloženém kontextu pocházejícím z české Wikipedie. Datová sada otázky směřované na časový údaj, entitu, lokaci, osobu \dots \,včetně 16\,\% ano/ne otázek.\par
 Existuje také česká verze anglického datasetu SQuAD prezentovaná v práci \cite{czech_squad}. Datová sada je strojovým překladem původního datasetu SQuAD 1.1 a SQuAD2.0. Oproti anglické verzi však obsahuje asi 70 000 otázek pro první (1.1) a 110 000 otázek pro druhou (2.0) verzi datové sady SQUAD. Ztráta části rozsahu datové sady je způsobena problémy s vyznačením odpovědi ve strojově přeložené verzi dokumentu.
 
 %=========================================================================
 \section{Výběr trénovacích a testovacích dat}
+\label{dataset_choice}
 Pro systém je potřeba vybrat data pro natrénování modelů pro vyznačení odpovědi v získaném textu a pro validaci výsledného systému.\par
 Pro trénink anglického modelu byl vybrán anglický SQuAD 1.1 (obsahující i validační část datasetu). Po zvážení bylo rozhodnuto použít první verzi datasetu, protože budou testovací data obsahovat pouze otázky, pro které existuje na otevřené doméně odpověď.\par
 Pro trénink českého modelu byl vybrán český překlad anglického datasetu SQuAD 1.1 \cite{czech_squad} kvůli jeho velikosti a porovnatelnosti s anglickou verzí datové sady.\par
@@ -491,16 +493,44 @@ Jako testovací datová sada byl zvolen český dataset SQADv3, ze kterého bylo
 \label{design_and_implementation}
 V této kapitole je rozebrán návrh systému a implementace jeho částí. Nejprve je popsán zvolený přístup k řešení problému a rozdělení problému na části reprezentující blokové schéma celého systému. Následuje popis nástrojů a knihoven použitých pro implementaci jednotlivých komponent. Nejdůležitější částí jsou sekce o implementaci dvou hlavních nezávislých částí \ref{reader} a \ref{retriever_imp}. Nakonec je shrnut výsledný tok programu pro odpovídání na otázky nad českou Wikipedií.
 
+\begin{figure}[hbt]
+	\centering
+	\scalebox{1.2}{
+	    \includegraphics{obrazky/reader-retriever-scheme.pdf}
+	}
+	\caption{Generické schéma (prezentované například v \cite{drQA}) open-domain QA systému}
+	\label{qa_scheme}
+\end{figure}
 
 %=========================================================================
 \section{Zvolený přístup k problému}
-
+Odpovídání na otázky na otevřené doméně (open-domain QA) má obvykle dvě hlavní (na sobě téměř nezávislé) části, jak je naznačeno na obrázku \ref{qa_scheme}. První částí je \emph{Retriever}, který má za úkol získat z internetu (pro nás z Wikipedie) relevantní dokumenty, které by mohly obsahovat odpověď a druhou je \emph{Reader}, který provede extrakci odpovědi ze získaného kontextu \cite{drQA}.\par
+\noindent\emph{Retriever} části systému je věnována pozornost v sekci \ref{retriever_imp}.\par
+Pro návrh systému bylo však největší dilema v realizaci \emph{Reader} části systému pro kvalitní extrakci odpovědi v češtině. Chtěl jsem využít některého z populárních předtrénovaných modelů (\ref{bert_albert}) založených na Transformers \cite{Transformers} architektuře (\ref{transformers}). Proto jsem se rozhodl vyzkoušet přístup, kdy je nativně anglickému ALBERT modelu, který dosahuje špičkových výsledků\footnote{\url{https://rajpurkar.github.io/SQuAD-explorer/}}, strojově přeložen vstupní dokument i otázka z češtiny do angličtiny.\par
+Pro porovnání jsem zvolil vícejazyčný model BERTa (m-BERT\footnote{\url{https://github.com/google-research/bert/blob/master/multilingual.md}}), který podporuje 104 světových jazyků s nejrozsáhlejší Wikipedií, trénovaný na českém překladu datové sady SQuAD 1.1 \cite{czech_squad} \cite{squad}.\par
 
 %=========================================================================
 \section{Návrh jednotlivých částí systému}
 \label{design}
+V této sekci bude popsán návrh systému, tedy hlavně \emph{Retrieveru}, \emph{Readeru} a části pro zpracování datové sady SQAD v3.0 \cite{sqad} pro závěrečné vyhodnocení.
 
+\subsection{Návrh Retrieveru}
+Získání \emph{n} relevantních dokumentů kandidujících pro zodpovězení otázky vyžaduje několik na sebe navazujících kroků. V návrhu a implementaci jsou použity metody předzpracování textu a řazení dokumentů popsané v kapitolách \ref{text_processing} a \ref{document_indexing}.\par
+Retriever dostává na vstupu otázku, která je také hlavním vstupem do celého systému. Dříve, než se na základě otázky začnou přímo prohledávat odstavce české Wikipedii, bude dobré z otázky získat co nejvíce informací, které by mohly vést ke \emph{spraveným článkům}. Až po jejich získání jsou jednotlivé články rozděleny na odstavce a ty prohledávány.\par
+\noindent K získání článku jsou použity tři metody:
+\begin{itemize}
+    \item \textbf{základní Wiki Search} nezpracované otázky, který někdy přináší uspokojivé výsledky, ale většinou je nedostačující,
+    \item \textbf{získání relevantního titulku článku} (pomocí BM25 \ref{bm25}) z \emph{dumpu} titulků\footnote{\url{https://cs.wikipedia.org/wiki/Wikipedie:St\%C3\%A1hnut\%C3\%AD_datab\%C3\%A1ze}} české Wikipedie po lemmatizaci otázky a odstranění stop slov,
+    \item \textbf{rozpoznání (pojmenované) entity}, která by se mohla vyskytovat v titulku článku a usnadnit tím \emph{Wiki Search}.
+\end{itemize}
+Tímto tedy získáme seznam článků z Wikipedie, který je následně upraven tak, aby se v něm každý získaný článek vyskytoval pouze jednou.\par
+Jednotlivé články je následně třeba rozdělit na jednotlivé odstavce, normalizovat jejich délku, lemmatizovat je, odstranit stop slova a indexovat je. Odstavce jsou poté seřazeny algoritmem BM25 a z nich vybrány první tři nejvhodnější. Pro vyhledávání mezi odstavci je použita lemmatizovaná otázka s odstraněnými stop slovy. Tři nejvhodnější odstavce jsou získány v jejich původní, nezpracované podobě a připadně (při použití nativně anglického \emph{readeru}) jsou včetně otázky přeloženy do angličtiny.
 
+\subsection{Návrh Readeru}
+
+\subsection{Návrh vyhodnocení}
+
+\subsection{Popis výsledného systému}
 %=========================================================================
 \section{Použité nástroje a technologie pro implementaci}
 \label{pouzite_nastroje}
@@ -517,9 +547,6 @@ V této kapitole je rozebrán návrh systému a implementace jeho částí. Nejp
 
 
 %=========================================================================
-\section{Popis výsledného systému}
-
-
 
 
 
