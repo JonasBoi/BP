@@ -515,7 +515,7 @@ Pro porovnání jsem zvolil vícejazyčný model BERTa (m-BERT\footnote{\url{htt
 V této sekci bude popsán návrh systému, tedy hlavně \emph{Retrieveru}, \emph{Readeru} a části pro zpracování datové sady SQAD v3.0 \cite{sqad} pro závěrečné vyhodnocení.
 
 \subsection{Návrh Retrieveru}
-Získání \emph{n} relevantních dokumentů kandidujících pro zodpovězení otázky vyžaduje několik na sebe navazujících kroků. V návrhu a implementaci jsou použity metody předzpracování textu a řazení dokumentů popsané v kapitolách \ref{text_processing} a \ref{document_indexing}.\par
+Získání \emph{n} relevantních dokumentů kandidujících pro zodpovězení otázky vyžaduje několik na sebe navazujících kroků (obrázek \ref{retriever-simple-scheme}). V návrhu a implementaci jsou použity metody předzpracování textu a řazení dokumentů popsané v kapitolách \ref{text_processing} a \ref{document_indexing}.\par
 Retriever dostává na vstupu otázku, která je také hlavním vstupem do celého systému. Dříve, než se na základě otázky začnou přímo prohledávat odstavce české Wikipedii, bude dobré z otázky získat co nejvíce informací, které by mohly vést ke \emph{spraveným článkům}. Až po jejich získání jsou jednotlivé články rozděleny na odstavce a ty prohledávány.\par
 \noindent K získání článku jsou použity tři metody:
 \begin{itemize}
@@ -524,9 +524,46 @@ Retriever dostává na vstupu otázku, která je také hlavním vstupem do celé
     \item \textbf{rozpoznání (pojmenované) entity}, která by se mohla vyskytovat v titulku článku a usnadnit tím \emph{Wiki Search}.
 \end{itemize}
 Tímto tedy získáme seznam článků z Wikipedie, který je následně upraven tak, aby se v něm každý získaný článek vyskytoval pouze jednou.\par
-Jednotlivé články je následně třeba rozdělit na jednotlivé odstavce, normalizovat jejich délku, lemmatizovat je, odstranit stop slova a indexovat je. Odstavce jsou poté seřazeny algoritmem BM25 a z nich vybrány první tři nejvhodnější. Pro vyhledávání mezi odstavci je použita lemmatizovaná otázka s odstraněnými stop slovy. Tři nejvhodnější odstavce jsou získány v jejich původní, nezpracované podobě a připadně (při použití nativně anglického \emph{readeru}) jsou včetně otázky přeloženy do angličtiny.
+Jednotlivé články je následně třeba rozdělit na odstavce, normalizovat jejich délku, lemmatizovat je, odstranit stop slova a indexovat je. Odstavce jsou poté seřazeny algoritmem BM25 a z nich vybrány první tři nejvhodnější. Pro vyhledávání mezi odstavci je použita lemmatizovaná otázka s odstraněnými stop slovy. Tři nejvhodnější odstavce jsou získány v jejich původní, nezpracované podobě a případně (při použití nativně anglického \emph{readeru}) jsou včetně otázky přeloženy do angličtiny.
+
+\begin{figure}[hbt]
+	\centering
+	\scalebox{0.9}{
+	    \includegraphics{obrazky/retriever-simple-scheme.pdf}
+	}
+	\caption{Zjednodušené schéma \emph{retriever} části systému}
+	\label{retriever-simple-scheme}
+\end{figure}
+
+Následuje podrobný návrh struktury \emph{retrieveru} znázorňující podrobně jednotlivé komponenty na obrázku \ref{retriever-podrobne}.
+
+\begin{figure}[hbt]
+    \centering
+	\scalebox{0.9}{
+	    \includegraphics{obrazky/retriever_podrobne.pdf}
+	}
+	\caption{Podrobné schéma \emph{retriever} části systému}
+	\label{retriever-podrobne}
+\end{figure}
 
 \subsection{Návrh Readeru}
+Část systému pro extrakci odpovědi ze získaného dokumentu byla navržena ve dvou variantách.
+\begin{itemize}
+    \item \textbf{Anglický ALBERT} s lineární klasifikační vrstvou pro určení začátku a konce odpovědi, pro který jsou vstupní dokumenty a otázka strojově přeloženy do angličtiny. Výsledná odpověď je přeložena opět zpět do češtiny.
+    \item \textbf{Vícejazyčný BERT (m-BERT)} opět s lineární klasifikační vrstvou pro určení začátku a konce odpovědi, který dokáže odpovídat přímo na českých dokumentech.
+\end{itemize}
+Pro obě varianty je však postup (až na překlad pro anglický ALBERT, který je však součástí \emph{retrieveru}) shodný.\par
+Model dostane k přečtení tři nejvíce relevantní odstavce získané \emph{retrieverem}. Pro každý odstavec je provedena extrakce odpovědi, kdy je vybrána vždy právě jedna validní odpověď s největším \uv{skóre}(nenormalizovaná logaritmická pravděpodobnost) pro daný dokument. Ze získaných odpovědí je vybrána ta, kterou si je model nejvíce jistý (ta s největším skóre) a případně (při použití ALBERT-en modelu) přeložena zpátky do češtiny.\par
+\noindent Ostatní odpovědi jsou také uloženy pro získání statistických dat při vyhodnocení. \emph{Reader} tak vybere kromě odpovědi také finální dokument, ze kterého je odpověď získána, který může být použit pro získání některých dalších informací/kontextu uživatelem.\par
+Schéma \emph{readeru} pro extrakci finální odpovědi je naznačeno na obrázku \ref{reader_schema}. Modely použité k implementaci a naznačeny v návrhu byly blíže popsány v kapitole \ref{language_comprehension}, konkrétně v sekci \ref{bert_albert}.
+
+\begin{figure}[hbt]
+	\centering
+	\includegraphics[width=5.0in, height=3.5in]{obrazky/dummy_pic.pdf}
+	\caption{dummy obrázek - schéma reader části systému}
+	\label{reader_schema}
+\end{figure}
+
 
 \subsection{Návrh vyhodnocení}
 
