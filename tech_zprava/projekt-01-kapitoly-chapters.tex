@@ -9,7 +9,7 @@ Pro češtinu je množství i velikost dostupných datových sad oproti angličt
 V~této práci se snažím otestovat přístup, který využívá strojový překlad češtiny do angličtiny, aby mohlo být použito jednoho z~robustních předtrénovaných modelů pro porozumění textu. Kromě metod pro porozumění textu a extrakci odpovědi v~práci rozebírám algoritmy řazení dokumentů dle jejich relevance k~otázce. Jako báze znalostí pro systém schopný na otázky odpovídat je použita česká Wikipedie, jejíž články jsou pro nalezení vhodné odpovědi prohledávány.\par
 Začal jsem popsáním metod pro zpracování textu v~kapitole \ref{text_processing}. Popsány jsou zde metody reprezentace slov a způsoby zpracování textu vhodné pro porozumění textu a pro algoritmy řazení relevantních dokumentů.\par
 Kapitola \ref{language_comprehension} se zabývá popisem neuronových sítí pro porozumění textu a extrakci odpovědi. Popsány jsou zde moderní architektury a modely použité v~práci. V~kapitole \ref{available_datasets} jsou poté popsány datové sady vhodné pro trénink a vyhodnocení výsledného systému.
-Následuje kapitola \ref{design_and_implementation}, kde je popsán návrh a implementace systému založeného na zmíněných postupech a kapitola \ref{system_evaluation}, kde je výsledný systém vyhodnocen s~použitím standardních metrik.
+Následuje kapitola \ref{chapter:design_}, kde je popsán návrh, kapitola \ref{chapter:implementace} o~implementace systému založeného na zmíněných postupech a kapitola \ref{system_evaluation}, kde je výsledný systém vyhodnocen s~použitím standardních metrik.
 
 
 
@@ -229,7 +229,7 @@ Analogicky funguje obousměrná RNN, které je propojená i v~opačném směru. 
 \textbf{LSTM} (Long Short-term Memory) představuje vylepšení standardní RNN.\par \smallskip
 Mějme model, který má za úkol předpovědět následující slovo ve větě. Pokud se kontext potřebný pro predikci nachází v~těsné blízkosti předpovídaného slova (př.: \uv{vychlazené mléko z~\emph{lednice}}), je i běžná RNN schopná si souvislost propojit. Pro příklad, kdy je kontext \uv{dále v~minulosti} (př.:\uv{Učím se od 6 let anglicky \dots Vzhledem k~těmto okolnostem plynule ovládám \emph{angličtinu}}) není RNN schopná naučit se tuhle souvislost mezi kontextem a hledaným slovem.\par \smallskip
 LSTM je tedy narozdíl od klasické RNN navržená tak, aby byla schopná pamatovat si dlouhodobé souvislosti v~textu při sekvenčním zpracování. Řeší tím tzv. \emph{problém mizejícího gradientu}.\par
-Model má stejnou opakující se strukturu jako RNN, rozdíl je však v~komplexnosti opakující se jednotky (či buňky). Struktura naznačená na obrázku \ref{lstm_cell} je poměrně složitá a jejím hlavním komponentem jsou tzv. \emph{brány}. 
+Model má stejnou opakující se strukturu jako RNN, rozdíl je však v~komplexnosti opakující se jednotky (či buňky). Struktura naznačená na obrázku \ref{lstm_cell} je poměrně složitá a~jejím hlavním komponentem jsou tzv. \emph{brány}. 
 
 \begin{figure}[hbt]
 	\centering
@@ -364,8 +364,8 @@ Před vytvořením indexu je užitečné provést co nejlepší normalizaci proh
 
 \subsection{Úskalí velké báze dat jako Wikipedie}
 Česká Wikipedie obsahuje velké množství článků (asi 3,5\,GB v~nekomprimonavé podobě). Pro prohledávání celé Wikipedie je potřeba vytvořit a udržovat index, což je pro takový objem dat poměrně výpočetně a paměťově náročné. Je složité pomocí běžných nástrojů sestavit index pro celou Wikipedii.\par
-Dalším problémem je různá délka dokumentů, nestrukturovanost některého textu a dynamicky se měnící prostředí, kdy jsou články na Wikipedii pravidelně aktualizovány.\par\enlargethispage{\baselineskip}
-Způsoby prohledávání Wikipedie a vypořádání se se zmíněnými problémy jsou popsány v~části \ref{design_and_implementation}, konkrétně \ref{design} a \ref{retriever_imp}.
+Dalším problémem je různá délka dokumentů, nestrukturovanost některého textu a~dynamicky se měnící prostředí, kdy jsou články na Wikipedii pravidelně aktualizovány.\par\enlargethispage{\baselineskip}
+Způsoby prohledávání Wikipedie a vypořádání se se zmíněnými problémy jsou popsány v~části \ref{chapter:design_}, konkrétně \ref{design} a kapitole o implementaci \ref{chapter:implementace}.
 
 %=========================================================================
 \section{Algoritmy pro řazení dokumentů}
@@ -464,7 +464,7 @@ Pro trénink neuronových sítí pro odpovídání na otázky by měla datová s
     \item odpověď
     \item případně doplňující informace (jako začátek odpovědi, délku odpovědi \dots)
 \end{itemize}
-Vytvoření takové datové sady je složitý úkol vyžadující velké množství lidských zdrojů. Je potřeba nasbírat dostatečné množství dokumentů, pro které někdo musí vymyslet otázky a vyznačit v~dokumentech příslušné odpovědi. Tvorba datových sad obvykle probíhá pomocí \emph{crowdsourcingu}\footnote{\emph{Crowdsourcing je nové slovo označující proces získání potřebné služby, nápadů, příspěvků, pomoci při řešení problémů od velké skupiny lidí.} (\url{https://wikisofia.cz/wiki/Crowdsourcing})}.
+Vytvoření takové datové sady je složitý úkol vyžadující velké množství lidských zdrojů. Je potřeba nasbírat dostatečné množství dokumentů, pro které někdo musí vymyslet otázky a~vyznačit v~dokumentech příslušné odpovědi. Tvorba datových sad obvykle probíhá pomocí \emph{crowdsourcingu}\footnote{\emph{Crowdsourcing je nové slovo označující proces získání potřebné služby, nápadů, příspěvků, pomoci při řešení problémů od velké skupiny lidí.} (\url{https://wikisofia.cz/wiki/Crowdsourcing})}.
 
 %=========================================================================
 \section{Datové sady pro angličtinu}
@@ -489,9 +489,9 @@ Jako testovací datová sada byl zvolen český dataset SQADv3, ze kterého bylo
 %=========================================================================
 %===============================================================================
 
-\chapter{Návrh systému a implementace jednotlivých komponent}
-\label{design_and_implementation}
-V~této kapitole je rozebrán návrh systému a implementace jeho částí. Nejprve je popsán zvolený přístup k~řešení problému a rozdělení problému na části reprezentující blokové schéma celého systému. Následuje popis nástrojů a knihoven použitých pro implementaci jednotlivých komponent. Nejdůležitější částí jsou sekce o~implementaci dvou hlavních nezávislých částí \ref{reader} a \ref{retriever_imp}. Nakonec je shrnut výsledný tok programu pro odpovídání na otázky nad českou Wikipedií.
+\chapter{Návrh systému a jeho komponent}
+\label{chapter:design_}
+V~této kapitole je rozebrán návrh systému, než přijde popis implementace jeho jednotlivých částí (\ref{chapter:implementace}). Nejprve je popsán generický návrh modelu pro odpovídání na otázky, zvolený přístup k~řešení problému a~motivace za finálním návrhem. Následuje rozdělení problému na části a jejich návrh včetně popisu blokových schémat hlavních komponent. Na závěr kapitoly je diskutován návrh vyhodnocení výsledného systému v kontextu otevřené domény.
 
 \begin{figure}[hbt]
 	\centering
@@ -520,7 +520,7 @@ Retriever dostává na vstupu otázku, která je také hlavním vstupem do celé
 \noindent K~získání článku jsou použity tři metody:
 \begin{itemize}
     \item \textbf{základní Wiki Search} nezpracované otázky, který někdy přináší uspokojivé výsledky, ale většinou je nedostačující,
-    \item \textbf{získání relevantního titulku článku} (pomocí BM25 \ref{bm25}) z~\emph{dumpu} titulků\footnote{\url{https://cs.wikipedia.org/wiki/Wikipedie:St\%C3\%A1hnut\%C3\%AD_datab\%C3\%A1ze}} a abstraktů české Wikipedie po lemmatizaci otázky a odstranění stop slov,
+    \item \textbf{získání relevantního titulku článku} (pomocí BM25 \ref{bm25}) z~\emph{dumpu} titulků\footnote{\url{https://cs.wikipedia.org/wiki/Wikipedie:St\%C3\%A1hnut\%C3\%AD_datab\%C3\%A1ze}} a~abstraktů české Wikipedie po lemmatizaci otázky a odstranění stop slov,
     \item \textbf{rozpoznání (pojmenované) entity}, která by se mohla vyskytovat v~titulku článku a usnadnit tím \emph{Wiki Search}.
 \end{itemize}
 Tímto tedy získáme seznam článků z~Wikipedie, který je následně upraven tak, aby se v~něm každý získaný článek vyskytoval pouze jednou.\par
@@ -559,10 +559,10 @@ Schéma \emph{readeru} pro extrakci finální odpovědi je naznačeno na obrázk
 
 \begin{figure}[hbt]
 	\centering
-	\scalebox{1.4}{
+	\scalebox{1.3}{
 	    \includegraphics{obrazky/reader_navrh.pdf}
 	}
-	\caption{Schéme \emph{readeru} (kombinovaně pro oba navržené systémy) pro 3 relevantní dokumenty, kde $n \in (1,3)$. Pro model ALBERT by musel proběhnout ještě strojový překlad finální odpovědi do češtiny.}
+	\caption{Schéma \emph{readeru} (kombinovaně pro oba navržené systémy) pro 3 relevantní dokumenty, kde $n \in (1,3)$. Pro model ALBERT by musel proběhnout ještě strojový překlad finální odpovědi do češtiny.}
 	\label{reader_schema}
 \end{figure}
 
@@ -573,17 +573,82 @@ Pro vyhodnocení byl vybrán český dataset SQAD v3.0, jak už bylo několikrá
     \item Potřebujeme metriku pro ohodnocení samotného \emph{retrieveru} v~úspěšnosti nalezeného dokumentu.
     \item Metriku pro zohlednění i správných odpovědí, které byly nalezeny, i když nebyly například vybrány \emph{readerem} jako nejvhodnější.
 \end{itemize}
-Pro podrobnější popis zvolených metrik viz \ref{metriky}.
+Pro podrobnější popis zvolených metrik viz \ref{metriky}. Metriky budou použity pro porovnání systému využívající dva navržené přístupy v \emph{reader} části a také aspektů ovlivňující \emph{retriever}.
 
-\subsection{Popis výsledného systému}
+
+\chapter{Implementace a použité technologie}
+\label{chapter:implementace}
+Obsahem této kapitoly je popis použitých nástrojů a implementace jednotlivých částí systému. Je popsáno jak a pomocí jakých knihoven byl návrh z kapitoly \ref{chapter:design_} realizován a jaké problémy bylo potřeba vyřešit. Rozebrán je taky postup zpracování dat potřebných pro funkci systému i jeho vyhodnocení.
+
 %=========================================================================
 \section{Použité nástroje a technologie pro implementaci}
 \label{pouzite_nastroje}
+V této sekci budou popsány použité technologie a knihovny použité při implementaci výsledného systému.\par
+Pro implementaci byl vybrán jazyk \textbf{Python} (3.7.10), který nabízí největší množství knihoven a nástrojů vhodných pro realizaci systému. Zároveň je vhodný ke zpracování dat a je sympatický svou jednoduchou syntaxí. Nabízí také prostředí \emph{Jupyter notebook}, který je velmi pohodlný pro vývoj.\par
+Některé knihovny implementují poznatky popsané v kapitolách \ref{text_processing}, \ref{language_comprehension} a \ref{document_indexing}. Knihovny běžného charakteru, jako je například \texttt{json}, ve výčtu nejsou uvedeny.
+
+\begin{itemize}
+    \item \textbf{PyTorch}\footnote{\url{https://pytorch.org/}}
+    je open-source framework pro strojové učení, zejména pro zpracování obrazu a přirozeného jazyka. \par
+    Nabízí implementace mnohých druhů neuronových sítí a tensorových operací s GPU akcelerací (CUDA).
+    
+    \item \textbf{HuggingFace -- Transformers}\footnote{\url{https://huggingface.co/transformers/}}
+    je populární (open-source) implementací nejznámějších Transformers architektur jako BERT nebo ALBERT (dále RoBERTa, XLM \dots) vyvinuta společností HuggingFace.\par
+    Nabízí nástroje pro jednoduchou práci s modely, předzpracování jejich vstupu, trénink atd. Pro implementace modelů obecného využití jako BERT nabízí také jejich verze pro konkrétní úlohy, jako je odpovídání na otázky (extrakce odpovědi). Pro každou architekturu je k dispozici typicky několik předtrénovaných verzí (BERT base, BERT large \dots).\par
+    Je implementována jak pro PyTorch, tak i pro velmi podobný framework TensorFlow\footnote{\url{https://tensorflow.org/}}.
+    
+    \item \textbf{HuggingFace -- Datasets}\footnote{\url{https://huggingface.co/docs/datasets/}}
+    umožňuje snadnou práci s veřejně dostupnými datasety. Usnadňuje jejich načtení a efektivní předzpracování.\par 
+    Díky dostupnosti zdrojových kódů Umožňuje také úpravu skriptu pro načtení datové sady pro načtení jiné, která doposud v oficiálním seznamu knihovny není dostupná.
+    
+    \item \textbf{DeepPavlov}\footnote{\url{https://deeppavlov.ai/}}
+    je open-source framework, postavený na Pytorch, TensorFlow a Keras, pro usnadnění vývoje a výzkumu v oblasti zpracování přirozeného jazyka, konkrétně dialogových systémů.\par
+    Nabízí mnoho předtrénovaných implementací pro rozpoznání entit, odpovídání na otázky, morfologickou analýzu a další.
+    
+    \item \textbf{Rank-bm25}\footnote{\url{https://github.com/dorianbrown/rank\_bm25}}
+    je knihovnou implementující hodnotící algoritmy z rodiny BM25 \cite{bm25_improvements} (Okapi, BM25+, BM25L).\par
+    Nabízí velmi jednoduché API pro indexaci a řazení dokumentů.
+    
+    \item \textbf{NumPy}\footnote{\url{https://numpy.org/}}
+    nabízí jako knihovna velmi efektivní operace pro práci s vektory a maticemi a vícerozměrnými poli. Je nabízena pod licencí BSD (open-source).
+    
+    \item \textbf{NLTK}\footnote{\url{https://www.nltk.org/}}
+    neboli Natural Language Toolkit je (open-source) knihovna nabízející spoustu nástrojů pro zpracování textu a přirozeného jazyka.\par Prostřednictvím jednoduchého API umožňuje tokenizaci (včetně dělení na věty), stematizaci, tagování částí textu a jiné. 
+    
+    \item \textbf{MorphoDiTa\footnote{\url{https://ufal.mff.cuni.cz/morphodita}} (corpy)\footnote{\url{https://corpy.readthedocs.io/en/stable/api/morphodita.html}}}
+    je open-source nástrojem pro morfologickou analýzu umožnující například tokenizaci nebo lemmatizaci textu.\par
+    Pro použití je potřeba také natrénovaný jazykový model, který je nabízený na webových stránkách v poznámce pod čarou pro češtinu a angličtinu. Jednoduché API pro práci s MorphoDiTou nabízí knihovna \textbf{corpy}.
+    
+    \item \textbf{Majka}\footnote{\url{https://nlp.fi.muni.cz/czech-morphology-analyser/}}
+    je podobně jako MorphoDiTa morfologickým analyzátorem.\par Majka provádí analýzu za použití morfologických slovníků. Slovníky jsou dostupné pro celou řadu jazyků, jako je čeština, slovenština, polština, angličtina, \dots
+    
+    \item \textbf{Wikipedia (api)}\footnote{\url{https://github.com/goldsmith/Wikipedia}}
+    je knihovna usnadňující vyhledávání, získávání a parsování článků z Wikipedie. \par Nabízí velmi jednoduché API pro vyhledávání článků a získávání jejich textového obsahu.
+    
+    \item \textbf{Googletrans}\footnote{\url{https://github.com/ssut/py-googletrans}}
+    nabízí API pro přístup k funkcionalitě Překladače Google. \par
+    Je neoficiální implementací přístupu k překladači a kvůli omezením na množství překládaných znaků nezajišťuje naprosto stabilní funkčnost.
+    
+    \item \textbf{Jupyter Notebook}\footnote{\url{https://jupyter.org/}} 
+    je open-source webová aplikace pro interaktivní spouštění Python kódu v tzv. buňkách.\par
+    Kromě zrojového kódu umožňuje také vkládání textu, vizualizaci dat, vkládání obrázků a grafů nebo spouštění BASH (Shell) skriptů.
+    
+    \item \textbf{Google Colab}\footnote{\url{https://colab.research.google.com/notebooks/intro.ipynb}}
+    nabízí přístup k virtuálnímu stroji, který zprostředkovává přístup k Jupyter Notebooku v cloudu.\par 
+    Virtuální stroje nabízí (bez rozšířené placené verze) asi 12\,GB RAM, úložiště s možností připojení a přístup k Google Drive a výkonné GPU s pamětí 16\,GB vhodné pro akceleraci výpočtů. Dokonce jsou dostupné i běhová prostředí s TPU pro paralelizaci výpočtů.\par
+    Běhová prostředí vždy disponují množstvím předinstalovaných, běžně používaných knihoven (PyTorch, TensorFlow a další).
+    
+\end{itemize}
+
+%=========================================================================
+\section{Zpracování dat v práci}
+\label{data_processing}
+
 
 
 %=========================================================================
 \section{Implementace a trénink readeru}
-\label{reader}
+\label{reader_imp}
 
 
 %=========================================================================
