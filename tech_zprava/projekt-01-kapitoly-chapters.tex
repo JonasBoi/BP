@@ -118,7 +118,7 @@ Pro některé případy může převod na malá písmeny znamenat ztrátu část
 
 \subsection{Odstranění stop slov}
 \label{stopwords}
-Ve zpracování přirozeného jazyka jsou \emph{stop slova} většinou souborem nejčastěji používaných slov v~daném jazyce \cite{wiki:stopwords}. Většinou jsou odstraňována, protože kvůli jejich vysokému výskytu nesou menší informační hodnotu a jejich odstranění vede k~lepší funkci vyhledávacích algoritmů \cite{bm25_improvements}.\par
+Ve zpracování přirozeného jazyka jsou \emph{stop slova} většinou souborem nejčastěji používaných slov v~daném jazyce\footnote{\url{https://en.wikipedia.org/wiki/Stop_word}}. Většinou jsou odstraňována, protože kvůli jejich vysokému výskytu nesou menší informační hodnotu a jejich odstranění vede k~lepší funkci vyhledávacích algoritmů \cite{bm25_improvements}.\par
 Nejužívanější slova daného jazyka je možno například ve frekvenčních seznamech jako \cite{wiki:frekvencni_seznam}, který obsahuje 100 nejpoužívanějších slov v~češtině. Získaný seznam je vhodné kriticky zhodnotit a vyčlenit z~něj některá slova, která by pro vyhledávání mohla mít kritický význam.\footnote{Příklad: \uv{první}, \uv{země}, \uv{člověk} \dots} Většinou je zanedbatelná alespoň většina spojek, předložek či zájmen. Typickými příklady stop slov pro češtinu jsou: být, a, se, v, že \dots
 
 \subsection{Získání lemmat}
@@ -127,7 +127,7 @@ Nejužívanější slova daného jazyka je možno například ve frekvenčních 
     ulicí běžely děti $\longrightarrow$ ulice běžet dítě\\
     ostrovy Středozemního moře $\longrightarrow$ ostrov Středozemní moře
 \end{center}
-Pro získání lemmat se používají speciální nástroje pro zpracování přirozeného jazyka. \emph{Lemma\-tizátory} mohou poskytovat také některé doplňkové informace o~mluvnichkých kategoriích jako rod, pád nebo slovní druh. Hlavním úskalím lemmatizátorů je mnohoznačnost jazyků jako je čeština, kdy může být více základních tvarů daného slova dle kontextu \cite{wiki:lemmatizator}.\par
+Pro získání lemmat se používají speciální nástroje pro zpracování přirozeného jazyka. \emph{Lemma\-tizátory} mohou poskytovat také některé doplňkové informace o~mluvnichkých kategoriích jako rod, pád nebo slovní druh. Hlavním úskalím lemmatizátorů je mnohoznačnost jazyků jako je čeština, kdy může být více základních tvarů daného slova dle kontextu \footnote{\url{https://cs.wikipedia.org/wiki/Lemmatiz\%C3\%A1tor}}.\par
 Využití lemmatizace je různé, ale v~případě této práce je podobné, jako účel postupu uvedeného v~sekci \ref{prevod_na_mala}. Jednoduše se hodí, když pro dotaz obsahující \uv{\dots Liparských ostrovů} budou nalezeny i dokumenty obsahující základní tvar hledaného výrazu \uv{Liparské ostrovy}\par
 Lemmatizace je také užitečným nástrojem při odstranění stop slov, kdy můžeme například odstranit všechny tvary slovesa \uv{být}, zatímco seznam stop slov může obsahovat pouze jeho základní tvar.
 
@@ -159,7 +159,7 @@ Každá z~těchto vrstev, ať už je vstupní, výstupní, nebo skrytá, se skl�
 \end{figure}
 
 \subsection{Umělý neuron a aktivační funkce}
-Umělý neuron je primitivní jednotka inspirována neuronem skutečným. Ten vypadá asi tak, že má tělo, do kterého přichází krátkými výběžky, tzv. \emph{dendrity} elektrické signály z~ostatním neuronů. Z~těla tohoto neuronu pak vychází jediný dlouhý výběžek, tzv. \emph{axon}. Neuron se tedy na základě signálů, které do něj přichází dendrity rozhodne (na základě nějaké minimální hranice přijatého signálu), zda-li bude, nebo nebude vysílat signál dál \cite{wiki:neuron}.\par
+Umělý neuron je primitivní jednotka inspirována neuronem skutečným. Ten vypadá asi tak, že má tělo, do kterého přichází krátkými výběžky, tzv. \emph{dendrity} elektrické signály z~ostatním neuronů. Z~těla tohoto neuronu pak vychází jediný dlouhý výběžek, tzv. \emph{axon}. Neuron se tedy na základě signálů, které do něj přichází dendrity rozhodne (na základě nějaké minimální hranice přijatého signálu), zda-li bude, nebo nebude vysílat signál dál \footnote{\url{https://cs.wikipedia.org/wiki/Neuron}}.\par
 Funkce umělého neuronu je analogická. Jak už bylo popsáno v~úvodu sekce \ref{neuronove_site}, každý neuron je propojen s~každým neuronem vrstvy předcházející i vrstvy další. Na rozdíl od skutečného neuronu má tedy \uv{více axonů}, kterými je propojen s~další vrstvou.\par
 Každé propojení mezi každým neuronem má svoji váhu \emph{w}, která ovlivňuje důležitost jednotlivého vstupu do neuronu. Každý neuron má pak svůj práh \emph{B} a aktivační funkci. Výstupem neuronu je tedy vážená suma vstupů do neuronu s~přičteným prahem a aplikovanou aktivační funkcí, neboli 
 $$F({\sum_{i=1}^n ({x_n}w_n)} + B)$$
@@ -311,7 +311,7 @@ Při tréninku je 15\,\% slov každé věty nahrazeno [MASK] tokenem, jehož pů
 Pro tento úkol je na enkodér BERTa napojena klasifikační vrstva, pomocí které je určena pravděpodobnost pro každého slovo ve slovníku, které má [MASK] token nahradit.\par
 \smallskip
 \textbf{Predikce následující věty} (NSP) je druhým typem úlohy pro předtrénink BERTa. Jeho snahou je naučit model porozumět vztahu nejen mezi jednotlivými slovy, ale taky mezi významem celých vět.\par
-Trénovací dataset je rozdělen na dvojice vět A~a B. Model má za úkol předpovědět, je-li věta B větou následující větu A~v~kontextu. V~50\,\% případů je věta B opravdu větou následující. Ve zbytku je to náhodně zvolená věta z~korpusu.\par
+Trénovací datová sada je rozdělena na dvojice vět A~a B. Model má za úkol předpovědět, je-li věta B větou následující větu A~v~kontextu. V~50\,\% případů je věta B opravdu větou následující. Ve zbytku je to náhodně zvolená věta z~korpusu.\par
 Práce \cite{BERT} také uvádí, že navzdory jednoduchosti tohoto úkolu je jeho přínos pro pozdější aplikaci modelu pro odpovídání na otázky velký.\par
 
 \paragraph{Formát vstupu}
@@ -343,10 +343,10 @@ Parametry napříč vrstvami jsou sdíleny, což zamezuje růstu počtu parametr
 Trénink modelu BERT pomocí predikce následující věty (NSP) se částečně překrýval s~úkolem predikce maskovaného tokenu, protože mohla být nesouvislost vět odhadnuta na základě nepříslušnosti slov stejnému tématu.\par
 Pro trénink modelu ALBERT je pro tento úkol použita stejná dvojice vět A~a B, u~kterých se určuje, zda-li B navazuje na A. Při nenávaznosti však není věta B náhodně vybrána z~jiného korpusu, ale je pouze prohozena s~větou A. Model je tak lépe schopen naučit se logickou souvislost vět, místo odhadu tématu, ke kterému se věty vztahují bez toho, aby na sebe logicky navazovaly.
 \bigskip\bigskip
-\paragraph{ALBERT pro odpovídání na otázky}
-Pro využití modelu ALBERT na konkrétní úkoly vyžadující porozumění textu je potřeba provést \emph{fine-tuning} modelu.\par
+\paragraph{ALBERT (resp. BERT) pro odpovídání na otázky}
+Pro využití modelu ALBERT (resp. BERT) na konkrétní úkoly vyžadující porozumění textu je potřeba provést \emph{fine-tuning} modelu.\par
 Pro odpovídání na otázky je na výstup modelu napojena lineání vrstva, která je natrénována na určení indexu začátku a konce odpovědi v~rámci celé vstupní sekvence. Pro začátek a konec je poté vybrána validní\footnote{podmínky jako: start idx > end idx, odpověď se nenachází v~první sekvenci (otázce)} dvojice indexů označující rozsah odpověď.\par
-Pro \emph{fine-tuning} na daný úkol jsou optimalizovány parametry lineární klasifikační vrstvy i enkodéru ALBERT (vyžaduje delší trénink), nebo pouze lineární vrstvy.
+Pro \emph{fine-tuning} na daný úkol jsou optimalizovány parametry lineární klasifikační vrstvy i enkodéru ALBERT (resp. BERT) -- vyžaduje delší trénink, nebo pouze lineární vrstvy.
 
 %=========================================================================
 %===============================================================================
@@ -454,7 +454,7 @@ Datová sada je v~oblasti strojového učení velká anotovaná (člověkem pops
 Datové sady je možno rozdělit podle toho, v~jaké fázi vývoje s~nimi pracujeme.
 \begin{itemize}
     \item \textbf{Trénovací} Používá se pro naučení neuronové sité. Při zpracovávání trénovací datové sady se model učí a upravuje své parametry. Na konci tréninku by měl model konvergovat ke 100\,\% úspěšnosti na trénovací datové sadě.
-    \item \textbf{Validační} Slouží pro průběžné vyhodnocení existujícího modelu v~průběhu vývoje. Model se z~validačních dat neučí. Může být využit například k~úpravě hyperparametrů nebo zastavení tréninku modelu, když se jeho úspěšnost na validační datové sadě přestane zlepšovat. Vytvořen může být vybraným zlomkem trénovacího datasetu nepoužitým pro trénink.
+    \item \textbf{Validační (dev)} Slouží pro průběžné vyhodnocení existujícího modelu v~průběhu vývoje. Model se z~validačních dat neučí. Může být využit například k~úpravě hyperparametrů nebo zastavení tréninku modelu, když se jeho úspěšnost na validační datové sadě přestane zlepšovat. Vytvořen může být vybraným zlomkem trénovacího datasetu nepoužitým pro trénink.
     \item \textbf{Testovací} Obsahuje příklady z~reálného světa, na kterých je model/systém vyhodnocen po dokončení jeho vývoje. Testovací dataset je často shodný s~validačním.
 \end{itemize}
 Pro trénink neuronových sítí pro odpovídání na otázky by měla datová sada obsahovat hlavně:
@@ -474,7 +474,7 @@ Pro angličtinu existuje celá řada datových sad zaměřených na odpovídán�
 \section{Datové sady pro češtinu}
 Čeština nabízí poměrně omezené zdroje oproti anglickým datovým sadám.\par 
 Nejznámější je datová sada SQADv3 (Simple Question Answering Database) \cite{sqad}. Obsahuje přes 13 000 příkladů otázek s~odpovědí v~přiloženém kontextu pocházejícím z~české Wikipedie. Datová sada otázky směřované na časový údaj, entitu, lokaci, osobu \dots \,včetně 16\,\% ano/ne otázek.\par
-Existuje také česká verze anglického datasetu SQuAD prezentovaná v~práci \cite{czech_squad}. Datová sada je strojovým překladem původního datasetu SQuAD 1.1 a SQuAD2.0. Oproti anglické verzi však obsahuje asi 70 000 otázek pro první (1.1) a 110 000 otázek pro druhou (2.0) verzi datové sady SQUAD. Ztráta části rozsahu datové sady je způsobena problémy s~vyznačením odpovědi ve strojově přeložené verzi dokumentu.
+Existuje také česká verze anglického datasetu SQuAD prezentovaná v~práci \cite{czech_squad}. Datová sada je strojovým překladem původního datasetu SQuAD 1.1 a SQuAD2.0. Oproti anglické verzi však obsahuje asi 70 000 otázek pro první (1.1) a 110 000 otázek pro druhou (2.0) verzi datové sady SQUAD (tabulka \ref{tab:squad_size}). Ztráta části rozsahu datové sady je způsobena problémy s~vyznačením odpovědi ve strojově přeložené verzi dokumentu.
 
 %=========================================================================
 \section{Výběr trénovacích a testovacích dat}
@@ -483,8 +483,36 @@ Pro systém je potřeba vybrat data pro natrénování modelů pro vyznačení o
 Pro trénink anglického modelu byl vybrán anglický SQuAD 1.1 (obsahující i validační část datasetu). Po zvážení bylo rozhodnuto použít první verzi datasetu, protože budou testovací data obsahovat pouze otázky, pro které existuje na otevřené doméně odpověď.\par
 Pro trénink českého modelu byl vybrán český překlad anglického datasetu SQuAD 1.1 \cite{czech_squad} kvůli jeho velikosti a porovnatelnosti s~anglickou verzí datové sady.\par
 \medskip
-Jako testovací datová sada byl zvolen český dataset SQADv3, ze kterého bylo odstraněno 16\,\% otázek očekávajících ano/ne odpovědi. Datová sada nejlépe odpovídá reálnému scénáři užití systému, protože obsahuje otázky a odpovědi z~článků z~české Wikipedie (narozdíl od trénovacích datasetů).
+Jako testovací datová sada byl zvolen český dataset SQADv3, ze kterého bylo odstraněno 16\,\% otázek očekávajících ano/ne odpovědi. Datová sada nejlépe odpovídá reálnému scénáři užití systému, protože obsahuje otázky a odpovědi z~článků z~české Wikipedie (narozdíl od trénovacích datasetů).\par
+V době použití byly zjištěny jiné hodnoty pro velikost datových sad, které jsou uvedeny v tabulce \ref{tab:squad_size_new}:
 
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|l|l|l|}
+        \hline
+        \multicolumn{2}{|l|}{Dataset}         & \begin{tabular}[c]{@{}l@{}}Anglické\\  otázky\end{tabular} & \begin{tabular}[c]{@{}l@{}}České \\ otázky\end{tabular} \\ \hline
+        \multirow{2}{*}{SQuAD 1.1} & Trénink  & 87,599                                                     & 64,164                                                  \\ \cline{2-4} 
+                                   & Validace & 10,570                                                     & 8,739                                                   \\ \hline
+        \multirow{2}{*}{SQuAD 2.0} & Trénink  & 130,319                                                    & 107,088                                                 \\ \cline{2-4} 
+                                   & Validace & 11,873                                                     & 10,845                                                  \\ \hline
+        \end{tabular}
+        \caption{Velikost datasetů SQuAD 1.1 a 2.0 pro češtinu a angličtinu podle \cite{czech_squad}.}
+    \label{tab:squad_size}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|l|l|l|}
+\hline
+\multicolumn{2}{|l|}{Dataset}         & \begin{tabular}[c]{@{}l@{}}Anglické\\  otázky\end{tabular} & \begin{tabular}[c]{@{}l@{}}České \\ otázky\end{tabular} \\ \hline
+\multirow{2}{*}{SQuAD 1.1} & Trénink  & 88,638                                                     & 69,169                                                  \\ \cline{2-4} 
+                           & Validace & 10,808                                                     & 9,615                                                   \\ \hline
+\multirow{2}{*}{SQuAD 2.0} & Trénink  & 131,958                                                    & 115,415                                                 \\ \cline{2-4} 
+                           & Validace & 12,171                                                     & 12,066                                                  \\ \hline
+\end{tabular}
+\caption{Velikost datasetů SQuAD 1.1 a 2.0 zjištěná při jejich použití.}
+\label{tab:squad_size_new}
+\end{table}
 
 %=========================================================================
 %===============================================================================
@@ -507,7 +535,7 @@ V~této kapitole je rozebrán návrh systému, než přijde popis implementace j
 Odpovídání na otázky na otevřené doméně (open-domain QA) má obvykle dvě hlavní (na sobě téměř nezávislé) části, jak je naznačeno na obrázku \ref{qa_scheme}. První částí je \emph{Retriever}, který má za úkol získat z~internetu (pro nás z~Wikipedie) relevantní dokumenty, které by mohly obsahovat odpověď a druhou je \emph{Reader}, který provede extrakci odpovědi ze získaného kontextu \cite{drQA}.\par
 \noindent\emph{Retriever} části systému je věnována pozornost v~sekci \ref{retriever_imp}.\par
 Pro návrh systému bylo však největší dilema v~realizaci \emph{Reader} části systému pro kvalitní extrakci odpovědi v~češtině. Chtěl jsem využít některého z~populárních předtrénovaných modelů (\ref{bert_albert}) založených na Transformers \cite{Transformers} architektuře (\ref{transformers}). Proto jsem se rozhodl vyzkoušet přístup, kdy je nativně anglickému ALBERT modelu, který dosahuje špičkových výsledků\footnote{\url{https://rajpurkar.github.io/SQuAD-explorer/}}, strojově přeložen vstupní dokument i otázka z~češtiny do angličtiny.\par
-Pro porovnání jsem zvolil vícejazyčný model BERTa (m-BERT\footnote{\url{https://github.com/google-research/bert/blob/master/multilingual.md}}), který podporuje 104 světových jazyků s~nejrozsáhlejší Wikipedií, trénovaný na českém překladu datové sady SQuAD 1.1 \cite{czech_squad} \cite{squad}.\par
+Pro porovnání jsem zvolil vícejazyčný model BERTa (m-BERT\footnote{\url{https://github.com/google-research/bert/blob/master/multilingual.md} -- Zjednodušeně řečeno je to model BERT předtrénován na korpusech mnoha jazyků.}), který podporuje 104 světových jazyků s~nejrozsáhlejší Wikipedií, trénovaný na českém překladu datové sady SQuAD 1.1 \cite{czech_squad} \cite{squad}.\par
 
 %=========================================================================
 \section{Návrh jednotlivých částí systému}
@@ -613,7 +641,7 @@ Některé knihovny implementují poznatky popsané v kapitolách \ref{text_proce
     nabízí jako knihovna velmi efektivní operace pro práci s vektory a maticemi a vícerozměrnými poli. Je nabízena pod licencí BSD (open-source).
     
     \item \textbf{NLTK}\footnote{\url{https://www.nltk.org/}}
-    neboli Natural Language Toolkit je (open-source) knihovna nabízející spoustu nástrojů pro zpracování textu a přirozeného jazyka.\par Prostřednictvím jednoduchého API umožňuje tokenizaci (včetně dělení na věty), stematizaci, tagování částí textu a jiné. 
+    (Natural Language Toolkit) je open-source knihovna nabízející nástroje pro zpracování textu a přirozeného jazyka.\par Prostřednictvím jednoduchého API umožňuje tokenizaci (včetně dělení na věty), stematizaci, tagování částí textu a jiné. 
     
     \item \textbf{MorphoDiTa\footnote{\url{https://ufal.mff.cuni.cz/morphodita}} (corpy)\footnote{\url{https://corpy.readthedocs.io/en/stable/api/morphodita.html}}}
     je open-source nástrojem pro morfologickou analýzu umožnující například tokenizaci nebo lemmatizaci textu.\par
@@ -634,7 +662,7 @@ Některé knihovny implementují poznatky popsané v kapitolách \ref{text_proce
     Kromě zrojového kódu umožňuje také vkládání textu, vizualizaci dat, vkládání obrázků a grafů nebo spouštění BASH (Shell) skriptů.
     
     \item \textbf{Google Colab}\footnote{\url{https://colab.research.google.com/notebooks/intro.ipynb}}
-    nabízí přístup k virtuálnímu stroji, který zprostředkovává přístup k Jupyter Notebooku v cloudu.\par 
+    je služba nabízející přístup k virtuálnímu stroji, který zprostředkovává přístup k Jupyter Notebooku v cloudu.\par 
     Virtuální stroje nabízí (bez rozšířené placené verze) asi 12\,GB RAM, úložiště s možností připojení a přístup k Google Drive a výkonné GPU s pamětí 16\,GB vhodné pro akceleraci výpočtů. Dokonce jsou dostupné i běhová prostředí s TPU pro paralelizaci výpočtů.\par
     Běhová prostředí vždy disponují množstvím předinstalovaných, běžně používaných knihoven (PyTorch, TensorFlow a další).
     
@@ -643,8 +671,39 @@ Některé knihovny implementují poznatky popsané v kapitolách \ref{text_proce
 %=========================================================================
 \section{Zpracování dat v práci}
 \label{data_processing}
+Následující sekce popisuje, jak byla zpracována data, se kterými se v práci pracuje. \par
+\noindent Nejprve je popsáno zpracování datasetu SQuAD a jeho českého překladu, na kterých je trénován \emph{reader}. Poté je popsáno zpracování dumpů obsahující titulky a abstrakty článků české Wikipedie. Vysvětleno je také zpracování českého datasetu SQAD v3.0 a také formát uložení odpovědí při vyhodnocení testování systému, aby na nich mohla být provedena evaluace. 
 
+\subsection{Předzpracování datové sady SQuAD}
+Pro načtení datasetu SQuAD byla použita knihovna Huggingface \texttt{ datasets }, která načte trénovací i dev dataset dostupný ve formátu JSON. Pro načtení je použit skript \emph{squad.py}, který lze díky open-source povaze knihovny upravit a~použít i pro načtení české verze datasetu SQuAD\footnote{\url{https://lindat.cz/repository/xmlui/handle/11234/1-3249?show=full}} (skripty \emph{czech\_squad.py} a~\emph{czech\_squad2.py}). Stejně jednoduchý postup lze použít i pro načtení verze 2.0 obou datasetů.\par
+Po načtení obsahuje dataset položku \emph{train} a~\emph{validation} pro trénink a~vyhodnocení natrénovaného modelu pro extrakci odpovědi. Velikosti jednotlivých částí jsou zmíněny v tabulce \ref{tab:squad_size_new}. Každá otázka ve SQuAD datasetu obsauje id, titulek, kontext(dokument), otázku a~odpověď. Odpovědí může být i více, pro odpověď je také uveden index znaku, na kterém začíná.\par
+Z knihovny \texttt{transformers} je poté potřeba načíst tokenizér, který převede otázku a~kontext každé položky v datasetu do podoby stravitelné modelem (tokeny reprezentovány token ID pro předtrénovaný slovník modelu a~speciální tokeny jako [CLS] a~[SEP]). Pro více\-jazyčný BERT lze použít \texttt{BertTokenizerFast}, pro ALBERT zas \texttt{AlbertTokenizerFast}.\par
+Modely BERT a~ALBERT založené na Transformer architektuře mají pevně danou maximální délku vstupní sekvence tokenů. Proto je potřeba tokenizér nastavit tak, aby byly příliš dlouhé vstupy rozděleny na sekvenci kratších, ideálně s nějakým přesahem za sebou následujích oddělených částí (\texttt{return\_overflowing\_tokens=True}).\par
+Při práci s odpovědí je v datasetu vyznačen pouze index počátečního znaku. Nastavením tokenizéru \texttt{return\_offsets\_mapping=True} získáme pro každý token také indexy vstupního řetězce znaků, na kterých se nachází.\par
+S použitím popsaných metod jsou k původnímu datasetu přidány informace o indexu \emph{počátečního a~koncového tokenu} každé odpovědi pro daný tokenizér daného modelu.\par 
+Funkce, která zpracování implementuje, byla vypůjčena z HuggingFace notebooku\footnote{\url{https://colab.research.google.com/github/huggingface/notebooks/blob/master/examples/question\_answering.ipynb\#scrollTo=xcE7HKQsxr5S}} a~pomocí metody datasetu \texttt{map()} je aplikována na všechny vzorky datasetu.
 
+\subsection{Práce s dumpem Wikipedie}
+V práci byly použity dva různé soubory pro získání relevantních článků Wikipedie. Prvním je dump názvů článků a druhým je dump abstraktů.\par
+Soubor s názvy článků je pouze jednoduchý text snadný pro zpracování. Na každý řádek souboru připadá jeden název článku. Před vytvořením indexu je tedy třeba pouze nahradit podtržítka v názvech mezerou a uložit názvy jednotlivých článků do seznamu.\par
+Pro abstrakty článků je to o něco složitější, protože jsou uloženy v poměrně rozměrném XML souboru. Každý záznam obsahuje titulek, url, text abstraktu a odkazy. Po načtení je dump zpracován tak, že je ponechána pouze informace o názvu článku a text jeho abstraktu. Výsledný zpracovaný dump je uložen jako soubor JSON s asi čtvrtinovou velikostí souboru původního.
+
+\subsection{Extrakce informací z datasetu SQAD}
+Dataset SQAD v3.0\footnote{\url{https://lindat.cz/repository/xmlui/handle/11234/1-3069}} je dostupný ve velmi specifické struktuře. Jednotlivé otázky datové sady jsou rozesety po $13,476$ složkách, z nichž každá obsahuje 7\,--\,9 souborů \uv{vert}. Důležité pro nás jsou pouze soubory obsahující otázku a extrakci odpovědi. Na obrázku \ref{question_format} je příklad formátu, ve kterém jsou otázky a odpovědi uloženy. 
+
+\begin{figure}[hbt]
+	\centering
+	\scalebox{0.35}{
+	    \includegraphics{obrazky/sqad_question_format.pdf}
+	}
+	\caption{Příklad formátu položky (otázky) datasetu SQAD v3.0.}
+	\label{question_format}
+\end{figure}
+
+Pro každý záznam musí být tedy otevřeny a zpracovány soubory obsahující otázku a~odpověď. První sloupec souboru obsahuje na každém řádku \emph{token} otázky/odpovědi, druhý sloupec jejich lemmata. Při zpracování je také potřeba brát ohled na speciální znaky.\par
+Pro každý záznam je při zpracování uložena otázka, extrakce odpovědi a lamma extrakce odpovědi. Záznamy obsahující \uv{ano/ne} odpovědi byly ze zpracování vynechány. Zpracovaný dataset je uložen ve formátu JSON pro jeho pozdější snadnější a rychlejší zpracování.
+
+\subsection{Ukládání dat pro vyhodnocení systému}
 
 %=========================================================================
 \section{Implementace a trénink readeru}
