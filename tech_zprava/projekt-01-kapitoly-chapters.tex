@@ -185,7 +185,7 @@ Funkce jsou znázorněny na obrázku \ref{aktivacni_funkce}. Vhodnost použití 
 	    \includegraphics[width=0.33\linewidth, height=1.5in]{obrazky/sigmoid.pdf}\hfill
     	\includegraphics[width=0.33\linewidth, height=1.5in]{obrazky/tanh.pdf}\hfill
     	\includegraphics[width=0.33\linewidth, height=1.5in]{obrazky/relu.pdf}\hfill
-	\caption{Jednotlivé aktivační funkce, zleva: sigmoidální ($H(f)=\langle 0,1 \rangle$), hyperbolické tangenty (tanh $H(f)=\langle -1,1 \rangle$) a ReLU $H(f)=\langle 0,\inf \rangle$).}
+	\caption{Jednotlivé aktivační funkce, zleva: sigmoidální ($H(f)=\langle 0,1 \rangle$), hyperbolické tangenty (tanh $H(f)=\langle -1,1 \rangle$) a ReLU ($H(f)=\langle 0,\inf \rangle$).}
 	\label{aktivacni_funkce}
 \end{figure}
 
@@ -747,17 +747,113 @@ Soubor zodpovězených záznamů je pak pojmenován podle toho, jaký rozsah ot�
 %=========================================================================
 \section{Implementace a~trénink readeru}
 \label{reader_imp}
+Pro implementaci \emph{readeru} systému byla použita knihovna\texttt{ transformers } od HuggingFace, která nabízí velmi jednoduché rozhraní pro trénink modelů.\par
 
+\subsection{Trénink}
+Pro trénink ALBERT modelu byla použita třída \texttt{ AlbertForQuestionAnswering } a~předtrénovaný model \texttt{albert-base-v2\footnote{\url{https://huggingface.co/albert-base-v2}} }(11 milionů parametrů). Model není příliš velký a dosahuje podobných výsledků, jako jeho větší verze \texttt{large} nebo \texttt{xlarge}. Pro \emph{fine-tuning} byl použit dataset SQuAD 1.1 a 2.0.\par
+Pro druhý model byl použit\texttt{ BertForQuestionAnswering } z knihovny\texttt{ transformers.} Předtrénovaný model\texttt{ bert-base-multilingual-cased\footnote{\url{https://huggingface.co/bert-base-multilingual-cased}} } (110 milionů parametrů). Pro fine-tuning byl použit český překlad datasetu SQuAD 1.1 a 2.0. Pro načtení obou datasetů byl použit upravený skript \emph{squad.py}.\par
+Všechny modely byly trénovány pomocí třídy\texttt{ Trainer }s následujícími parametry:
+\begin{itemize}
+    \item \emph{batch size} (velikost dávky) -- $16$
+    \item \emph{learning rate} (rychlost učení) -- $2e\!-\!5$
+    \item \emph{weight decay} -- $0,01$
+    \item \emph{počet trénovacích epoch} -- $3$
+\end{itemize}
 
+Po \emph{fine-tuningu} je úspěšnost modelů (F1 a EM, viz \ref{metriky}) na jejich validačních datasetech následující (tabulka \ref{tab:reader_trained}). Oba modely byly trénovány na GPU ve službě Google Colab.
 
+\begin{table}[h]
+\centering
+    \begin{tabular}{| l | l | l |}
+        \hline
+        \textbf{ALBERT} & SQuAD 1.1 & SQuAD 2.0 \\ \hline
+        EM              & 82,14      & 78,33      \\ \hline
+        F1              & 89,58      & 81,55      \\ \hline
+    \end{tabular}
+    \begin{tabular}{| l | l | l |}
+        \hline
+        \textbf{BERT} & cz\_SQuAD 1.1 & cz\_SQuAD 2.0 \\ \hline
+        EM              & 68,52      & 66,47      \\ \hline
+        F1              & 77,72      & 69,54      \\ \hline
+    \end{tabular}
+    \caption{
+    Úspěšnost modelů na validačních datasetech.
+    }
+    \label{tab:reader_trained}
+\end{table}
+
+\subsection{Extrakce odpovědi}
+Třída zajišťující extrakci odpovědi se nazývá \texttt{Reader}. Pro extrakci odpovědi z kontextu je nejprve potřeba vytvořit její instanci. Většina parametrů pro inicializaci jsou volitelné, musíme však zadat cestu k natrénovanému modelu (\texttt{model\_checkpoint}) v úložišti a jeho typ (\texttt{model\_type}). Můžeme také upravit maximální délku odpovědi (\texttt{max\_answer\_length}) a maximální počet validních odpovědí (\texttt{n\_best\_size}), které model vybere. \emph{Reader} načte tokenizér a model, který bude pro extrakci odpovědi využívat a použije GPU, pokud je k dispozici.\par
+Pro extrakci odpovědi je poté možné volat jedinou instanční metodu \texttt{get\_answers}, která vyžaduje otázku s kontextem a vrací pole o velikosti \texttt{n\_best\_size} obsahující nejlepší kandidáty pro odpověď. Každá odpověď se skládá z textu "text" a skóre "score".\par
+Pro každý dokument je poté vybrána nejlépe hodnocená odpověď s neprázdným textem.
 
 %=========================================================================
 \section{Implementace retrieveru}
 \label{retriever_imp}
+Pro získání relevantních dokumentů je implementována třída \texttt{Retriever}. Pro její inicializaci je třeba zadat cestu k modelu (\texttt{dita\_file}) pro nástroj MorphoDiTa, který provádí lemmatizaci, cestu k souboru s titulky článků Wikipedie (\texttt{wiki\_titles}) a ke zpracovanému JSON souboru s abstrakty Wikipedie (\texttt{wiki\_abstracts}). Místo MorphoDiTy může \texttt{Retriever} použít i nástroj Majka (\texttt{majka=True}), pro který je potřeba zadat cestu k souboru s morfologickým slovníkem (\texttt{majka\_file}). Pokud není k dispozici zpracovaný soubor s abstrakty, lze původní dump abstraktů převést na formátovaný JSON pomocí funkce \texttt{parse\_abstracts()}.\par
+Při vytváření instance \texttt{Readeru} je načten lemmatizátor, sestaven index titulků článků a index abstraktů článků Wikipedie, načten tokenizér (pro rozdělení textu na věty) a načten model pro rozpoznávání entit.\par
 
+\paragraph{Použitá stop slova --}
+Pokud je potřeba při zpracování textů v průběhu vyhledávání relevantního dokumentu odstranit stop slova, je pro to využit následující seznam:
+\begin{quote}
+    {\footnotesize kdy být a se v na ten on že s z který mít do já o k i jeho ale svůj jako za moci pro tak po tento co když všechen už jak aby od nebo říci jeden jen můj jenž ty stát u muset chtít také až než ještě při jít pak před však ani vědět hodně podle další celý jiný mezi dát tady tam kde každý takový protože nic něco ne sám bez či dostat nějaký proto}
+\end{quote}
+Dále je k dispozici seznam pro odstranění interpunkce:
+\begin{quote}
+    {\footnotesize . , ? ! ... " ( ) ; - /}
+\end{quote}
 
-%=========================================================================
+\paragraph{Tvorba indexu --}
+Pro vytvoření indexu pro prohledávání je použita třída \texttt{BM25Okapi} z dříve zmíněné knihovny \texttt{rank-bm25}. Každý titulek/abstrakt je převeden na malá písmena, lemmatizován a poté jsou z něj odstraněny stop slova. Získány jsou zpracované tokeny každého titulku/abstraktu. Index titulků/abstraktů je poté vytvořen pomocí \texttt{BM25Okapi} z takto zpracovaných titulků/abstraktů.
 
+\paragraph{Rozpoznání pojmenovaných entit --}
+Rozpoznání pojmenovaných entit (NER - \emph{Named Entity Recognition}) je další úloha na poli NLP. Uveďme alespoň příklad jejího použití:
+\begin{center}
+    Kdy vynalezl Alfred Nobel dynamit? $\longrightarrow$ Alfred Nobel
+\end{center}
+NER může usnadnit vyznačení klíčových slov pro vyhledávání.\par
+Pro rozpoznání pojmenované entity v otázce je použita knihovna \texttt{deeppavlov}. Využívá natrénovaný model \texttt{ner\_ontonotes\_bert\_mult}, který je vytvořen funkcí \texttt{build\_model()}.
+
+\subsection{Získání relevantních dokumentů}
+Inicializace třídy \texttt{Retriever} trvá hlavně kvůli tvorbě indexů a načtení modelu pro NER poměrně dlouho\footnote{Asi 10 minut, pokud není potřeba stáhnout \texttt{deeppavlov} model pro NER.}. Po jeho inicializaci je potřeba pro získání relevantních dokumentů pouze jediná instanční metoda \texttt{retrieve()}, která pro zadanou otázku získá $n$ (v práci 3) relevantních dokumentů.\par
+Získání dokumentů probíhá následovně:
+\begin{enumerate}
+    \item Nejprve jsou získány názvy článků metodou \texttt{get\_doc\_list()}, které jsou výsledkem vyhledávání metody \texttt{search()} knihovny \texttt{wikipedia}. Jednotlivé vstupy do vyhledávání jsou následující:
+    \begin{itemize}
+        \item V otázce jsou rozpoznány pojmenované entity
+        \item Otázka je převedena na malá písmena, lemmatizována a jsou z ní odstraněny stop slova.
+        \begin{itemize}
+            \item Pomocí metody vytvořeného indexu titulků \texttt{get\_top\_n()} je získán nejvíce relevantní titulek článku vzhledem k otázce.
+            \item Pomocí metody vytvořeného indexu abstraktů \texttt{get\_top\_n()} je získán nejvíce relevantní titulek článku vzhledem k otázce.
+        \end{itemize}
+        \item Otázka je pro vyhledání použita nezpracovaná.
+    \end{itemize}
+    Pokud jsou některé výsledky vyhledávání stejné, je použit pouze jeden z nich.
+    
+    \item Pro každý získaný název článku je získán jeho textový obsah metodou \texttt{page()} kni\-hovny \texttt{wikipedia}. Ten je rozdělen na jednotlivé odstavce a jsou z něj odstraněny nepotřebné části jako reference a odkazy.
+    
+    \item Je zkontrolováno, jestli některý z odstavců nepřesahuje maximální délku. Je-li potřeba odstavec dále rozdělit, je použita metoda \texttt{normalize\_length()}, která využívá tokenizéru knihovny \texttt{nltk}. Ten rozdělí odstavec na věty a spojuje jednotlivé věty, dokud není dosaženo maximální délky. Pro zbývající věty je vytvořen další odstavec, který obsahuje také poslední 2 věty odstavce předcházejícího.
+    
+    \item Po normalizaci délky získaných odstavců je potřeba získat jejich zpracovanou verzi, aby mohl být sestaven index pro vyhledávání. Každý odstavec je tedy převeden na malá písmena, lemmatizován a jsou z něj odstraněna stop slova (a interpunkce). Pro každý odstavec je získán seznam takto normalizovaných tokenů, které jsou použity pro tvorbu indexu \texttt{BM25Okapi} pro vyhledávání.
+    
+    \item Původní lemmatizovaná otázka převedená na malá písmena bez stop slov je použita pro vyhledávání v indexu získaných odstavců pomocí metody \texttt{get\_top\_n()}. Tím jsou získány (nezpracované\footnote{Zpracování probíhá pouze pro tvorbu indexu.}) nejvíce relevantní odstavce -- dokumenty pro danou otázku.
+\end{enumerate}
+\pagebreak
+\section*{Nalezení odpovědi na otázku}
+Celý tok programu systémem je následující:
+\begin{itemize}
+    \item Je vytvořena instance třídy pro extrakci odpovědi \texttt{Reader}, instance třídy pro získání relevantních dokumentů \texttt{Retriever} a také instance překladače \texttt{Translator} knihovny \texttt{googletrans}.
+    
+    \item Po zadání otázky je volána funkce \texttt{find\_answer()}, která získá odpověď na otázku.
+    \begin{itemize}
+        \item Pomocí \emph{retrieveru} jsou získány relevantní dokumenty
+        \item V případě použití nativně anglického modelu ALBERT jsou dokumenty spolu s otázkou přeloženy pomocí funkce \texttt{transtale()} do angličtiny.
+        \item Pro každý získaný dokument je provedena extrakce odpovědi a vybrána nejlépe ohodnocená neprázdná odpověď.
+        \item Ze získaných extrakcí odpovědi z jednotlivých dokumentů je vybrána ta, která má nejvyšší skóre. Použita je metoda \texttt{argmax()} knihovny \texttt{numpy}. Pomocí získaného indexu je vybrán dokument i odpověď.
+        \item Vybraná odpověď je při použití anglického modelu pro extrakci přeložena zpět do češtiny.
+        \item Funkce vrací odpověď a pro podrobné vyhodnocení dále: (odpověď před překladem), dokument, ve kterém byla odpověď nalezena, seznam nejlepších odpovědí, seznam skóre nejlepších odpovědí, seznam sum skóre nejlepších odpovědí a seznam článků Wikipedie, které byly pro nalezení odpovědi procházeny.
+    \end{itemize}
+\end{itemize}
 
 
 %=========================================================================
