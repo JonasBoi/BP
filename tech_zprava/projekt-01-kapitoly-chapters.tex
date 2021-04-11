@@ -463,6 +463,7 @@ Závěr článku \cite{bm25_improvements} ale ukazuje, že neexistuje modifikace
 %===============================================================================
 
 \chapter{Dostupné datové sady a~výběr}
+%=pozn=% vysvětlit povahu odpovědí, otázky nedávající smysl bez kontextu ...
 \label{available_datasets}
 Tato kapitola se zabývá popisem a~výběrem datových sad (datasetů) pro realizaci a~evaluaci systému.\par
 Datová sada je v~oblasti strojového učení velká anotovaná (člověkem popsaná) kolekce dat pro trénink a~vyhodnocování neuronových sítí. Obvykle obsahuje pro každý příklad vstupní data a~jejich popis (anotaci).\\
@@ -645,8 +646,7 @@ Některé knihovny implementují poznatky popsané v kapitolách \ref{text_proce
     Díky dostupnosti zdrojových kódů Umožňuje také úpravu skriptu pro načtení datové sady pro načtení jiné, která doposud v oficiálním seznamu knihovny není dostupná.
     
     \item \textbf{DeepPavlov}\footnote{\url{https://deeppavlov.ai/}}
-    je open-source framework, postavený na Pytorch, TensorFlow a~Keras, pro usnadnění vývoje a~výzkumu v oblasti zpracování přirozeného jazyka, konkrétně dialogových systémů.\par
-    Nabízí mnoho předtrénovaných implementací pro rozpoznání entit, odpovídání na otázky, morfologickou analýzu a~další.
+    je open-source framework, postavený na Pytorch, TensorFlow a~Keras, pro usnadnění vývoje a~výzkumu v oblasti zpracování přirozeného jazyka, konkrétně dialogových systémů.
     
     \item \textbf{Rank-bm25}\footnote{\url{https://github.com/dorianbrown/rank\_bm25}}
     je knihovnou implementující hodnotící algoritmy z rodiny BM25 \cite{bm25_improvements} (Okapi, BM25+, BM25L).\par
@@ -672,6 +672,8 @@ Některé knihovny implementují poznatky popsané v kapitolách \ref{text_proce
     nabízí API pro přístup k funkcionalitě Překladače Google. \par
     Je neoficiální implementací přístupu k překladači a~kvůli omezením na množství překládaných znaků nezajišťuje naprosto stabilní funkčnost.
     
+    \item \textbf{Scikit-learn -- metrcis}\footnote{\url{https://scikit-learn.org/stable/modules/classes.html\#module-sklearn.metrics}} je část knihovny \textbf{sklearn} určená k usnadnění výpočtu základních vyhodnocovacích metrik.
+    
     \item \textbf{Jupyter Notebook}\footnote{\url{https://jupyter.org/}} 
     je open-source webová aplikace pro interaktivní spouštění Python kódu v tzv. buňkách.\par
     Kromě zrojového kódu umožňuje také vkládání textu, vizualizaci dat, vkládání obrázků a~grafů nebo spouštění BASH (Shell) skriptů.
@@ -693,6 +695,7 @@ Následující sekce popisuje, jak byla zpracována data, se kterými se v prác
 Pro načtení datasetu SQuAD byla použita knihovna Huggingface \texttt{ datasets }, která načte trénovací i dev dataset dostupný ve formátu JSON. Pro načtení je použit skript \emph{squad.py}, který lze díky open-source povaze knihovny upravit a~použít i pro načtení české verze datasetu SQuAD\footnote{\url{https://lindat.cz/repository/xmlui/handle/11234/1-3249?show=full}} (skripty \emph{czech\_squad.py} a~\emph{czech\_squad2.py}). Stejně jednoduchý postup lze použít i pro načtení verze 2.0 obou datasetů.\par
 Po načtení obsahuje dataset položku \emph{train} a~\emph{validation} pro trénink a~vyhodnocení natrénovaného modelu pro extrakci odpovědi. Velikosti jednotlivých částí jsou zmíněny v tabulce \ref{tab:squad_size_new}. Každá otázka ve SQuAD datasetu obsauje id, titulek, kontext(dokument), otázku a~odpověď. Odpovědí může být i více, pro odpověď je také uveden index znaku, na kterém začíná.\par
 Z knihovny \texttt{transformers} je poté potřeba načíst tokenizér, který převede otázku a~kontext každé položky v datasetu do podoby stravitelné modelem (tokeny reprezentovány token ID pro předtrénovaný slovník modelu a~speciální tokeny jako [CLS] a~[SEP]). Pro více\-jazyčný BERT lze použít \texttt{BertTokenizerFast}, pro ALBERT zas \texttt{AlbertTokenizerFast}.\par
+\pagebreak
 Modely BERT a~ALBERT založené na Transformer architektuře mají pevně danou maximální délku vstupní sekvence tokenů. Proto je potřeba tokenizér nastavit tak, aby byly příliš dlouhé vstupy rozděleny na sekvenci kratších, ideálně s nějakým přesahem za sebou následujích oddělených částí (\texttt{return\_overflowing\_tokens=True}).\par
 Při práci s odpovědí je v datasetu vyznačen pouze index počátečního znaku. Nastavením tokenizéru \texttt{return\_offsets\_mapping=True} získáme pro každý token také indexy vstupního řetězce znaků, na kterých se nachází.\par
 S použitím popsaných metod jsou k původnímu datasetu přidány informace o indexu \emph{počátečního a~koncového tokenu} každé odpovědi pro daný tokenizér daného modelu.\par 
@@ -861,24 +864,144 @@ Celý tok programu systémem je následující:
 
 \chapter{Vyhodnocení systému a~rozbor chyb}
 \label{system_evaluation}
-
+V této kapitole jsou popsány výsledky dosažené vytvořeným systémem. Popsán je vliv použitého přístupu pro \emph{reader}, trénovacího datasetu a použitého nástroje pro morfologickou analýzu. Nejprve jsou popsány standardní i speciální metriky, na nichž je úspěšnost systému prezentována. Výsledky jsou poté porovnány s jiným existujícím řešením. Jsou diskutovány hlavní nedostatky a příčiny chyb a možnosti dalšího zlepšení.
 
 
 %=========================================================================
 \section{Vysvětlení základních metrik}
 \label{metriky}
+V této sekci jsou popsány metriky použité pro vyhodnocení systému. Popsány jsou standardní metriky jako EM a F1 používané pro QA systémy a také metriky zachycující specifika otevřené domény.\par
+Metody EM, F1, MRR a částečně T3M jsou standardní metriky používané pro vyhodnocení většiny podobných systémů. Ostatní metriky jsou úpravou těch standardních, navržené specificky pro vyhodnocení tohoto systému.
+
+\subsection{Exact Match (EM)}
+\label{EM}
+\emph{Exact match}, neboli přesná shoda, je jednoduchá standardní metrika, které ale může diskriminovat dostačující odpovědi s pouze malými rozdíly oproti referenčním výsledkům. Její hodnota může být buď 1 (pokud je shoda dosažena) nebo 0 (pokud se oproti referenční hodnotě výsledek liší, byť jen v jednom znaku). Na příkladu je ukázka penalizace odpovědi, která byla dokonce přesnější, než referenční odpověď.\par
+\begin{center}
+\begin{tabular}{l}
+    \textbf{otázka:} Kde se narodil Gabriel Jonas Lippmann?\\
+    \emph{referenční odpověď:} Bonnevoie\\
+    \emph{odpověď systému 1:} Bonnevoie, Lucembursko -- \textbf{EM} -- 0\\
+    \emph{odpověď systému 2:} Bonnevoie -- \textbf{EM}-- 1
+\end{tabular}
+\end{center}
+Pro vyhodnocování je referenční i získaná odpověď převedena před porovnáním na malá písmena. Při vyhodnocování systému s readerem ALBERT je brána v úvahu i původní, nepřeložená odpověď.
+
+\subsection{Exact Lemma Match (ELM)}
+\label{ELM}
+ELM je speciálně navržená metrika pro toleranci drobných rozdílů oproti referenční odpovědi. Kromě převedení na malá písmena jsou odpovědi před porovnáním také lemmatizovány. Skóre ELM je tedy typicky vyšší, než EM.
+\begin{center}
+\begin{tabular}{l}
+    \textbf{otázka:} Kdy se koná dostihový závod Velká pardubická?\\
+    \emph{referenční odpověď:} druhou říjnovou neděli\\
+    \emph{odpověď systému:} druhá říjnová neděle \\
+    \textbf{EM} -- 0 , \textbf{ELM} -- 1\\
+\end{tabular}
+\end{center}
+
+Skóre ELM nabývá opět hodnoty buď 1 (správně) nebo 0 (špatně), stejně jako pro EM. ELM pro příklad uvedený v \ref{EM} by bylo také 0.
+
+\subsection{Naivní skóre (NS)}
+Naivní skóre je nejvíce benevolentní metrikou. Zjišťuji u ní, zda-li je odpověď nebo její lemma podřetězcem referenční odpovědi nebo jejího lemma, případně naopak. Snaha je tedy zachytit co nejvíce alespoň částečně správných odpovědí. Naivní skóre (NS) příkladu uvedeného v podsekci \ref{EM} nebo \ref{ELM} by tedy bylo 1. 
+
+\subsection{Top 3 Match (T3M)}
+T3M je obdobou EM \ref{EM}, pro shodu je však testována každá z nejlepších třech (3) nalezených odpovědí. Můžeme tedy určit, v kolika případech oproti EM systém našel správnou odpověď, ale nevybral ji, protože nedosáhla nejvyššího skóre. T3M nabývá opět hodnoty 0 nebo 1.
+
+\subsection{MRR}
+MRR (\emph{Mean Reciprocal Rank}) je obdobou T3M, zohledňuje však, na kolikátém místě byla odpověď nalezena (T3M zohledňuje pouze to, jestli byla vůbec nalezena). Pokud dosáhla odpověď shodná s referenční odpovědí nejvyšší skóre (byla vybrána), hodnota MRR je 1, pokud byla na druhém místě, hodnota je 1/2 a pokud na třetím, hodnota MRR je 1/3. Pokud nebyla odpověď nalezena vůbec, hodnota MRR je 0.
+
+\subsection{F1 skóre}
+Je jakýmsi kompromisem mezi naivním skóre a EM. Při jeho výpočtu jsou použity dvě metriky --- \emph{recall} (úplnost) a \emph{precision} (přesnost).
+\begin{equation}
+    \text{\textbf{F1}} = 2\cdot \frac{precision \cdot recall}{precision + recall} 
+\end{equation}
+\begin{equation}
+recall = \frac{tp}{tp+fn} \quad precision = \frac{tp}{tp+fp}
+\end{equation}
+
+\begin{itemize}
+    \item tp -- \emph{true positive} -- znaky (počet) společné pro zíkanou i referenční odpoěď
+    \item fn -- \emph{false negative} -- znaky, které jsou v referenční odpovědi, ale chybí v získané
+    \item fp -- \emph{false positive} -- znaky, které nejsou v referenční odpovědi, ale přebývají v získané
+\end{itemize}
+
+Obvykle jsou definice tp, fn a fp uváděny pro tokeny, ne znaky, chceme ale více zohlednit morfologii češtiny a dropné rozdíli v odpovědích vztahující se k otevřené doméně -- například augustiánský/augustiánských -- při porovnávání tokenů bychom nedosáhli žádné shody.\par \medskip
+\noindent Pro příklad: 
+\begin{center}
+\begin{tabular}{l}
+    \textbf{otázka:} Odkud byla anglická kapela The Beatles?\\
+    \emph{referenční odpověď:} z Liverpoolu\\
+    \emph{odpověď systému:} Liverpoolu\\
+\end{tabular}
+\end{center}
+je tedy $precision = 1$, $recall = 0,83$ a $\text{\textbf{F1}} = 0,91$.\par \medskip
+\noindent Pro příklad z \ref{EM}
+\begin{center}
+\begin{tabular}{l}
+    \textbf{otázka:} Kde se narodil Gabriel Jonas Lippmann?\\
+    \emph{referenční odpověď:} Bonnevoie\\
+    \emph{odpověď systému:} Bonnevoie, Lucembursko\\
+\end{tabular}
+\end{center}
+je $precision = 0,41$, $recall = 1$ a $\text{\textbf{F1}} = 0,82$.\par \medskip
+F1 tedy zohledňuje přesnost i úplnost odpovědi a je velmi směrodatnou metrikou pro odpovídání na otázky.
+
+\subsection{Lidské vyhodnocení}
+Otevřená doména je problematická pro automatické vyhodnocování. Jak je uvedeno například v \cite{min2021neurips}, otázka může mít více možných odpovědí, pokud není jednoznačně položena. Odpověď může být také obecnější, nebo specifičtější (př. z \ref{EM}), ale stále odpovídat na otázku. Z článku \cite{min2021neurips} tedy vyplývá, že systémy jsou hodnoceny lépe při vyhodnocení lidmi. Konkrétně, procento odpovědí označených jako \uv{rozhodně správně} bylo u systémů v průměru o 17\,--\,25\,\% lepší, než pouhé porovnání řetězců odpovědí pomocí EM.\par
+Proto je pro každý experiment také náhodně vybráno 300 otázek pro lidské vyhodnocení, aby se vzal alespoň minimální ohled na diskriminační povahu automatické evaluace.
 
 %=========================================================================
-\section{Postup při vyhodnocování výsledného systému}
+\section{Vyhodnocení výsledného systému}
+Pro vyhodnocení celého systému byla vybrána datová sada SQAD v3.0 \cite{sqad}, ze které byly odebrány ano/ne otázky. (??a otázky, které nedávají bez přiloženého kontextu smysl.)\par
+Pro každou metriku v \ref{metriky} bylo použito vzorce \ref{score_calc}
+\begin{equation}
+    \label{score_calc}
+    \text{skóre} = \frac{1}{N}\cdot \sum^N_{k=0} S_k
+\end{equation}
+kde $S_k$ je skóre $S$ (např. EM) pro odpověď $k$ a $N$ je celkový počet odpovědí. Skóre na celém datasetu je tedy průměrem jednotlivých skóre $S_k$ všech zodpovězených otázek.
+
+V této sekci jsou shrnuty a porovnány výsledky výsledného systému na testovací sadě.
+
+\subsection{Model ALBERT a strojový překlad}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|l|l|l|}
+        \hline
+        \textbf{ALBERT} & EM    & ELM   & NS    & T3M   & MRR   & F1        & člověk \\ \hline
+        SQuAD 1.1+MD    & 35,53 & 37,33 & ?     & ?     & ?     & 37,70     & ?      \\ \hline
+        SQuAD 2.0+MD    & 33,53 & 35,33 & ?     & ?     & ?     & 35,51     & ?      \\ \hline
+        SQuAD 1.1+Maj   & ?     & ?     & ?     & ?     & ?     & ?         & ?      \\ \hline
+        SQuAD 2.0+Maj   & ?     & ?     & ?     & ?     & ?     & ?         & ?      \\ \hline
+    \end{tabular}
+    \caption{Úspěšnost systému s readerem ALBERT a strojovým překladem textů (prozatím 500 otázek).}
+    \label{tab:system_eval_albert}
+\end{table}
+
+\subsection{Model vícejazyčný BERT}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|l|l|l|l|l|l|l|}
+        \hline
+        \textbf{mBERT}  & EM    & ELM   & NS    & T3M   & MRR   & F1        & člověk \\ \hline
+        SQuAD 1.1+MD    & 48,49 & 50,98 & 61,12 & 55,73 & 51,99 & 57,44     & ?      \\ \hline
+        SQuAD 2.0+MD    & 51,50 & 53,60 & 64,17 & 56,33 & 53,63 & 59,92     & ?      \\ \hline
+        SQuAD 1.1+Maj   & ?     & ?     & ?     & ?     & ?     & ?         & ?      \\ \hline
+        SQuAD 2.0+Maj   & ?     & ?     & ?     & ?     & ?     & ?         & ?      \\ \hline
+    \end{tabular}
+    \caption{Úspěšnost systému s readerem ALBERT a strojovým překladem textů (prozatím 500 otázek).}
+    \label{tab:system_eval_mbert}
+\end{table}
+
+\subsection{Porovnání dosažených výsledků}
 
 
 %=========================================================================
 \section{Porovnání výsledků se současným stavem poznání}
+Porovnat  s AQA atp. \cite{aqa}
 
 
 %=========================================================================
 \section{Rozbor chyb a~možnosti dalšího vývoje}
-
+Popsat příčiny chyb, nejlepší systém, nejčastější nedostatky, co by se dalo zlepšit...
 
 
 %=========================================================================
