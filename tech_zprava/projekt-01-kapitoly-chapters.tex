@@ -10,9 +10,8 @@ V~této práci se snažím otestovat přístup, který využívá strojový pře
 Začal jsem popsáním metod pro zpracování textu v~kapitole \ref{text_processing}. Popsány jsou zde metody reprezentace slov a~způsoby zpracování textu vhodné pro porozumění textu a~pro algoritmy řazení relevantních dokumentů.\par
 Kapitola \ref{language_comprehension} se zabývá popisem neuronových sítí pro porozumění textu a~extrakci odpovědi. Popsány jsou zde moderní architektury a~modely použité v~práci. V~kapitole \ref{available_datasets} jsou poté popsány datové sady vhodné pro trénink a~vyhodnocení výsledného systému.
 Následuje kapitola \ref{chapter:design_}, kde je popsán návrh, kapitola \ref{chapter:implementace} o~implementace systému založeného na zmíněných postupech a~kapitola \ref{system_evaluation}, kde je výsledný systém vyhodnocen s~použitím standardních metrik.
-
-
-
+%%TODO zdramatizovat, reálně co v práci fakt je
+%%TODO přepracovat abstrakt
 
 %=========================================================================
 %===============================================================================
@@ -458,12 +457,22 @@ Pro BM25 existují také modifikace, jako BM25+, BM25L a~další, které byly po
 \end{itemize}
 Závěr článku \cite{bm25_improvements} ale ukazuje, že neexistuje modifikace, která by systematicky zlepšila dosažené výsledky vyhledávání.\par
 
+\subsection{DPR (Dense Passage Retrieval)}
+\label{dpr}
+DPR je technika představená článkem \cite{dpr}, která využívá architekturu dvou enkodérů.\par
+Pomocí jednoho z enkodérů je převeden každý dokument na jeho vektorovou reprezentaci, ze kterých je sestaven vyhledávací index.\par
+Druhý enkodér je určen pro získání reprezentace otázky. Pro vektor otázky je poté nalezen dokument (nebo $k$ dokumentů), jehož vektor je vektoru otázky nejblíže (rovnice~\ref{similarity}).\par
+\begin{equation}
+    \label{similarity}
+    sim(q,d) = E_Q(q)\cdot E_D(d)
+\end{equation}
+V rovnici \ref{similarity} \cite{dpr} je $sim(q,d)$ skóre relevance otázky $q$ a dokumentu $d$, $E_Q$ je enkodér použitý pro reprezentaci otázky a $E_D$ pro reprezentaci dokumentu.\par
+Jako enkodéry jsou použity modely BERT (pro \cite{dpr}, ale použito také např v \cite{fajcik2021pruning} pro implementaci systému R2-D2). Ty jsou trénovány tak, aby po výpočtu blízkosti vektorů otázky a relevantních pasáží měly relevantní pasáže nejmenší vzdálenost.
 
 %=========================================================================
 %===============================================================================
 
 \chapter{Dostupné datové sady a~výběr}
-%=pozn=% vysvětlit povahu odpovědí, otázky nedávající smysl bez kontextu ...
 \label{available_datasets}
 Tato kapitola se zabývá popisem a~výběrem datových sad (datasetů) pro realizaci a~evaluaci systému.\par
 Datová sada je v~oblasti strojového učení velká anotovaná (člověkem popsaná) kolekce dat pro trénink a~vyhodnocování neuronových sítí. Obvykle obsahuje pro každý příklad vstupní data a~jejich popis (anotaci).\\
@@ -484,23 +493,24 @@ Vytvoření takové datové sady je složitý úkol vyžadující velké množst
 
 %=========================================================================
 \section{Datové sady pro angličtinu}
-Pro angličtinu existuje celá řada datových sad zaměřených na odpovídání na otázky. Nejznámější z~nich je však SQuAD (\emph{Stanford Question Answering Dataset}) \cite{squad}. Dataset obsahuje asi 100 000 anotovaných dvojic otázka--odpověď z~více jak 500 různých článků z~anglické Wikipedie. Existuje také rozšířená verze SQuAD datasetu. SQuAD2.0 \cite{squad_v2} obsahuje navíc 50 000 otázek, na které v~kontextu neexistuje odpověď. Model tedy musí umět určit, když dokument odpověď neobsahuje.
+Pro angličtinu existuje celá řada datových sad zaměřených na odpovídání na otázky. Nejznámější z~nich je však SQuAD (\emph{Stanford Question Answering Dataset}) \cite{squad}. Dataset obsahuje asi 100 000 anotovaných dvojic otázka--odpověď z~více jak 500 různých článků z~anglické Wikipedie. Existuje také rozšířená verze SQuAD datasetu. SQuAD2.0 \cite{squad_v2} obsahuje navíc 50 000 otázek, na které v~kontextu neexistuje odpověď. Model tedy musí umět určit, když dokument odpověď neobsahuje.\par
+Další datasety jsou například NQ (Natural Questions) se zaměřením na otevřenou doménu nebo HOTPOTQA vyžadující spojování informací z více dokumentů pro zodpovězení otázky. Čeština takovou diverzitou datových sad nedisponuje.
 
 %=========================================================================
 \section{Datové sady pro češtinu}
-Čeština nabízí poměrně omezené zdroje oproti anglickým datovým sadám.\par 
-Nejznámější je datová sada SQADv3 (Simple Question Answering Database) \cite{sqad}. Obsahuje přes 13 000 příkladů otázek s~odpovědí v~přiloženém kontextu pocházejícím z~české Wikipedie. Datová sada otázky směřované na časový údaj, entitu, lokaci, osobu \dots \,včetně 16\,\% ano/ne otázek.\par
+Čeština nabízí poměrně omezené zdroje\footnote{Co se týká datasetů pro odpovídání na otázky, existuje pouze právě zmíněný SQAD. Angličtina nabízí datasety specializované např. pro otevřenou doménu.} oproti anglickým datovým sadám.\par 
+Nejznámější je datová sada SQADv3 (Simple Question Answering Database) \cite{sqad}. Obsahuje přes 13 000 příkladů otázek s~odpovědí v~přiloženém kontextu pocházejícím z~české Wikipedie. Datová sada otázky směřované na časový údaj, entitu, lokaci, osobu \dots \,včetně 16\,\% ano/ne otázek. Velikost datasetu je přesně popsána v tabulce \ref{tab:sqad_size}.\par
 Existuje také česká verze anglického datasetu SQuAD prezentovaná v~práci \cite{czech_squad}. Datová sada je strojovým překladem původního datasetu SQuAD 1.1 a~SQuAD2.0. Oproti anglické verzi však obsahuje asi 70 000 otázek pro první (1.1) a~110 000 otázek pro druhou (2.0) verzi datové sady SQUAD (tabulka \ref{tab:squad_size}). Ztráta části rozsahu datové sady je způsobena problémy s~vyznačením odpovědi ve strojově přeložené verzi dokumentu.
 
 %=========================================================================
 \section{Výběr trénovacích a~testovacích dat}
 \label{dataset_choice}
 Pro systém je potřeba vybrat data pro natrénování modelů pro vyznačení odpovědi v~získaném textu a~pro validaci výsledného systému.\par
-Pro trénink anglického modelu byl vybrán anglický SQuAD 1.1 (obsahující i validační část datasetu). Po zvážení bylo rozhodnuto použít první verzi datasetu, protože budou testovací data obsahovat pouze otázky, pro které existuje na otevřené doméně odpověď.\par
-Pro trénink českého modelu byl vybrán český překlad anglického datasetu SQuAD 1.1 \cite{czech_squad} kvůli jeho velikosti a~porovnatelnosti s~anglickou verzí datové sady.\par
+Pro trénink anglického modelu byl vybrán anglický SQuAD 1.1 a 2.0 (obsahující i validační část datasetu). Po zvážení bylo rozhodnuto použítí a porovnání obou verzí datasetu. Testovací data obsahují pouze otázky, pro které existuje na otevřené doméně odpověď a bude tedy porovnáno, která verze datasetu byla pro trénink readeru vhodnější.\par
+Pro trénink českého modelu byl vybrán český překlad anglického datasetu SQuAD 1.1 a 2.0 \cite{czech_squad} kvůli jeho velikosti a~porovnatelnosti s~anglickou verzí datové sady.\par
 \medskip
 Jako testovací datová sada byl zvolen český dataset SQADv3, ze kterého bylo odstraněno 16\,\% otázek očekávajících ano/ne odpovědi. Datová sada nejlépe odpovídá reálnému scénáři užití systému, protože obsahuje otázky a~odpovědi z~článků z~české Wikipedie (narozdíl od trénovacích datasetů).\par
-V době použití byly zjištěny jiné hodnoty pro velikost datových sad, které jsou uvedeny v tabulce \ref{tab:squad_size_new}:
+V době použití byly zjištěny jiné hodnoty pro velikost datových sad, které jsou uvedeny v tabulce \ref{tab:squad_size_new}.
 
 \begin{table}[H]
     \centering
@@ -528,6 +538,23 @@ V době použití byly zjištěny jiné hodnoty pro velikost datových sad, kter
 \end{tabular}
 \caption{Velikost datasetů SQuAD 1.1 a~2.0 zjištěná při jejich použití.}
 \label{tab:squad_size_new}
+\end{table}
+
+\section*{Úskalí datasetu SQAD}
+Dataset SQAD má pro použití na otevřené doméně podobné nevýhody jako SQuAD. Otázky jsou přímo vázané ke konkrétnímu článku, z čehož vyvstávají problémy pro jejich jiné využití.\par 
+Některé otázky nemusí dávat bez přiloženého kontextu smysl a je tedy nemožné pro ně najít odpověď. Některé mohou být také nejednoznačné a správných odpovědí pro ně může být bez kontextu několik, v datasetu se však nachází pouze ta jediná, která je extrakcí z přiloženého kontextu. \par 
+Dalším z možných problémů je také vázanost datasetu na časové období, kdy byl zveřejněn (2019). Příkladem může být otázka \uv{Kolik evropských států tvoří Evropskou unii?} pro kterou už odpověď \uv{28} není realitou.\par
+Procházet ručně a vyselektovat pro odstranění takové otázky z datové sady je pro jednoho člověka náročné a proto to bude případně zohledněno až při lidském vyhodnocení zmíněném v části \ref{metriky}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+Dataset            & počet záznamů & bez ano/ne      \\ \hline
+\textbf{SQAD v3.0} & 13,476        & \textbf{11,273} \\ \hline
+\end{tabular}
+\caption{Velikost datasetu SQAD v3.0 při jeho použití pro testování systému.}
+\label{tab:sqad_size}
 \end{table}
 
 %=========================================================================
@@ -619,6 +646,21 @@ Pro vyhodnocení byl vybrán český dataset SQAD v3.0, jak už bylo několikrá
 \end{itemize}
 Pro podrobnější popis zvolených metrik viz \ref{metriky}. Metriky budou použity pro porovnání systému využívající dva navržené přístupy v \emph{reader} části a~také aspektů ovlivňující \emph{retriever}.
 
+\section*{Existující systémy pro otevřenou doménu}
+Příkladem existujícího systému pro QA na otevřené doméně může být třeba dříve zmíněný článek \cite{drQA} (DrQA) prezentující \emph{retriever--reader framework}. Je poměrně jednoduchý a podobný navrženému systému v této práci. DrQA byl navržen pro odpovídání na otázky nad anglickou Wikipedií a jeho úspěšnost EM na datasetu SQuAD (1.1) je podle \cite{drQA} necelých 30\,\%.\par
+Novější implementací může být například systém R2-D2 \cite{fajcik2021pruning}, který patřil k nejvíce úspěšným systémům soutěže NeurIPS 2020 \cite{min2021neurips}. R2-D2, neboli \textit{Rank twice -- Read twice}, používá architekturu sestávající ze čtyř částí: \emph{retriever, reranker, }extraktivní a generativní \emph{reader}. Retriever používá DPR \cite{dpr}(popsáno v části \ref{dpr}) a reranker využívá enkodér transformer architektury. Jeho úspěšnost na datasetu NQ (Natural Questions) dosahuje 55\,\%\,EM. V zásadě jsou si state of the art systémy v architektuře retriever\,--\,reader velmi podobné, s drobnými odchylkami (jako je reranker, extraktivní/generativní reader).\par\medskip
+Pro češtinu existuje systém AQA (Automatic Question Answering) poprvé prezentován v práci \cite{aqa} a od té doby zdokonalován. Práce \cite{aqa} poskytující jakýsi benchmark pro evaluaci systému na otevřené doméně pro dataset SQAD (v1.0) je z roku 2016. Pozdější vyhodnocení pro zdokonalený systém a dataset SQAD v1.1 z roku 2018 je v článku \cite{aqa2018}. Výsledky systému vyhodnoceného v roce 2018 jsou shrnuty v tabulce \ref{tab:aqa_benchmark}. Novější vyhodnocení systému fungujícím na otevřené doméně architektury retriever\,--\,reader pro dataset SQAD 3.0 není k dispozici.
+\begin{table}[H]
+\centering
+    \begin{tabular}{|l|l|c|}
+    \hline
+    \multicolumn{1}{|c|}{{\textbf{AQA}}} & EM    & \multicolumn{1}{l|}{počet testovacích vzorků} \\ \hline
+    \textbf{SQAD v1.0}                       & 49,83 & 3301                                         \\ \hline
+    \textbf{SQAD v1.1}                       & 38,08 & 3301                                         \\ \hline
+    \end{tabular}
+\caption{Úspěšnost systému AQA v přesné shodě s referenční odpovědí na datových sadách SQAD 1.0 a 1.1.}
+\label{tab:aqa_benchmark}
+\end{table}
 
 \chapter{Implementace a~použité technologie}
 \label{chapter:implementace}
@@ -671,8 +713,6 @@ Některé knihovny implementují poznatky popsané v kapitolách \ref{text_proce
     \item \textbf{Googletrans}\footnote{\url{https://github.com/ssut/py-googletrans}}
     nabízí API pro přístup k funkcionalitě Překladače Google. \par
     Je neoficiální implementací přístupu k překladači a~kvůli omezením na množství překládaných znaků nezajišťuje naprosto stabilní funkčnost.
-    
-    \item \textbf{Scikit-learn -- metrcis}\footnote{\url{https://scikit-learn.org/stable/modules/classes.html\#module-sklearn.metrics}} je část knihovny \textbf{sklearn} určená k usnadnění výpočtu základních vyhodnocovacích metrik.
     
     \item \textbf{Jupyter Notebook}\footnote{\url{https://jupyter.org/}} 
     je open-source webová aplikace pro interaktivní spouštění Python kódu v tzv. buňkách.\par
@@ -775,7 +815,7 @@ Po \emph{fine-tuningu} je úspěšnost modelů (F1 a EM, viz \ref{metriky}) na j
     \end{tabular}
     \begin{tabular}{| l | l | l |}
         \hline
-        \textbf{BERT} & cz\_SQuAD 1.1 & cz\_SQuAD 2.0 \\ \hline
+        \textbf{mBERT} & cz\_SQuAD 1.1 & cz\_SQuAD 2.0 \\ \hline
         EM              & 68,52      & 66,47      \\ \hline
         F1              & 77,72      & 69,54      \\ \hline
     \end{tabular}
@@ -818,7 +858,7 @@ NER může usnadnit vyznačení klíčových slov pro vyhledávání.\par
 Pro rozpoznání pojmenované entity v otázce je použita knihovna \texttt{deeppavlov}. Využívá natrénovaný model \texttt{ner\_ontonotes\_bert\_mult}, který je vytvořen funkcí \texttt{build\_model()}.
 
 \subsection{Získání relevantních dokumentů}
-Inicializace třídy \texttt{Retriever} trvá hlavně kvůli tvorbě indexů a načtení modelu pro NER poměrně dlouho\footnote{Asi 10 minut, pokud není potřeba stáhnout \texttt{deeppavlov} model pro NER.}. Po jeho inicializaci je potřeba pro získání relevantních dokumentů pouze jediná instanční metoda \texttt{retrieve()}, která pro zadanou otázku získá $n$ (v práci 3) relevantních dokumentů.\par
+Inicializace třídy \texttt{Retriever} trvá hlavně kvůli tvorbě indexů a načtení modelu pro NER poměrně dlouho\footnote{Asi 10 minut, pokud není potřeba stáhnout \texttt{deeppavlov} model pro NER. Pokud lze načíst vytvořený model přes \texttt{pickle}, může to být pouze kolem jedné minuty.}. Po jeho inicializaci je potřeba pro získání relevantních dokumentů pouze jediná instanční metoda \texttt{retrieve()}, která pro zadanou otázku získá $n$ (v práci 3) relevantních dokumentů.\par
 Získání dokumentů probíhá následovně:
 \begin{enumerate}
     \item Nejprve jsou získány názvy článků metodou \texttt{get\_doc\_list()}, které jsou výsledkem vyhledávání metody \texttt{search()} knihovny \texttt{wikipedia}. Jednotlivé vstupy do vyhledávání jsou následující:
@@ -871,7 +911,7 @@ V této kapitole jsou popsány výsledky dosažené vytvořeným systémem. Pops
 \section{Vysvětlení základních metrik}
 \label{metriky}
 V této sekci jsou popsány metriky použité pro vyhodnocení systému. Popsány jsou standardní metriky jako EM a F1 používané pro QA systémy a také metriky zachycující specifika otevřené domény.\par
-Metody EM, F1, MRR a částečně T3M jsou standardní metriky používané pro vyhodnocení většiny podobných systémů. Ostatní metriky jsou úpravou těch standardních, navržené specificky pro vyhodnocení tohoto systému.
+Metody EM a F1 (používané např. pro vyhodnocení na \cite{squad}, \cite{squad_v2}), MRR (např. pro~\cite{sqad}) a částečně T3M jsou standardní metriky používané pro vyhodnocení většiny podobných systémů. Ostatní metriky jsou úpravou těch standardních, navržené specificky pro vyhodnocení tohoto systému.
 
 \subsection{Exact Match (EM)}
 \label{EM}
@@ -907,10 +947,10 @@ Naivní skóre je nejvíce benevolentní metrikou. Zjišťuji u ní, zda-li je o
 T3M je obdobou EM \ref{EM}, pro shodu je však testována každá z nejlepších třech (3) nalezených odpovědí. Můžeme tedy určit, v kolika případech oproti EM systém našel správnou odpověď, ale nevybral ji, protože nedosáhla nejvyššího skóre. T3M nabývá opět hodnoty 0 nebo 1.
 
 \subsection{MRR}
-MRR (\emph{Mean Reciprocal Rank}) je obdobou T3M, zohledňuje však, na kolikátém místě byla odpověď nalezena (T3M zohledňuje pouze to, jestli byla vůbec nalezena). Pokud dosáhla odpověď shodná s referenční odpovědí nejvyšší skóre (byla vybrána), hodnota MRR je 1, pokud byla na druhém místě, hodnota je 1/2 a pokud na třetím, hodnota MRR je 1/3. Pokud nebyla odpověď nalezena vůbec, hodnota MRR je 0.
+MRR (\emph{Mean Reciprocal Rank}) je obdobou T3M, zohledňuje však, na kolikátém místě byla odpověď nalezena (T3M zohledňuje pouze to, jestli byla vůbec nalezena). Pokud dosáhla odpověď shodná s referenční odpovědí nejvyšší skóre (byla vybrána), hodnota MRR je 1, pokud byla na druhém místě, hodnota je 1/2 a pokud na třetím, hodnota MRR je 1/3. Pokud nebyla odpověď nalezena vůbec, hodnota MRR je 0 \cite{MRR}.
 
 \subsection{F1 skóre}
-Je jakýmsi kompromisem mezi naivním skóre a EM. Při jeho výpočtu jsou použity dvě metriky --- \emph{recall} (úplnost) a \emph{precision} (přesnost).
+Je jakýmsi kompromisem mezi naivním skóre a EM. Při jeho výpočtu jsou použity dvě metriky --- \emph{recall} (úplnost) a \emph{precision} (přesnost) \cite{information_retrieval}.
 \begin{equation}
     \text{\textbf{F1}} = 2\cdot \frac{precision \cdot recall}{precision + recall} 
 \end{equation}
@@ -924,7 +964,7 @@ recall = \frac{tp}{tp+fn} \quad precision = \frac{tp}{tp+fp}
     \item fp -- \emph{false positive} -- znaky, které nejsou v referenční odpovědi, ale přebývají v získané
 \end{itemize}
 
-Obvykle jsou definice tp, fn a fp uváděny pro tokeny, ne znaky, chceme ale více zohlednit morfologii češtiny a dropné rozdíli v odpovědích vztahující se k otevřené doméně -- například augustiánský/augustiánských -- při porovnávání tokenů bychom nedosáhli žádné shody.\par \medskip
+Obvykle jsou definice tp, fn a fp uváděny pro tokeny, ne znaky, chceme ale více zohlednit morfologii češtiny a dropné rozdíli v odpovědích vztahující se k otevřené doméně -- například augustiánský/augustiánských -- při porovnávání tokenů bychom nedosáhli žádné shody. F1 skóre je počítáno, pouze pokud je získaná odpověď podřetězcem té referenční, nebo naopak.\par \medskip
 \noindent Pro příklad: 
 \begin{center}
 \begin{tabular}{l}
@@ -951,22 +991,23 @@ Proto je pro každý experiment také náhodně vybráno 300 otázek pro lidské
 
 %=========================================================================
 \section{Vyhodnocení výsledného systému}
-Pro vyhodnocení celého systému byla vybrána datová sada SQAD v3.0 \cite{sqad}, ze které byly odebrány ano/ne otázky. (??a otázky, které nedávají bez přiloženého kontextu smysl.)\par
+Pro vyhodnocení celého systému byla vybrána datová sada SQAD v3.0 \cite{sqad}, ze které byly odebrány ano/ne otázky.\par
 Pro každou metriku v \ref{metriky} bylo použito vzorce \ref{score_calc}
 \begin{equation}
     \label{score_calc}
-    \text{skóre} = \frac{1}{N}\cdot \sum^N_{k=0} S_k
+    \text{skóre} = \frac{1}{N}\cdot \sum^N_{k=1} S_k
 \end{equation}
-kde $S_k$ je skóre $S$ (např. EM) pro odpověď $k$ a $N$ je celkový počet odpovědí. Skóre na celém datasetu je tedy průměrem jednotlivých skóre $S_k$ všech zodpovězených otázek.
-
+kde $S_k$ je skóre $S$ (např. EM) pro odpověď $k$ a $N$ je celkový počet odpovědí. Skóre na celém datasetu je tedy průměrem jednotlivých skóre $S_k$ všech zodpovězených otázek.\par
 V této sekci jsou shrnuty a porovnány výsledky výsledného systému na testovací sadě.
 
+%%TODO provést všechny experimenty
 \subsection{Model ALBERT a strojový překlad}
+\label{albert_eval}
 \begin{table}[H]
     \centering
     \begin{tabular}{|l|l|l|l|l|l|l|l|}
         \hline
-        \textbf{ALBERT} & EM    & ELM   & NS    & T3M   & MRR   & F1        & člověk \\ \hline
+        \textbf{ALBERT} & \textbf{EM}    & ELM   & NS    & T3M   & MRR   & \textbf{F1}        & člověk \\ \hline
         SQuAD 1.1+MD    & 35,53 & 37,33 & ?     & ?     & ?     & 37,70     & ?      \\ \hline
         SQuAD 2.0+MD    & 33,53 & 35,33 & ?     & ?     & ?     & 35,51     & ?      \\ \hline
         SQuAD 1.1+Maj   & ?     & ?     & ?     & ?     & ?     & ?         & ?      \\ \hline
@@ -977,11 +1018,12 @@ V této sekci jsou shrnuty a porovnány výsledky výsledného systému na testo
 \end{table}
 
 \subsection{Model vícejazyčný BERT}
+\label{mbert_eval}
 \begin{table}[H]
     \centering
     \begin{tabular}{|l|l|l|l|l|l|l|l|}
         \hline
-        \textbf{mBERT}  & EM    & ELM   & NS    & T3M   & MRR   & F1        & člověk \\ \hline
+        \textbf{mBERT}  & \textbf{EM}    & ELM   & NS    & T3M   & MRR   & \textbf{F1}        & člověk \\ \hline
         SQuAD 1.1+MD    & 48,49 & 50,98 & 61,12 & 55,73 & 51,99 & 57,44     & ?      \\ \hline
         SQuAD 2.0+MD    & 51,50 & 53,60 & 64,17 & 56,33 & 53,63 & 59,92     & ?      \\ \hline
         SQuAD 1.1+Maj   & ?     & ?     & ?     & ?     & ?     & ?         & ?      \\ \hline
@@ -992,24 +1034,28 @@ V této sekci jsou shrnuty a porovnány výsledky výsledného systému na testo
 \end{table}
 
 \subsection{Porovnání dosažených výsledků}
-
+%%TODO zhodnotit použitelnost porovnaných výsůedků v albert eval a mber eval
 
 %=========================================================================
 \section{Porovnání výsledků se současným stavem poznání}
 Porovnat  s AQA atp. \cite{aqa}
+%%TODO porovnat s tím, co máme k dispozici
 
 
 %=========================================================================
 \section{Rozbor chyb a~možnosti dalšího vývoje}
 Popsat příčiny chyb, nejlepší systém, nejčastější nedostatky, co by se dalo zlepšit...
+%%TODO ručně vyhodnotit některé chyby a jak je případně eliminovat
 
 
 %=========================================================================
 %===============================================================================
 
 \chapter{Závěr}
+%%TODO napsat závěr
 \label{conclusion}
 
+%%TODO napsat m. fajčíkovi : syntetická tvorba q-a pairs? použití modelu na http://pcknot2.fit.vutbr.cz:8501/?
 
 %=========================================================================
 %===============================================================================
