@@ -1,6 +1,12 @@
-class Reader():
+import torch
+from transformers import BertTokenizerFast, BertForQuestionAnswering
+import numpy as np
 
-    def __init__(self, model_checkpoint, max_answer_length=10, n_best_size=10, max_length=384, stride=128, use_cpu=False):
+
+class Reader:
+
+    def __init__(self, model_checkpoint, max_answer_length=10, n_best_size=10, max_length=384, stride=128,
+                 use_cpu=False):
         # load all parameters of the reader
         self.max_answer_length = max_answer_length  # max answer span length
         self.n_best_size = n_best_size  #
@@ -8,7 +14,7 @@ class Reader():
         self.stride = stride  # the length of overlap between two mini-batches of tokenizer
 
         # choose device; cuda if available
-        self.device = torch.device("cuda:0" if (torch.cuda.is_available() and use_cpu == False) else "cpu")
+        self.device = torch.device("cuda:0" if (torch.cuda.is_available() and use_cpu is False) else "cpu")
 
         # load tokenizer and model from pretrained checkpoint
         self.tokenizer = BertTokenizerFast.from_pretrained(model_checkpoint)
@@ -54,7 +60,8 @@ class Reader():
                     # Don't consider answers with a length that is either < 0 or > max_answer_length.
                     if end_index < start_index or end_index - start_index + 1 > self.max_answer_length:
                         continue
-                    if start_index <= end_index:  # We need to refine that test to check the answer is inside the context
+                    # We need to refine that test to check the answer is inside the context
+                    if start_index <= end_index:
                         start_char = offset_mapping[start_index][0]
                         end_char = offset_mapping[end_index][1]
                         valid_answers.append(
@@ -65,7 +72,6 @@ class Reader():
                         )
         valid_answers = sorted(valid_answers, key=lambda x: x["score"], reverse=True)[:self.n_best_size]
         return valid_answers
-
 
     def get_answers(self, question, context):
         """

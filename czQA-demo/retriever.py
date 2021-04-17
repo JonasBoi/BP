@@ -1,11 +1,25 @@
-class Retriever():
+from deeppavlov import build_model, configs
+from rank_bm25 import BM25Okapi, BM25Plus, BM25L
+from corpy.morphodita import Tagger
+import re
+import pickle
+import wikipedia
+import json
+import nltk.data
+import os
+
+
+class Retriever:
 
     def __init__(self, wiki_abstracts, wiki_titles, dita_file, index_file, download_ner_model=False):
         # set wiki api language to search the Czech Wikipedia
         wikipedia.set_lang("cs")
 
         # save the most common czech words (stop words)
-        common = "kdy být a se v na ten on že s z který mít do já o k i jeho ale svůj jako za moci pro tak po tento co když všechen už jak aby od nebo říci jeden jen můj jenž ty stát u muset chtít také až než ještě při jít pak před však ani vědět hodně podle další celý jiný mezi dát tady tam kde každý takový protože nic něco ne sám bez či dostat nějaký proto"
+        common = "kdy být a se v na ten on že s z který mít do já o k i jeho ale svůj jako za moci pro tak po " \
+                 "tento co když všechen už jak aby od nebo říci jeden jen můj jenž ty stát u muset chtít také až " \
+                 "než ještě při jít pak před však ani vědět hodně podle další celý jiný mezi dát tady tam kde každý " \
+                 "takový protože nic něco ne sám bez či dostat nějaký proto"
         self.common = common.split()
 
         # save punctuation to be removed
@@ -40,7 +54,8 @@ class Retriever():
 
         print("Retriever initialized")
 
-    def get_title_search_index(self, wiki_titles):
+    @staticmethod
+    def get_title_search_index(wiki_titles):
         """
         Build index for searching through relevant title names on czech wiki:
 
@@ -51,7 +66,7 @@ class Retriever():
         titles = []
 
         for line in f:
-            title = ((" ").join(line.split("_"))).strip()
+            title = (" ".join(line.split("_"))).strip()
             title = title.strip('\n')
             titles.append(title)
         f.close()
@@ -99,7 +114,7 @@ class Retriever():
         # process for creating bm25 index
         tok_abstracts = []
         for abstract in abstracts:
-            tok_abstract = self.delete_common(self.lemmatize_morphodita(abstract.lower()))
+            tok_abstract = self.delete_common(self.lemmatize(abstract.lower()))
             tok_abstracts.append(tok_abstract)
 
         # build index
@@ -116,7 +131,7 @@ class Retriever():
         Search with bm25 among the wiki titles
 
         """
-        tokenized_query = self.delete_common(self.lemmatize_morphodita(question.lower()))
+        tokenized_query = self.delete_common(self.lemmatize(question.lower()))
         results = self.bm25_articles_index.get_top_n(tokenized_query, self.titles, n=5)
 
         return results
@@ -126,7 +141,7 @@ class Retriever():
         Search with bm25 among the wiki abstracts
 
         """
-        tokenized_query = self.delete_common(self.lemmatize_morphodita(question.lower()))
+        tokenized_query = self.delete_common(self.lemmatize(question.lower()))
         results = self.bm25_abstract_index.get_top_n(tokenized_query, self.abstract_titles, n=5)
 
         return results
@@ -171,8 +186,7 @@ class Retriever():
 
         return tokens
 
-
-    def lemmatize_morphodita(self, text):
+    def lemmatize(self, text):
         """
         Returns lemma of each token in a list of lemmatized tokens
 
@@ -181,7 +195,7 @@ class Retriever():
         # (this works better with morphodita which sometimes fails to tokenize the
         #  text correctly if it wasnt split before like this - it just works)
         text = re.split("\W", text)
-        text = (" ").join(text)
+        text = " ".join(text)
 
         tokens = list(self.tagger.tag(text, convert='strip_lemma_id'))
 
@@ -191,16 +205,17 @@ class Retriever():
 
         return lemmas
 
-
     def search_again(self, tokens):
         """
         Performs repeated search in case wiki api didnt find any documents
 
         """
         # join the searched tokens and try to use wiki search
-        searched_term = (' ').join(tokens)
+        searched_term = ' '.join(tokens)
         if searched_term.strip() != "":
             doc_list = wikipedia.search(searched_term, results=1)
+        else:
+            return []
 
         # if no tokens left, end
         if len(tokens) == 0:
@@ -212,7 +227,6 @@ class Retriever():
             return self.search_again(tokens)
         # return the found article
         return doc_list
-
 
     def get_doc_list(self, question):
         """
@@ -252,13 +266,12 @@ class Retriever():
         # simplify the search if its too bad and search recursively
         if len(article) == 0:
             # extract important for wiki
-            tokens = self.delete_common(self.lemmatize_morphodita(question.lower()))
+            tokens = self.delete_common(self.lemmatize(question.lower()))
             article = self.search_again(tokens)
         if len(article) > 0:
             doc_list.append(article[0])
 
         return doc_list
-
 
     def normalize_length(self, par):
         """
@@ -287,8 +300,8 @@ class Retriever():
 
         return normalized_pars
 
-
-    def get_wiki_page(self, doc):
+    @staticmethod
+    def get_wiki_page(doc):
         """
         Get the Wikipedia page content
 
@@ -306,6 +319,27 @@ class Retriever():
 
         return doc
 
+    def process_paragraph(self, par, processed_pars, processed_lemm_pars):
+        # for albert, the max paragraph length shall be shorter due to translation limits
+        max_len = 3000
+
+        # check max paragraph length
+        if len(par) > max_len:
+            # split into smaller paragraphs - normalize lengths
+            normalized_paragraphs = self.normalize_length(par)
+            # append each smaller paragraph
+            for norm_par in normalized_paragraphs:
+                # append paragraph
+                processed_pars.append(norm_par)
+                # get lemmas and append
+                processed_lemm_pars.append(' '.join(self.delete_common(self.lemmatize(norm_par.lower()))))
+        else:
+            # append paragraph
+            processed_pars.append(par)
+            # get lemmas and append
+            processed_lemm_pars.append(' '.join(self.delete_common(self.lemmatize(par.lower()))))
+
+        return processed_pars, processed_lemm_pars
 
     def split_documents(self, doc_list):
         """
@@ -346,30 +380,10 @@ class Retriever():
                 if par == '' or par == '\n' or par.strip().startswith("Obrázky, zvuky či videa k tématu"):
                     continue
 
-                # for albert, the max paragraph length shall be shorter due to translation limits
-                if self.model_type == 'mbert':
-                    max_len = 3000
-                else:
-                    max_len = 1500
-
-                # check max paragraph length
-                if len(par) > max_len:
-                    # split into smaller paragraphs - normalize lengths
-                    normalized_paragraphs = self.normalize_length(par)
-                    # append each smaller paragraph
-                    for norm_par in normalized_paragraphs:
-                        # append paragraph
-                        pars.append(norm_par)
-                        # get lemmas and append
-                        lemm_pars.append((' ').join(self.delete_common(self.lemmatize_morphodita(norm_par.lower()))))
-                else:
-                    # append paragraph
-                    pars.append(par)
-                    # get lemmas and append
-                    lemm_pars.append((' ').join(self.delete_common(self.lemmatize_morphodita(par.lower()))))
+                # process the paragraph - create processed paragraphs = pars, and their lemmatized version
+                pars, lemm_pars = self.process_paragraph(par, pars, lemm_pars)
 
         return pars, lemm_pars
-
 
     def retrieve(self, question, max_docs):
         """
@@ -397,7 +411,7 @@ class Retriever():
         # so we just take the reelvant abstracts and hope the answer is there
         if len(pars) == 0:
             # tokenize the query and get the top 5 abstracts
-            tokenized_query = self.delete_common(self.lemmatize_morphodita(question.lower()))
+            tokenized_query = self.delete_common(self.lemmatize(question.lower()))
             results = self.bm25_abstract_index.get_top_n(tokenized_query, self.abstracts, n=5)
 
             # perform the paragraph normalization similar to the one in split_documents()
@@ -405,19 +419,8 @@ class Retriever():
             for par in results:
                 par = par.strip()
                 # check max paragraph length
-                max_len = 3000
-                if len(par) > max_len:
-                    # split into smaller paragraphs
-                    normalized_paragraphs = self.normalize_length(par)
-                    # append each smaller paragraph
-                    for norm_par in normalized_paragraphs:
-                        pars.append(norm_par)
-                        lemm_pars.append((' ').join(self.delete_common(self.lemmatize_morphodita(norm_par.lower()))))
-                else:
-                    # append paragraph
-                    pars.append(par)
-                    # get lemmas and append
-                    lemm_pars.append((' ').join(self.delete_common(self.lemmatize_morphodita(par.lower()))))
+                # process the paragraph - create processed paragraphs = pars, and their lemmatized version
+                pars, lemm_pars = self.process_paragraph(par, pars, lemm_pars)
         ##############################################################################################
 
         # tokenize for bm25
@@ -435,7 +438,7 @@ class Retriever():
         # bm25 = BM25Okapi(tok_text)
 
         # tokenize and lemmatize the query
-        tokenized_query = (' ').join(self.delete_common(self.lemmatize_morphodita(question.lower())))
+        tokenized_query = ' '.join(self.delete_common(self.lemmatize(question.lower())))
         tokenized_query = re.split("\W", tokenized_query)
 
         # get top n results

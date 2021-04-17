@@ -139,12 +139,12 @@
   supervisor.title.p={Doc. RNDr.},   %titul před jménem (nepovinné) / title before the name (optional)
   supervisor.title.a={Ph.D.},    %titul za jménem (nepovinné) / title after the name (optional)
   % Klíčová slova / keywords
-  keywords.cs={zpracování přirozeného jazyka, NLP, odpovídání na otázky, strojové učení, Wikipedia, otevřená doména, ALBERT, dolování znalostí}, % klíčová slova v českém či slovenském jazyce / keywords in czech or slovak language
-  keywords.en={natural language processing, NLP, question answering, machine learning, Wikipedia, open domain, ALBERT, knowledge mining}, % klíčová slova v anglickém jazyce / keywords in english
+  keywords.cs={zpracování přirozeného jazyka, čeština, NLP, odpovídání na otázky, strojové učení, Wikipedie, otevřená doména, SQAD, ALBERT, mBERT, dolování znalostí, strojový překlad}, % klíčová slova v českém či slovenském jazyce / keywords in czech or slovak language
+  keywords.en={natural language processing, Czech, NLP, question answering, machine learning, Wikipedia, open-domain, SQAD, ALBERT, mBERT, knowledge mining, machine translation}, % klíčová slova v anglickém jazyce / keywords in english
   %keywords.en={Here, individual keywords separated by commas will be written in English.},
   % Abstrakt / Abstract
-  abstract.cs={Práce se zabývá odpovídáním na otázky v přirozeném jazyce s pomocí strojového učení a~využitím české Wikipedie jako báze znalostí. Popsány jsou dostupné metody, state of the art a výběr vhodných metod pro daný úkol. Prozkoumány jsou dostupné datové sady pro trénink i vyhodnocení výsledného řešení. Poté je představen návrh výsledného systému a popis implementace jeho jednotlivých komponent. Diskutovány jsou metody vyhledávání relevantních dokumentů a vhodné předzpracování prohledávaných textů i nalezení odpovědi v získaném kontextu. Celý systém je vyhodnocen na známém datasetu s použitím základních metrik. Výsledkem je systém schopný odpovídat na otázky v přirozeném jazyce.}, % abstrakt v českém či slovenském jazyce / abstract in czech or slovak language
-  abstract.en={This thesis describes natural language question answering using machine learning and\linebreak searching Czech Wikipedia as its knowledge base. Existing methods, state of the art and choosing a suitable method for the given task is described. Available datasets for training and final system evaluation are explored. The system design is then introduced and the implementation of its individual components is described. Methods for relevant document retrieval, preprocessing the searched corpus as well as finding the answer span in the acquired context are discussed. The whole system is then evaluated on a well known dataset using the basic metrics. The result is a system being able to answer natural language questions.}, % abstrakt v anglickém jazyce / abstract in english
+  abstract.cs={Práce se zabývá odpovídáním na otázky v přirozeném jazyce v Češtině s pomocí strojového učení s využitím české Wikipedie jako báze znalostí. Popsány jsou dostupné metody a návrh řešení daného úkolu. Prozkoumány jsou dostupné datové sady pro trénink i vyhodnocení výsledného řešení. Poté je představen návrh výsledného systému a popis implementace jeho jednotlivých komponent. Diskutovány jsou metody vyhledávání relevantních dokumentů, vhodné předzpracování prohledávaných textů a metody nalezení odpovědi v získaném kontextu. Účelem práce je vytvořit systém schopný uspět v odpovídání na otázky z datové sady SQAD v3.0. Hlavním přínosem je prozkoumání možností strojového překladu pro použití robustních jazykových modelů a porovnání s použitím vícejazyčného modelu trénovaného na strojově přeložené datové sadě. Zásadní je vyhodnocení systému na celé datové sadě SQAD, zhodnocení použitých přístupů a jejich porovnání s existujícími výsledky.}, % abstrakt v českém či slovenském jazyce / abstract in czech or slovak language
+  abstract.en={This thesis deals with natural language question answering in Czech using machine learning and Czech Wikipedia as its knowledge base. Existing methods, state of the art and choosing a suitable approach for the given task is described. Available datasets for training and final system evaluation are explored. The system design is then introduced and the implementation of its individual components is described. Methods for relevant document retrieval, preprocessing the searched corpus as well as methods of finding the answer span in the acquired context are discussed. The main purpose of this work is to create a system being able to succeed in answering the questions from the SQAD v3.0 dataset. The main contribution is the examination of the possibilities of machine translation making the use of robust language models possible and its comparison with the use of multilingual model trained on translated dataset. Evaluation on the whole SQAD dataset is crucial, comparing the utilized methods and its best results with other existing systems.}, % abstrakt v anglickém jazyce / abstract in english
   %abstract.en={An abstract of the work in English will be written in this paragraph.},
   % Prohlášení (u anglicky psané práce anglicky, u slovensky psané práce slovensky) / Declaration (for thesis in english should be in english)
   declaration={Prohlašuji, že jsem tuto bakalářskou práci vypracoval samostatně pod vedením pana Doc. RNDr. Pavla Smrže Ph.D.
@@ -231,7 +231,7 @@ Uvedl jsem všechny literární prameny, publikace a další zdroje, ze kterých
   \ifenglish
     \input{projekt-01-kapitoly-chapters-en}
   \else
-    \input{projekt-01-kapitoly-chapters}
+    \input{xsasin05-kapitoly}
   \fi
   
   % Kompilace po částech (viz výše, nutno odkomentovat)
@@ -263,7 +263,7 @@ Uvedl jsem všechny literární prameny, publikace a další zdroje, ze kterých
   \fi
 \fi
   \begin{flushleft}
-  \bibliography{projekt-20-literatura-bibliography}
+  \bibliography{xsasin05-literatura}
   \end{flushleft}
 
   % vynechani stranky v oboustrannem rezimu
@@ -325,7 +325,7 @@ Uvedl jsem všechny literární prameny, publikace a další zdroje, ze kterých
   \ifenglish
     \input{projekt-30-prilohy-appendices-en}
   \else
-    \input{projekt-30-prilohy-appendices}
+    \input{xsasin05-prilohy}
   \fi
   
   % Kompilace po částech (viz výše, nutno odkomentovat)

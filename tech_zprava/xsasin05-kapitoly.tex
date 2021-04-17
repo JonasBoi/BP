@@ -115,7 +115,7 @@ Pro některé případy může převod na malá písmeny znamenat ztrátu část
 \subsection{Odstranění stop slov}
 \label{stopwords}
 Ve zpracování přirozeného jazyka jsou \emph{stop slova} většinou souborem nejčastěji používaných slov v~daném jazyce\footnote{\url{https://en.wikipedia.org/wiki/Stop_word}}. Většinou jsou odstraňována, protože kvůli jejich vysokému výskytu nesou menší informační hodnotu a~jejich odstranění vede k~lepší funkci vyhledávacích algoritmů \cite{bm25_improvements}.\par
-Nejužívanější slova daného jazyka je možno například ve frekvenčních seznamech jako \cite{wiki:frekvencni_seznam}, který obsahuje 100 nejpoužívanějších slov v~češtině. Získaný seznam je vhodné kriticky zhodnotit a~vyčlenit z~něj některá slova, která by pro vyhledávání mohla mít kritický význam.\footnote{Příklad: \uv{první}, \uv{země}, \uv{člověk} \dots} Většinou je zanedbatelná alespoň většina spojek, předložek či zájmen. Typickými příklady stop slov pro češtinu jsou: být, a, se, v, že \dots
+Nejužívanější slova daného jazyka je možno najít například ve frekvenčních seznamech, které obsahují nejpoužívanější slova v~češtině. Získaný seznam je vhodné kriticky zhodnotit a~vyčlenit z~něj některá slova, která by pro vyhledávání mohla mít kritický význam.\footnote{Příklad: \uv{první}, \uv{země}, \uv{člověk} \dots} Většinou je zanedbatelná alespoň většina spojek, předložek či zájmen. Typickými příklady stop slov pro češtinu jsou: být, a, se, v, že \dots
 
 \subsection{Získání lemmat}
 \textbf{Lemmatizace} je druh zpracování textu, při kterém je pro každé slovo nalezen základní tvar, tzv. \emph{lemma}.\footnote{Podobným postupem je \emph{stematizace}, která ale algoritmicky pouze odstraní koncovky a~předpony pro nalezení slovního kmene. Lemmatizátor pro nalezení základních tvarů používá morfologický slovník.}
@@ -728,14 +728,14 @@ Následující sekce popisuje, jak byla zpracována data, se kterými se v prác
 \noindent Nejprve je popsáno zpracování datasetu SQuAD a~jeho českého překladu, na kterých je trénován \emph{reader}. Poté je popsáno zpracování dumpů obsahující titulky a~abstrakty článků české Wikipedie. Vysvětleno je také zpracování českého datasetu SQAD v3.0 a~také formát uložení odpovědí při vyhodnocení testování systému, aby na nich mohla být provedena evaluace. 
 
 \subsection{Předzpracování datové sady SQuAD}
-Pro načtení datasetu SQuAD byla použita knihovna Huggingface \texttt{ datasets }, která načte trénovací i dev dataset dostupný ve formátu JSON. Pro načtení je použit skript \emph{squad.py}, který lze díky open-source povaze knihovny upravit a~použít i pro načtení české verze datasetu SQuAD\footnote{\url{https://lindat.cz/repository/xmlui/handle/11234/1-3249?show=full}} (skripty \emph{czech\_squad.py} a~\emph{czech\_squad2.py}). Stejně jednoduchý postup lze použít i pro načtení verze 2.0 obou datasetů.\par
+Pro načtení datasetu SQuAD byla použita knihovna Huggingface \texttt{ datasets }, která načte trénovací i dev dataset dostupný ve formátu JSON. Pro načtení je použit skript \emph{squad.py}, který lze díky open-source povaze knihovny upravit a~použít i pro načtení české verze datasetu SQuAD \cite{cz_suqad_download} (skripty \emph{czech\_squad.py} a~\emph{czech\_squad2.py}). Stejně jednoduchý postup lze použít i pro načtení verze 2.0 obou datasetů.\par
 Po načtení obsahuje dataset položku \emph{train} a~\emph{validation} pro trénink a~vyhodnocení natrénovaného modelu pro extrakci odpovědi. Velikosti jednotlivých částí jsou zmíněny v tabulce \ref{tab:squad_size_new}. Každá otázka ve SQuAD datasetu obsauje id, titulek, kontext(dokument), otázku a~odpověď. Odpovědí může být i více, pro odpověď je také uveden index znaku, na kterém začíná.\par
 Z knihovny \texttt{transformers} je poté potřeba načíst tokenizér, který převede otázku a~kontext každé položky v datasetu do podoby stravitelné modelem (tokeny reprezentovány token ID pro předtrénovaný slovník modelu a~speciální tokeny jako [CLS] a~[SEP]). Pro více\-jazyčný BERT lze použít \texttt{BertTokenizerFast}, pro ALBERT zas \texttt{AlbertTokenizerFast}.\par
 \pagebreak
 Modely BERT a~ALBERT založené na Transformer architektuře mají pevně danou maximální délku vstupní sekvence tokenů. Proto je potřeba tokenizér nastavit tak, aby byly příliš dlouhé vstupy rozděleny na sekvenci kratších, ideálně s nějakým přesahem za sebou následujích oddělených částí (\texttt{return\_overflowing\_tokens=True}).\par
 Při práci s odpovědí je v datasetu vyznačen pouze index počátečního znaku. Nastavením tokenizéru \texttt{return\_offsets\_mapping=True} získáme pro každý token také indexy vstupního řetězce znaků, na kterých se nachází.\par
 S použitím popsaných metod jsou k původnímu datasetu přidány informace o indexu \emph{počátečního a~koncového tokenu} každé odpovědi pro daný tokenizér daného modelu.\par 
-Funkce, která zpracování implementuje, byla vypůjčena z HuggingFace notebooku\footnote{\url{https://colab.research.google.com/github/huggingface/notebooks/blob/master/examples/question\_answering.ipynb\#scrollTo=xcE7HKQsxr5S}} a~pomocí metody datasetu \texttt{map()} je aplikována na všechny vzorky datasetu.
+Funkce, která zpracování implementuje, byla vypůjčena z HuggingFace notebooku\footnote{\url{https://colab.research.google.com/github/huggingface/notebooks/blob/master/}} a~pomocí metody datasetu \texttt{map()} je aplikována na všechny vzorky datasetu.
 
 \subsection{Práce s dumpem Wikipedie}
 V práci byly použity dva různé soubory pro získání relevantních článků Wikipedie. Prvním je dump názvů článků a~druhým je dump abstraktů.\par
@@ -743,11 +743,11 @@ Soubor s názvy článků je pouze jednoduchý text snadný pro zpracování. Na
 Pro abstrakty článků je to o něco složitější, protože jsou uloženy v poměrně rozměrném XML souboru. Každý záznam obsahuje titulek, url, text abstraktu a~odkazy. Po načtení je dump zpracován tak, že je ponechána pouze informace o názvu článku a~text jeho abstraktu. Výsledný zpracovaný dump je uložen jako soubor JSON s asi čtvrtinovou velikostí souboru původního. Získání a~zpracování konkrétních článků je popsáno až v sekci \ref{retriever_imp}.
 
 \subsection{Extrakce informací z datasetu SQAD}
-Dataset SQAD v3.0\footnote{\url{https://lindat.cz/repository/xmlui/handle/11234/1-3069}} je dostupný ve velmi specifické struktuře. Jednotlivé otázky datové sady jsou rozesety po $13,476$ složkách, z nichž každá obsahuje 7\,--\,9 souborů \uv{vert}. Důležité pro nás jsou pouze soubory obsahující otázku a~extrakci odpovědi. Na obrázku \ref{question_format} je příklad formátu, ve kterém jsou otázky a~odpovědi uloženy. 
+Dataset SQAD v3.0 \cite{sqad_download} je dostupný ve velmi specifické struktuře. Jednotlivé otázky datové sady jsou rozesety po $13,476$ složkách, z nichž každá obsahuje 7\,--\,9 souborů \uv{vert}. Důležité pro nás jsou pouze soubory obsahující otázku a~extrakci odpovědi. Na obrázku \ref{question_format} je příklad formátu, ve kterém jsou otázky a~odpovědi uloženy. 
 
 \begin{figure}[hbt]
 	\centering
-	\scalebox{0.35}{
+	\scalebox{0.3}{
 	    \includegraphics{obrazky/sqad_question_format.pdf}
 	}
 	\caption{Příklad formátu položky (otázky) datasetu SQAD v3.0.}
@@ -833,7 +833,7 @@ Pro získání relevantních dokumentů je implementována třída \texttt{Retri
 Při vytváření instance \texttt{Readeru} je načten lemmatizátor, sestaven index titulků článků a index abstraktů článků Wikipedie, načten tokenizér (pro rozdělení textu na věty) a načten model pro rozpoznávání entit.\par
 
 \paragraph{Použitá stop slova --}
-Pokud je potřeba při zpracování textů v průběhu vyhledávání relevantního dokumentu odstranit stop slova, je pro to využit následující seznam:
+Pokud je potřeba při zpracování textů v průběhu vyhledávání relevantního dokumentu odstranit stop slova, je pro to využit následující seznam\footnote{\scriptsize \url{https://cs.wiktionary.org/wiki/P\%C5\%99\%C3\%ADloha:Frekven\%C4\%8Dn\%C3\%AD\_seznam\_(\%C4\%8De\%C5\%A1tina)}}:
 \begin{quote}
     {\footnotesize kdy být a se v na ten on že s z který mít do já o k i jeho ale svůj jako za moci pro tak po tento co když všechen už jak aby od nebo říci jeden jen můj jenž ty stát u muset chtít také až než ještě při jít pak před však ani vědět hodně podle další celý jiný mezi dát tady tam kde každý takový protože nic něco ne sám bez či dostat nějaký proto}
 \end{quote}
@@ -995,30 +995,32 @@ Pro každou metriku v \ref{metriky} bylo použito vzorce \ref{score_calc}
 \end{equation}
 kde $S_k$ je skóre $S$ (např. EM) pro odpověď $k$ a $N$ je celkový počet odpovědí. Skóre na celém datasetu je tedy průměrem jednotlivých skóre $S_k$ všech zodpovězených otázek.\par
 V této sekci jsou shrnuty a porovnány výsledky výsledného systému na testovací sadě.\par
-Pro každou variantu systému bylo provedeno vyhodnocení pouze na čtvrtině\footnote{Velikost čtvrtiny datasetu je \textbf{2819 vzorků} -- srovnatelné s počtem vzorků při vyhodnocení AQA v \cite{aqa2018}.} datasetu, která byla získána tak, že byl vybrán každý jeho čtvrtý vzorek. Pro vítěznou variantu bylo vyhodnocení provedeno na všech více jak 11000 vzorcích a byly provedeny další experimenty.
+Pro každou variantu systému bylo provedeno vyhodnocení pouze na (stejné) čtvrtině\footnote{Velikost čtvrtiny datasetu je \textbf{2819 vzorků} -- srovnatelné s počtem vzorků při vyhodnocení AQA v \cite{aqa2018}.} datasetu, která byla získána tak, že byl vybrán každý jeho čtvrtý vzorek. Pro vítěznou variantu bylo vyhodnocení provedeno na všech více jak 11000 vzorcích a byly provedeny další experimenty.
 
 %%TODO provést všechny experimenty
 \subsection{Model ALBERT a strojový překlad}
 \label{albert_eval}
 Vyhodnocení systému s readerem ALBERT, pro který jsou nalezené texty strojově překládány do angličtiny. Vyhodnocení proběhlo pro 4 varianty -- reader trénován na datasetu SQuAD 1.1/2.0 (SQ1.1/2.0) a nástroj použitý pro morfologickou analýzu -- Majka/MorphoDiTa (Maj/MD). Nejlepší výsledky a důležité metriky jako EM a F1 jsou zvýrazněny tučně.
-\label{tab:albert_eval}
+
 \begin{table}[H]
     \centering
     \begin{tabular}{|l||l|l|l|l|l|l|l|l|l|}
         \hline
         \textbf{ALBERT}  & \textbf{EM}   & ELM       & NS        & T3M       & MRR       & \textbf{F1}   & prec.         & rec. \\ \hline\hline
-            SQ1.1+MD    & ?              & ?         & ?         & ?         & ?         & ?             & ?             & ?    \\ \hline
-            SQ2.0+MD    & ?              & ?         & ?         & ?         & ?         & ?             & ?             & ?    \\ \hline
-            SQ1.1+Maj   & ?              & ?         & ?         & ?         & ?         & ?             & ?             & ?    \\ \hline
-            SQ2.0+Maj   & ?              & ?         & ?         & ?         & ?         & ?             & ?             & ?    \\ \hline
+            SQ1.1+MD    & 11,96         & 25,63     & 37,77     & 23,61     & 21,17     & 22,93         & 21,80         & 25,81    \\ \hline
+            SQ2.0+MD    & 12,85         & 26,08     & 39,57     & 23,63     & 21,66     & 23,87         & 22,77         & 26,80    \\ \hline
+            SQ1.1+Maj   & 11,64         & 25,37     & 37,90     & \textbf{23,78}     & 21,40     & 23,03         & 21,88         & 25,98    \\ \hline
+            SQ2.0+Maj   & \textbf{12,88}& \textbf{26,15}& \textbf{39,60}& 23,60     & \textbf{21,68}     & \textbf{24,11}         & \textbf{22,98}         & \textbf{27,09}    \\ \hline
     \end{tabular}
-    \caption{Úspěšnost (v \%) systému s readerem ALBERT a strojovým překladem textů -- vyhodnoceno pro čtvrtinu datasetu SQAD v3.0 (2819 otázek).}
+    \caption{Úspěšnost [\%] systému s readerem ALBERT a strojovým překladem textů -- vyhodnoceno pro čtvrtinu datasetu SQAD v3.0 (2819 otázek).}
     \label{tab:system_eval_albert}
 \end{table}
+Jak je vidět v tabulce \ref{tab:system_eval_albert}, výsledky tohoto přístupu nejsou příliš dobré. Za povšimnutí stojí výrazný rozdíl mezi EM a ELM. Příčinou tak velké odchylky od přesné shody je nejspíš ztráta tvaru slov při překladu, kdy však slovní základ zůstává stejný. Naivní skóre dosahuje téměř 40\%, nějaké shody tedy systém dosáhl, ale nepřesnosti způsobené překladem převládly.
 
 \subsection{Model vícejazyčný BERT}
-Vyhodnocení systému používajícího vícejazyčný BERT jako reader. Vyhodnocení proběhlo opět ve 4 variantách stejně jak v předchozí podsekci \ref{albert_eval}. Značení je stejné s jediným rozdílem, kdy SQ1.1/2.0 jsou českými strojovými překlady datové sady SQuAD použité pro trénink readeru. Nejlepší výsledky jsou opět zvýrazněny tučně.
 \label{mbert_eval}
+Vyhodnocení systému používajícího vícejazyčný BERT jako reader. Vyhodnocení proběhlo opět ve 4 variantách stejně jak v předchozí podsekci \ref{albert_eval}. Značení je stejné s jediným rozdílem, kdy SQ1.1/2.0 jsou českými strojovými překlady datové sady SQuAD použité pro trénink readeru. Nejlepší výsledky jsou opět zvýrazněny tučně.
+
 \begin{table}[H]
     \centering
     \begin{tabular}{|l||l|l|l|l|l|l|l|l|l|}
@@ -1029,33 +1031,36 @@ Vyhodnocení systému používajícího vícejazyčný BERT jako reader. Vyhodno
             SQ1.1+Maj   & 40,90         & 42,85     & 59,13     & 46,29     & 43,38     & 51,79         & 54,27         & 52,55         \\ \hline
             SQ2.0+Maj   & 42,36         & 44,38     & 61,16     & 46,65     & 44,32     & 53,63         & 56,26         & 54,35     \\ \hline
     \end{tabular}
-    \caption{Úspěšnost (v \%) systému s readerem m-BERT trénovaném na čekém překladu datasetu SQuAD -- vyhodnoceno pro čtvrtinu datasetu SQAD v3.0 (2819 otázek).}
+    \caption{Úspěšnost [\%] systému s readerem m-BERT trénovaném na čekém překladu datasetu SQuAD -- vyhodnoceno pro čtvrtinu datasetu SQAD v3.0 (2819 otázek).}
     \label{tab:system_eval_mbert}
 \end{table}
 
+Při použití vícejazyčného modelu BERT bylo dosaženo poměrně uspokojujících výsledků (tab. \ref{tab:system_eval_mbert})a jeho nejlepší varianta je tedy dále vyhodnocena na všech 11273 otázkách testovací datové sady.\par
+Následuje ještě ale podsekce o ručním vyhodnocení lidmi, která zachycuje diskriminační povahu automatických metrik.\pagebreak
+
 \subsection{Vyhodnocení člověkem}
-Z celé datové sady SQAD v3.0 bylo náhodně vybráno 200 otázek, které byly vyhodnoceny také ručně - lidmi (inspirováno \cite{min2021neurips}). Porovnáno na nich bude tedy úspěšnost jednotlivých systémů dle automatického vyhodnocení\footnote{u tohoto vzorku a lidských hodnotitelů jsou pro porovnání vybrány pouze metriky EM a F1} a vyhodnocení lidmi, jinak řečeno, jestli by danou odpověď systému brali jako postačující.\par
-Následující tabulka \ref{tab:human_eval} prezentuje přehledně dosažené porovnání.
+Z celé datové sady SQAD v3.0 bylo náhodně vybráno 200 otázek, které byly vyhodnoceny také ručně -- lidmi (inspirováno \cite{min2021neurips}). Porovnáno na nich bude tedy úspěšnost jednotlivých systémů dle automatického vyhodnocení\footnote{U tohoto vzorku a lidských hodnotitelů jsou pro porovnání vybrány pouze metriky EM a F1.} a vyhodnocení lidmi, jinak řečeno, jestli by danou odpověď systému bral člověk jako postačující.\par
+Následující tabulka \ref{tab:human_eval} prezentuje přehledně zjištěné hodnoty.
 
 \begin{table}[H]
 \centering
 \begin{tabular}{|l||l|l|l|}
     \hline
         {ALBERT}       & \textbf{EM} & \textbf{F1} & \textbf{člověk} \\ \hline\hline
-    SQ1.1+MD  & ?           & ?           & ?               \\ \hline
-    SQ2.0+MD  & ?           & ?           & ?               \\ \hline
-    SQ1.1+Maj & ?           & ?           & ?               \\ \hline
-    SQ2.0+Maj & ?           & ?           & ?               \\ \hline
+    SQ1.1+MD  & 11,00       & 24,46       & 55,50               \\ \hline
+    SQ2.0+MD  & 11,00       & 24,48       & 54,50               \\ \hline
+    SQ1.1+Maj & 11,00       & 24,48      & \textbf{56,50}               \\ \hline
+    SQ2.0+Maj & \textbf{12,00}       & \textbf{24,92}      & 53,50               \\ \hline
     \end{tabular}
     \begin{tabular}{|l||l|l|l|}
     \hline
     {mBERT}       & \textbf{EM} & \textbf{F1} & \textbf{člověk} \\ \hline\hline
-    SQ1.1+MD  & ?           & ?           & ?               \\ \hline
-    SQ2.0+MD  & ?           & ?           & ?               \\ \hline
-    SQ1.1+Maj & ?           & ?           & ?               \\ \hline
-    SQ2.0+Maj & ?           & ?           & ?               \\ \hline
+    SQ1.1+MD  & 43,00       & 53,15         & 64,00               \\ \hline
+    SQ2.0+MD  & \textbf{46,00}& \textbf{56,81}& \textbf{69,00}              \\ \hline
+    SQ1.1+Maj & 42,00       & 52,55           & 63,00               \\ \hline
+    SQ2.0+Maj & 45,00       & 56,21           & 67,50               \\ \hline
     \end{tabular}
-\caption{Porovnání automatického vyhodnocení a vyhodnocení lidmi systémů vyhodnocených v \ref{tab:albert_eval} a \ref{mbert_eval} na 200 náhodně vybraných otázkách.}
+\caption{Porovnání automatického vyhodnocení a vyhodnocení lidmi systémů vyhodnocených v \ref{albert_eval} a \ref{mbert_eval} na 200 náhodně vybraných otázkách.}
 \label{tab:human_eval}
 \end{table}
 
