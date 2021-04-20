@@ -37,7 +37,7 @@ nebo\\
 [Paříž] $-$ [Francie] $+$ [Čína] $=$ [Peking]
 \end{center}
 
-V~následující části budou popsány vlastnosti a~nejznámějších metod pro získání vektorových reprezentací.
+V~následující části budou popsány vlastnosti a~popis nejznámějších metod pro získání vektorových reprezentací.
 
 \begin{figure}[hbt]
 	\centering
@@ -986,7 +986,7 @@ Otevřená doména je problematická pro automatické vyhodnocování. Jak je uv
 Proto je pro každý experiment také náhodně vybráno 200 otázek pro lidské vyhodnocení, aby se vzal alespoň minimální ohled na diskriminační povahu automatické evaluace.
 
 %=========================================================================
-\section{Vyhodnocení výsledného systému}
+\section{Vyhodnocení výsledného open-domain systému}
 Pro vyhodnocení celého systému byla vybrána datová sada SQAD v3.0 \cite{sqad}, ze které byly odebrány ano/ne otázky.\par
 Pro každou metriku v \ref{metriky} bylo použito vzorce \ref{score_calc}
 \begin{equation}
@@ -1039,6 +1039,7 @@ Při použití vícejazyčného modelu BERT bylo dosaženo poměrně uspokojují
 Následuje ještě ale podsekce o ručním vyhodnocení lidmi, která zachycuje diskriminační povahu automatických metrik.\pagebreak
 
 \subsection{Vyhodnocení člověkem}
+\label{human_eval}
 Z celé datové sady SQAD v3.0 bylo náhodně vybráno 200 otázek, které byly vyhodnoceny také ručně -- lidmi (inspirováno \cite{min2021neurips}). Porovnáno na nich bude tedy úspěšnost jednotlivých systémů dle automatického vyhodnocení\footnote{U tohoto vzorku a lidských hodnotitelů jsou pro porovnání vybrány pouze metriky EM a F1.} a vyhodnocení lidmi, jinak řečeno, jestli by danou odpověď systému bral člověk jako postačující.\par
 Následující tabulka \ref{tab:human_eval} prezentuje přehledně zjištěné hodnoty.
 
@@ -1064,16 +1065,79 @@ Následující tabulka \ref{tab:human_eval} prezentuje přehledně zjištěné h
 \label{tab:human_eval}
 \end{table}
 
+Při tomto vyhodnocení byla odpověď ohodnocena 1, pokud byla při ručním vyhodnocení odpověď systému dostačující odpovědí na danou otázku a 0 v opačném případě. U výsledků je vidět rozdíl mezi přesnou shodou a lidským vyhodnocením až 45,5\,\% u~systému využívajícího strojový překlad a reader ALBERT a až 23\,\% u systému využívajícího vícejazyčný BERT.\par
+Výsledky tedy indikují použitelnost odpovědi téměř 70\,\% u nejlepší varianty systému. Také ukazují mnohem větší použitelnost výsledků prvního přístupu, než se při prvotním vyhodnocení mohlo zdát, avšak nedosahují kvalit systému využívajícího vícejazyčný BERT.\par
+Pro ilustraci je uvedeno pár příkladů, které byly při ručním vyhodnocení posouzeny jako dostačující:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{č.}   &\textbf{Otázka}                                         \\ \hline
+1               &Kolik má čeština slovních druhů?                        \\ \hline
+2                &Kdo je Oldřich Homuta?                                  \\ \hline
+3                &Která diecéze má jako hlavní patronku svatou Zdislavu?  \\ \hline
+4                &Jaké je jméno současného papeže?                        \\ \hline
+5                &Kdo je vrchním velitelem ozbrojených sil ČR?            \\ \hline
+6                & Kde zemřel Platón?                                      \\ \hline
+\end{tabular}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{č.}   &\textbf{Odpověď systému} & \textbf{Referenční odpověď} \\ \hline
+1               &deset                    & 10                          \\ \hline
+2               &český elektrotechnik     & vynálezce remosky           \\ \hline
+3               &litoměřické diecéze      & litoměřický                 \\ \hline
+4               &kardinál Bergoglio       & František                   \\ \hline
+5               &Miloš Zeman              & prezident České republiky   \\ \hline
+6               &Atény                    & v Athénách                  \\ \hline
+\end{tabular}
+\caption{Příklady odpovědí systému (různých variant z vyhodnocovaných), které byly posouzeny člověkem jako dostačující.}
+\label{tab:human_eval_examples}
+\end{table}
+
 \subsection{Porovnání dosažených výsledků}
-%%TODO zhodnotit použitelnost porovnaných výsledků v albert eval a mber eval
+Vyhodnocení jednotlivých variant systému proběhlo v předchozích podsekcích a můžou být tedy shrnuty závěry experimentů. \par
+Pro variantu ALBERT došlo oproti variantě mBERT pouze k velmi malé přesné shodě získaných výsledků. Pro obě varianty systému byl úspěšnější \emph{reader} trénovaný na verzi 2.0 datasetu SQuAD, tedy na tom, který pro trénink obsahuje i velké množství dokumentů neobsahujících odpověď na položenou otázku. Tento trénink nejspíš přispěl k o něco lepšímu průměru výběru správného dokumentu.\par
+Co se týká lexikálních analyzátorů a jejich vliv na funkci hodnotící funkce \texttt{bm25}, zvítězil v první variantě analyzátor Majka, ne však příliš přesvědčivě a procentuální rozdíl úspěšnosti systému je téměř zanedbatelný. Pro druhou variantu zvítězil analyzátor MorphoDiTa a o něco přesvědčivěji. Ve všech experimentech byl však rozdíl v systémech používajících různý lexikální analyzátor téměř zanedbatelný. Kvůli tomu, že byl však ve druhé (úspěšnější) variantě nástroj MorphoDiTa systematicky (byť jen o trochu) lepší, je použit pro vyhodnocení systému na celé testovací datové sadě právě on.\par
+Co se týká ručního vyhodnocení lidmi, byly všechny varianty mnohem úspěšnější, než podle automatického vyhodnocení. Větší rozdíl mezi automatickým a lidským vyhodnocení byl zaznamenán u první varianty systému s readerem ALBERT, kde jsou odpovědi deformovány opakovaným překladem textu do angličtiny a zpět do češtiny. Reálná použitelnost této varianty systému však není tak špatná, jak se z automatického vyhodnocení zdá.\par
+Z provedených experimentů je tedy vítěznou variantou systém mBERT SQ2.0+MD. Tedy systém používající jako reader vícejazyčný BERT natrénovaný na českém překladu datasetu SQuAD 2.0 a nástrojem MorphoDiTa pro morfologickou analýzu.
 
 \subsection{Vyhodnocení nejlepšího dosaženého systému}
-%%TODO vyhodnotit nejlepší dosažená model na celém datasetu + best5 + best8
+\label{best_eval}
+V této části jsou uvedeny výsledky vyhodnocení nejlepší varianty systému na celém datasetu SQAD 3.0. Experimentováno bylo s množstvím dokumentů, které jsou předány readeru k extrakci odpovědi. V tabulce \ref{tab:final_evaluation} jsou uvedeny výsledky vyhodnocení systému.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l||l|l|l|l|l|l|l|l|l|}
+        \hline
+          & \textbf{EM}   & ELM       & NS        & TkM       & MRR       & \textbf{F1}   & prec.         & rec. \\ \hline\hline
+            top 3    & 42,30         & 44,21     & 61,20     & 46,67     & 44,27     & 53,69         & 56,12         & 54,44    \\ \hline
+            top 5    & 43,71         & 45,64     & 62,80     & 50,02     & 46,41     & 55,20         & 57,62         & 55,95    \\ \hline
+            top 8   & \textbf{43,89}         & \textbf{45,83}     & \textbf{62,96}     & 52,36     & 47,34     & \textbf{55,42}         & \textbf{57,70}         & \textbf{56,28}    \\ \hline
+            top 10   & 43,77         & 45,68     & 62,87     & \textbf{53,07}     & \textbf{47,48}     & 55,28         & 57,52        & 56,17    \\ \hline
+    \end{tabular}
+    \caption{Vyhodnocení systému [\%] na celém datasetu SQAD 3.0 (bez ano/ne otázek --~viz tabulka \ref{tab:sqad_size}) s~využitím Wikipedie jako báze znalostí. Porovnáno je množství čtených dokumentů \uv{top~\emph{k}}. TkM je varianta metriky T3M (\ref{metriky}) pro každou variantu top \emph{k} čtených dokumentů. Varianta systému: extraktivní reader -- vícejazyčný BERT trénován na datasetu cz\_SQuAD 2.0 (\ref{reader_imp}), morfologický analyzátor -- MorphoDiTa.}
+    \label{tab:final_evaluation}
+\end{table}
+Při vyhodnocení na celé testovací sadě se hodnoty od výsledků na čtvrtině datasetu v podsekci \ref{mbert_eval} o mnoho neliší. Z tabulky \ref{tab:final_evaluation} vyplývá, že nejlepší pro maximalizaci skóre EM i většiny dalších je čtení 8 nejvíce relevantních dokumentů. Při hodnotě 10 už úspěšnost většiny metrik klesla. Zvýšilo se však skóre TkM i MRR, což je s větším množstvím získaných dokumentů očekávatelné.
 
 %=========================================================================
-\section*{Porovnání výsledků se současným stavem poznání}
-Porovnat  s AQA atp. \cite{aqa}
-%%TODO porovnat s tím, co máme k dispozici
+\section*{Porovnání výsledků práce se současným stavem poznání}
+V této sekci jsou výsledky práce porovnány s podobnými systémy stejného účelu, pro které je dostupné vyhodnocení na standardních metrikách.\par
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l||l|l|}
+\hline
+Systém     & dataset   & počet testovacích otázek & \textbf{EM} & \textbf{NS} \\ \hline \hline
+AQA 2018   & SQAD v1.0 & 3 301                    & 49,83       & 59.58       \\ \hline
+AQA 2018   & SQAD v1.1 & 3 301                    & 38,08       & 46,26       \\ \hline
+\textbf{Tato práce} & SQAD v3.0 & 11 273                   & 43,89       & 62,96       \\ \hline
+\end{tabular}
+\caption{Porovnání výsledků této práce se systémem AQA \cite{aqa} (uvedené výsledky jsou převzaty z \cite{aqa2018}). Výsledky jsou uvedeny v \%.}
+\label{tab:aqa_compare}
+\end{table}
+Výsledky práce jsou porovnány s výsledky systému AQA \cite{aqa}, konkrétně s poslední dostupnou vyhodnocenou variantou tohoto systému z roku 2018 \cite{aqa2018}, která byla vyhodnocena na 3301 otázkách z datasetu SQAD v1.0 a 1.1. Výsledky jsou shrnuty v tabulce \ref{tab:aqa_compare} a jsou porovnány pomocí metrik EM a NS. Metrika NS není v práci specifikována, pracuje se v~ní však s \uv{plnou shodou} (EM) a \uv{částečnou shodou}, která je definována jako odpověď, která se přesně neshoduje s referenční, protože některá slova přebývají, nebo chybí. \emph{Částečná shoda} uváděna při vyhodnocení systému AQA je tedy značena jako NS -- naivní skóre (viz \ref{metriky}), což je metrika této práce, která popisu nejvíce odpovídá. NS pro AQA je součtem hodnot \emph{plné} a \emph{částečné} shody uvedených v \cite{aqa2018}.\par
+Z výsledků uvedených v tabulce \ref{tab:aqa_compare} je patrné, že systém AQA převyšuje výsledky této práce pouze v metrice EM a to pouze na části zastaralého datasetu SQAD v1.0. Z tabulky je patrné (a je tak uvedeno i v práci \cite{aqa2018}), že při vyhodnocení na stejně velkém vzorku vybraného z aktualizované verze datasetu 1.1, úspěšnost systému výrazně klesla (z EM 49,83\% na EM 38,08\%). Takový (možná i výraznější) pokles by šlo očekávat i při vyhodnocení systému na datasetu SQAD v3.0 použitého v této práci, která navíc vyhodnocuje systém na výrazně větším počtu vzorků. Systém prezentovaný v mé práci navíc dosahuje výrazně vyšších hodnot naivního skóre, které koresponduje s procentem použitelných výsledků více, než přesná shoda (jak je uvedeno v části \ref{human_eval}).\par
+Výsledky práce tedy považuji ve srovnání s dostupným vyhodnocení systému AQA, který představuje relevantní porovnání s výsledky mé práce, za úspěch.
 
 
 %=========================================================================

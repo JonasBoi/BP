@@ -62,8 +62,8 @@ CONFIGURATION_JSON_SCHEMA = {
         "reader_top_k_answers": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 10,
-          "default": 5
+          "maximum": 5,
+          "default": 3
         },
         # maximum answer length in tokens
         "reader_max_tokens_for_answer": {

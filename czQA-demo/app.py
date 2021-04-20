@@ -1,6 +1,7 @@
 import numpy as np
 import warnings
 import nltk
+import jsonschema as js
 
 from reader import Reader
 from retriever import Retriever
@@ -79,9 +80,10 @@ def run():
 
     # create reader and retriever
     reader = Reader(model_checkpoint)
-    retriever = Retriever(wiki_abstracts, wiki_titles, dita_file, index_file, download_ner_model=True)
+    retriever = Retriever(wiki_abstracts, wiki_titles, dita_file, index_file, download_ner_model=False)
 
     while True:
+        print("Položte otázku:")
         question = input()
 
         try:
@@ -91,6 +93,13 @@ def run():
             print("odpověď nenalezena")
             continue
 
+
         print(answer)
         print()
+        print(best_answers)
+        print(best_scores)
+        print(article_list)
+        print()
         print(document)
+        print()
+        print()

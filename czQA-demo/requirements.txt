@@ -1,0 +1,9 @@
+torch
+sentencepiece
+datasets transformers
+wikipedia
+rank_bm25
+corpy
+tensorflow-gpu==1.15.2
+deeppavlov
+git+https://github.com/deepmipt/bert.git@feat/multi_gpu
