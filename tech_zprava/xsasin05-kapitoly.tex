@@ -643,6 +643,7 @@ Pro vyhodnocení byl vybrán český dataset SQAD v3.0, jak už bylo několikrá
 Pro podrobnější popis zvolených metrik viz \ref{metriky}. Metriky budou použity pro porovnání systému využívající dva navržené přístupy v \emph{reader} části a~také aspektů ovlivňující \emph{retriever}.
 
 \section{Existující systémy pro otevřenou doménu}
+\label{existing_work}
 Příkladem existujícího systému pro QA na otevřené doméně může být třeba dříve zmíněný článek \cite{drQA} (DrQA) prezentující \emph{retriever--reader framework}. Je poměrně jednoduchý a podobný navrženému systému v této práci. DrQA byl navržen pro odpovídání na otázky nad anglickou Wikipedií a jeho úspěšnost EM na datasetu SQuAD (1.1) je podle \cite{drQA} necelých 30\,\%.\par
 Novější implementací může být například systém R2-D2 \cite{fajcik2021pruning}, který patřil k nejvíce úspěšným systémům soutěže NeurIPS 2020 \cite{min2021neurips}. R2-D2, neboli \textit{Rank twice -- Read twice}, používá architekturu sestávající ze čtyř částí: \emph{retriever, reranker, }extraktivní a generativní \emph{reader}. Retriever používá DPR \cite{dpr}(popsáno v části \ref{dpr}) a reranker využívá enkodér transformer architektury. Jeho úspěšnost na datasetu NQ (Natural Questions) dosahuje 55\%\,EM. V zásadě jsou si state of the art systémy v architektuře retriever\,--\,reader velmi podobné, s drobnými odchylkami (jako je reranker, extraktivní/generativní reader). Implementace R2--D2 se navíc snaží omezit paměťovou náročnost modelu. Pro modely bez omezení dosahuje úspěšnost těch nejlepších (v extrakci odpovědi) více jak 60\%\,F1 skóre\footnote{\url{https://ai.google.com/research/NaturalQuestions/leaderboard}}.\par\medskip
 Pro češtinu existuje systém AQA (Automatic Question Answering) poprvé prezentován v práci \cite{aqa} a od té doby zdokonalován. Práce \cite{aqa} poskytující jakýsi benchmark pro evaluaci systému na otevřené doméně pro dataset SQAD (v1.0) je z roku 2016. Pozdější vyhodnocení pro zdokonalený systém a dataset SQAD v1.1 z roku 2018 je v článku \cite{aqa2018}. Výsledky systému vyhodnoceného v roce 2018 jsou shrnuty v tabulce \ref{tab:aqa_benchmark}. Novější vyhodnocení systému fungujícím na otevřené doméně architektury retriever\,--\,reader pro dataset SQAD 3.0 není k dispozici.
@@ -997,7 +998,6 @@ kde $S_k$ je skóre $S$ (např. EM) pro odpověď $k$ a $N$ je celkový počet o
 V této sekci jsou shrnuty a porovnány výsledky výsledného systému na testovací sadě.\par
 Pro každou variantu systému bylo provedeno vyhodnocení pouze na (stejné) čtvrtině\footnote{Velikost čtvrtiny datasetu je \textbf{2819 vzorků} -- srovnatelné s počtem vzorků při vyhodnocení AQA v \cite{aqa2018}.} datasetu, která byla získána tak, že byl vybrán každý jeho čtvrtý vzorek. Pro vítěznou variantu bylo vyhodnocení provedeno na všech více jak 11000 vzorcích a byly provedeny další experimenty.
 
-%%TODO provést všechny experimenty
 \subsection{Model ALBERT a strojový překlad}
 \label{albert_eval}
 Vyhodnocení systému s readerem ALBERT, pro který jsou nalezené texty strojově překládány do angličtiny. Vyhodnocení proběhlo pro 4 varianty -- reader trénován na datasetu SQuAD 1.1/2.0 (SQ1.1/2.0) a nástroj použitý pro morfologickou analýzu -- Majka/MorphoDiTa (Maj/MD). Nejlepší výsledky a důležité metriky jako EM a F1 jsou zvýrazněny tučně.
@@ -1137,14 +1137,65 @@ AQA 2018   & SQAD v1.1 & 3 301                    & 38,08       & 46,26       \\
 \end{table}
 Výsledky práce jsou porovnány s výsledky systému AQA \cite{aqa}, konkrétně s poslední dostupnou vyhodnocenou variantou tohoto systému z roku 2018 \cite{aqa2018}, která byla vyhodnocena na 3301 otázkách z datasetu SQAD v1.0 a 1.1. Výsledky jsou shrnuty v tabulce \ref{tab:aqa_compare} a jsou porovnány pomocí metrik EM a NS. Metrika NS není v práci specifikována, pracuje se v~ní však s \uv{plnou shodou} (EM) a \uv{částečnou shodou}, která je definována jako odpověď, která se přesně neshoduje s referenční, protože některá slova přebývají, nebo chybí. \emph{Částečná shoda} uváděna při vyhodnocení systému AQA je tedy značena jako NS -- naivní skóre (viz \ref{metriky}), což je metrika této práce, která popisu nejvíce odpovídá. NS pro AQA je součtem hodnot \emph{plné} a \emph{částečné} shody uvedených v \cite{aqa2018}.\par
 Z výsledků uvedených v tabulce \ref{tab:aqa_compare} je patrné, že systém AQA převyšuje výsledky této práce pouze v metrice EM a to pouze na části zastaralého datasetu SQAD v1.0. Z tabulky je patrné (a je tak uvedeno i v práci \cite{aqa2018}), že při vyhodnocení na stejně velkém vzorku vybraného z aktualizované verze datasetu 1.1, úspěšnost systému výrazně klesla (z EM 49,83\% na EM 38,08\%). Takový (možná i výraznější) pokles by šlo očekávat i při vyhodnocení systému na datasetu SQAD v3.0 použitého v této práci, která navíc vyhodnocuje systém na výrazně větším počtu vzorků. Systém prezentovaný v mé práci navíc dosahuje výrazně vyšších hodnot naivního skóre, které koresponduje s procentem použitelných výsledků více, než přesná shoda (jak je uvedeno v části \ref{human_eval}).\par
-Výsledky práce tedy považuji ve srovnání s dostupným vyhodnocení systému AQA, který představuje relevantní porovnání s výsledky mé práce, za úspěch.
+Výsledky práce tedy považuji ve srovnání s dostupným vyhodnocení systému AQA, který představuje relevantní porovnání s výsledky mé práce, za úspěch.\par
+Výsledky mohou být porovnány také se \textit{state of the art} systémy, které však existují pouze pro angličtinu a jsou vyhodnoceny na datasetu NQ. Například v sekci \ref{existing_work} zmíněný systém R2--D2 (55\,\% EM), nebo nejlepší výsledky na datasetu NQ uvedené v jeho oficiálním žebříčku (až 64\,\% F1). Rozdílnost datasetu sice neposkytuje příliš validní porovnání, jsem však ale přesvědčen, že výsledky této práce takových kvalit nedosahují. Přesto si systém v porovnání s existujícími systémy nevede příliš špatně.
 
 
 %=========================================================================
 \section{Rozbor chyb a~možnosti dalšího vývoje}
-Popsat příčiny chyb, nejlepší systém, nejčastější nedostatky, co by se dalo zlepšit...
-%%TODO ručně vyhodnotit některé chyby a jak je případně eliminovat
+V této sekci jsou rozebrány nedostatky systému, příčiny nesprávných odpovědí a možnosti vylepšení/nahrazení jeho existujících komponent pro optimální funkci systému. Navrhovaná vylepšení jsou zmíněna jak v krátkém, tak dlouhém časovém horizontu.\par
+\subsection{Analýza chyb a jejich příčin}
+Dataset je pro analýzu chyb nejprve rozdělen do 5 částí, které jsou vyhodnoceny samostatně. Z každé části jsou uloženy nesprávné odpovědi, které jsou nejblíže zkoumány pro část testovacích vzorků s nejnižší úspěšností. Úspěšnost na jednotlivých pěti částech je uvedena v tabulce \ref{tab:partial_eval}.
 
+\begin{table}[H]
+\centering
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+           & \textbf{EM} & \textbf{F1} & \textbf{NS} & \textbf{MRR} \\ \hline
+\textbf{1} & 57,69       & 65,70       & 71,26       & 60,89        \\ \hline
+\textbf{2} & 40,75       & \textbf{52,09}       & 59,69       & 44,61        \\ \hline
+\textbf{3} & 41,65       & 53,57       & 61,54       & 44,89        \\ \hline
+\textbf{4} & \textbf{38,70}       & 53,36       & 62,19       & \textbf{42,16}        \\ \hline
+\textbf{5} & 40,68       & 52,38       & \textbf{60,07}       & 44,18        \\ \hline
+\end{tabular}
+\caption{Vyhodnocení systému na jednotlivých pětinách datasetu (1 -- 5), kde každá pětina má asi 2255 vzorků, pro první pětinu jsou tedy vyhodnoceny vzorky s číslem 1 až 2255. Tučně jsou uvedeny nejnižší hodnoty (v \%).}
+\label{tab:partial_eval}
+\end{table}
+
+Nejlépe dopadla při vyhodnocení s velkým náskokem první část vyhodnocovací sady. Nejhůře část 4 (otázky 6765 -- 9020), kde přesná shoda nedosáhla 40\,\%. Pro tuto část je tedy proveden rozbor chyb. Pro rozbor byly vybrány vzorky, u kterých nebylo dosaženo přesné shody, nebo bylo dosažené F1 skóre méně, než 0,5. Získáno bylo tedy 982 vzorků pro bližší analýzu.\par
+Prvním směrodatným údajem je skóre TkM -- tedy přesná shoda v alespoň jedné extrakci odpovědi, která byla pro přečtené dokumenty provedena. Hodnota tohoto skóre dosahuje 15,78\,\%. Tyto chyby jsou tedy způsobeny špatným výběrem získané odpovědi, která je závislá na skóre určeném \emph{readerem}.\par
+Ze zbývajících 827 vzorků bylo dosaženo NS 13,66\,\%, což indikuje alespoň minimální použitelnost tohoto zlomku získaných odpovědí. Zbývá tedy zjistit příčinu chyb u 714 odpovědí, kde nebylo dosaženo žádné shody.\par
+Pro zbývající vzorky bylo provedeno vyhodnocení, které má za úkol zjistit, jestli se referenční odpověď nachází v některém z top $n$ (kde pro analyzovaný systém $n=8$) dokumentů. Ta byla nalezena ve 37,11\,\% analyzovaných vzorků. Pro tyto shody bylo vypočítáno také skóre MRR 25,68\,\%, které zhodnocuje i pořadí relevance těchto dokumentů, ve kterém byly získány retrieverem.\par
+Z původních 982 analyzovaných chybných vzorků můžeme tedy 533 považovat za chybnou extrakci odpovědi, nebo její špatné ohodnocení a vybrání nesprávné. Pro zbylých 449 vzorků nebyla správná odpověď nalezena v jediném získaném dokumentu. Vzhledem k původnímu vzorku pětiny datasetu (2255 zodpovězených otázek) je to tedy asi 20\,\%. Výsledky této analýzy prezentuje tabulka \ref{tab:error_analysis}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|l||c|c|c|}
+\hline
+\textbf{typ chyby}                & \multicolumn{1}{l|}{\textbf{zastoupení (v \%)}} & \multicolumn{1}{l|}{\textbf{počet}} & \multicolumn{1}{l|}{\textbf{původ chyby}}                                              \\ \hline
+nevybrání správné odpovědi        & 15,78                                          & 155                                              & \multirow{3}{*}{reader (54\,\%)}                                                       \\ \cline{1-3}
+nízká shoda s referenční odpovědí & 11,51                                          & 113                                              &                                                                                        \\ \cline{1-3}
+chybná extrakce (nulová shoda)    & 26,99                                          & 265                                              &                                                                                        \\ \hline
+nenalezení relevantního dokumentu & 35,95                                          & 353                                              & \multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}retriever /\\ auto. vyhod.\end{tabular}} \\ \cline{1-3}
+správná odpověď (ručně)           & 9,77                                           & 96                                               &                                                                                        \\ \hline
+\end{tabular}
+\caption{Příčiny chyb v analyzovaném vzorku 982 chybně zodpovězených otázek.}
+\label{tab:error_analysis}
+\end{table}
+
+Pro otázky, které nebyly správně zodpovězeny a byly klasifikovány jako chyba retrieveru, protože nedošlo k nalezení relevantního dokumentu obsahujícího odpověď, bylo provedeno ruční vyhodnocení. V těchto 449 otázkách bylo nalezeno 96 odpovědí, které jsou při ručním vyhodnocení člověkem postačující. Zbylo tedy 353 vzorků a z ručního vyhodnocení vyplývá několik hlavních příčin chyb:
+\begin{itemize}
+    \item mnohoznačnost otázky/otázka nedává bez kontextu smysl
+    \begin{itemize}
+        \item \uv{Proč se Severu nedostávalo zkušených vojevůdců?}, \uv{Proč Franco zaútočil na severu?}, \uv{Co udělal Smith v roce 1999?}, \dots
+    \end{itemize}
+    \item správná odpověď se nachází mezi nevybranými, je však v jiném tvaru
+    \item po převodu na malá písmena (viz \ref{retriever_imp}) se ztrácí část kontextu
+    \item nebyly získány dostatečně relevantní dokumenty
+    \item neschopnost readeru identifikovat ve složitém kontextu odpověď
+\end{itemize}
+
+\subsection{Další vývoj a možnosti navazujících prací}
 
 %=========================================================================
 %===============================================================================
@@ -1152,6 +1203,7 @@ Popsat příčiny chyb, nejlepší systém, nejčastější nedostatky, co by se
 \chapter{Závěr}
 %%TODO napsat závěr
 \label{conclusion}
+%%TODO vytvořit plakát
 
 %=========================================================================
 %===============================================================================
