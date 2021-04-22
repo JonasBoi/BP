@@ -1196,13 +1196,23 @@ Pro otázky, které nebyly správně zodpovězeny a byly klasifikovány jako chy
 \end{itemize}
 
 \subsection{Další vývoj a možnosti navazujících prací}
+Práce pokládá základ systému, který nabízí velký prostor pro další vylepšení. Návrhy toho, jak by mohlo být řešení rozšířeno například v rámci navazujících prací je popsáno v této části.\par
+Nejdříve co se týká první části systému -- retrieveru pro získávání relevantních pasáží. Řazení pomocí hodnotící funkce BM25 by mohlo být nahrazeno modernějším přístupem DPR popisovaným v části \ref{dpr}, ať už za použití vícejazyčného BERTa, nebo jiného modelu (enkodéru) pro získání vektorové reprezentace. Pro získávání pasáží by oproti přístupu v této práci, kdy jsou procházeny pouze relevantní články, mohla být vhodně zpracována a indexována celá Wikipedie, případně by mohly být zpracovány i zvláštní struktury, jako tabulky, kde se často nachází spousta relevantních informací. Při zpracování textu by mohl být vylepšen také převod na malá písmena, aby nedocházelo ke ztrátám kontextu.\par
+Co se týká modulu pro extrakci odpovědi, jsou cesty dalšího vývoje velmi otevřené. Prvním vylepšením by mohl být modul pro odhad předmětu otázky, aby došlo k lepší shodě při výběru odpovědi (otázka se ptá na datum -- uvažujme pouze odpovědi, které jsou také datum). Zajímavý by mohlo být také experimentovat s další variantou BERTa použitelného pro češtinu -- například Slavic BERT \cite{slavicBERT}. Mimo existující předtrénované ekodéry by měl být předmětem výzkumu hlavně předtrénink ryze české varianty například modelu ALBERT. Takový pokus již sice byl uskutečněn (například práce \cite{Zelina2020thesis}), model však nedosahoval dostatečných kvalit. Experimentovat by se dalo dále s přidáním abstraktivního readeru, jak je učiněno například v \cite{fajcik2021pruning}.\par
+Přínosné by bylo také další rozšíření datasetu SQAD, nebo tvorba nového datasetu zaměřeného na otevřenou doménu, obsahující více reálných příkladů toho, na co se lidé ptají na internetu -- ať už pro trénink retrieveru (DPR), nebo pro reálnější vyhodnocení schopností takového systému.
 
 %=========================================================================
 %===============================================================================
 
 \chapter{Závěr}
-%%TODO napsat závěr
 \label{conclusion}
+Práce popisuje tvorbu systému schopného odpovídat na otázky nad českou Wikipedií.\par
+Popisuje metody zpracování textu, strojového učení, modely vhodné pro porozumění textu a extrakci odpovědi a zhodnocuje také metody získávání relevantních pasáží. Popisuje dostupné aplikace popsaných postupů pro češtinu. Zhodnocuje dostupnost a vhodnost existujících datových sad pro trénink i vyhodnocení systému.\par
+Po rozebrání teorie vztahující se k tématu je popsán návrh systému a jeho komponent. Popsány jsou použité nástroje a to, jak byl výsledný systém implementován. Práce poté prezentuje množství experimentů a variant systému a jejich podrobné vyhodnocení. Pro nejúspěšnější variantu je poté provedena evaluace na datasetu SQAD 3.0. Analyzovány jsou výsledky vyhodnocení, příčiny chyb i možnosti dalšího vývoje.\par
+Podařilo se vytvořit systém, který splňuje požadavky zadání. Při řešení bylo experimentováno se dvěma přístupy -- použití anglického modelu ALBERT, pro který jsou pasáže strojově překládány a použití vícejazyčného modelu BERT. Oba systémy byly natrénovaný pro extrakci odpovědi. Porovnány byly také morfologické analyzátory MorphoDiTa a Majka a jejich vliv na získání relevantních pasáží.\par
+Nejlépe se osvědčila varianta systému využívající vícejazyčný BERT trénovaný na českém překladu datasetu SQuAD 2.0 a využívající nástroj MorpoDiTa pro morfologickou analýzu. Tato varianta systému byla vyhodnocena na datasetu SQAD v3.0 (bez ano/ne odpovědí). Podařilo se vytvořit systém, který dosahuje úspěšnosti 43,89\,\% EM a 55,42\,\% F1 skóre a převyšuje výsledky systému AQA z roku 2018. Nastavuje také laťku pro další práce na podobných systémech.\par
+Pro systém byla provedena analýza chyb a jejich příčin a také ruční vyhodnocení části chybně zodpovězených otázek. Ruční vyhodnocení nasvědčuje, že by mohla být reálná použitelnost odpovědí až o 23\,\% vyšší (až 69\,\%), než nasvědčuje metrika přesné shody EM. Pro systém využívající anglický model ALBERT je tento rozdíl mnohem větší (12,88\,\%EM, přes 50\,\% při lidském vyhodnocení), což je způsobeno deformací frází při opakovaném překladu pasáže/odpovědi. Diskutována jsou také úskalí použití datasetu SQAD pro vyhodnocení systému na otevřené doméně, jak ruční vyhodnocení nasvědčuje.\par
+Další vývoj by mohl zahrnovat použití DPR pro hodnocení pasáží textu, zpracování a indexace celé Wikipedie, začlenění modulu pro klasifikaci otázek a odpovědí, trénink ryze českých kvalitních modelů jako je ALBERT či rozšíření existujících a tvorbu nových datasetů pro češtinu.
 %%TODO vytvořit plakát
 
 %=========================================================================
