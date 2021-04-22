@@ -7,3 +7,4 @@ corpy
 tensorflow-gpu==1.15.2
 deeppavlov
 git+https://github.com/deepmipt/bert.git@feat/multi_gpu
+Flask~=1.1.2

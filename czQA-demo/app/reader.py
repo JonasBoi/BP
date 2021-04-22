@@ -5,7 +5,7 @@ import numpy as np
 
 class Reader:
 
-    def __init__(self, model_checkpoint, max_answer_length=10, n_best_size=10, max_length=384, stride=128,
+    def __init__(self, model_checkpoint, max_answer_length=10, n_best_size=20, max_length=384, stride=128,
                  use_cpu=False):
         # load all parameters of the reader
         self.max_answer_length = max_answer_length  # max answer span length

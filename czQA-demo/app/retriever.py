@@ -1,11 +1,13 @@
 from deeppavlov import build_model, configs
-from rank_bm25 import BM25Okapi, BM25Plus, BM25L
+from rank_bm25 import BM25Okapi, BM25Plus
 from corpy.morphodita import Tagger
 import re
 import pickle
 import wikipedia
 import json
+import nltk
 import nltk.data
+import numpy as np
 import os
 
 
@@ -14,6 +16,9 @@ class Retriever:
     def __init__(self, wiki_abstracts, wiki_titles, dita_file, index_file, download_ner_model=False):
         # set wiki api language to search the Czech Wikipedia
         wikipedia.set_lang("cs")
+
+        # download for sentence tokenizer
+        nltk.download('punkt')
 
         # save the most common czech words (stop words)
         common = "kdy být a se v na ten on že s z který mít do já o k i jeho ale svůj jako za moci pro tak po " \
@@ -273,7 +278,7 @@ class Retriever:
 
         return doc_list
 
-    def normalize_length(self, par):
+    def normalize_length(self, par, max_len):
         """
         Splits too long paragraph into smaller ones
 
@@ -289,7 +294,7 @@ class Retriever:
         for idx, sentence in enumerate(sentences):
             # if max paragraph length was reached, save the created paragraph
             # and start appending to a new one
-            if len(new_paragraph) + len(sentence) > 2500:
+            if len(new_paragraph) + len(sentence) > max_len:
                 normalized_pars.append(new_paragraph)
                 new_paragraph = ""
                 # make some overlap by taking some sentences from the previous paragraph
@@ -319,23 +324,23 @@ class Retriever:
 
         return doc
 
-    def process_paragraph(self, par, processed_pars, processed_lemm_pars):
+    def process_paragraph(self, par, processed_pars, processed_lemm_pars, doc_title):
         # for albert, the max paragraph length shall be shorter due to translation limits
-        max_len = 3000
+        max_len = 2000
 
         # check max paragraph length
         if len(par) > max_len:
             # split into smaller paragraphs - normalize lengths
-            normalized_paragraphs = self.normalize_length(par)
+            normalized_paragraphs = self.normalize_length(par, max_len)
             # append each smaller paragraph
             for norm_par in normalized_paragraphs:
                 # append paragraph
-                processed_pars.append(norm_par)
+                processed_pars.append(doc_title + "######" + norm_par)
                 # get lemmas and append
                 processed_lemm_pars.append(' '.join(self.delete_common(self.lemmatize(norm_par.lower()))))
         else:
             # append paragraph
-            processed_pars.append(par)
+            processed_pars.append(doc_title + "######" + par)
             # get lemmas and append
             processed_lemm_pars.append(' '.join(self.delete_common(self.lemmatize(par.lower()))))
 
@@ -352,11 +357,13 @@ class Retriever:
 
         # iterate over articles and process each one
         for doc in doc_list:
+            doc_title = doc
             # get whole page content
             try:
                 doc = self.get_wiki_page(doc)
             except wikipedia.PageError:
                 continue
+
             # check if actual page was found
             # page is of Wikipedia instance
             # if not found, string "not found" is returned
@@ -381,7 +388,7 @@ class Retriever:
                     continue
 
                 # process the paragraph - create processed paragraphs = pars, and their lemmatized version
-                pars, lemm_pars = self.process_paragraph(par, pars, lemm_pars)
+                pars, lemm_pars = self.process_paragraph(par, pars, lemm_pars, doc_title)
 
         return pars, lemm_pars
 
@@ -390,29 +397,24 @@ class Retriever:
         Returns the top 3 paragraphs for the given question
 
         """
-        # check max question length - just set something
-        if len(question) > 250:
-            return ""
-
-        # strip questionmark - its not necessary i guess
+        # strip questionmark - its not necessary
         question = question.strip('?')
 
         # get relevant wiki article names
         doc_list = self.get_doc_list(question)
-
         # convert from list to set -- only work with unique article names
         doc_list = set(doc_list)
-
         # split docs into paragraphs -- this is the slowest part of the process
-        # might need optimalization
         pars, lemm_pars = self.split_documents(doc_list)
 
         # if we didnt find anything using the wiki api -- we need to get atleast something
-        # so we just take the reelvant abstracts and hope the answer is there
+        # so we just take the relevant abstracts and hope the answer is there
         if len(pars) == 0:
             # tokenize the query and get the top 5 abstracts
             tokenized_query = self.delete_common(self.lemmatize(question.lower()))
-            results = self.bm25_abstract_index.get_top_n(tokenized_query, self.abstracts, n=5)
+
+            results = self.bm25_abstract_index.get_top_n(tokenized_query, self.abstracts, n=10)
+            results_titles = self.bm25_abstract_index.get_top_n(tokenized_query, self.abstracts, n=10)
 
             # perform the paragraph normalization similar to the one in split_documents()
             # get the paragraphs and their processed versions to build its search index
@@ -420,7 +422,10 @@ class Retriever:
                 par = par.strip()
                 # check max paragraph length
                 # process the paragraph - create processed paragraphs = pars, and their lemmatized version
-                pars, lemm_pars = self.process_paragraph(par, pars, lemm_pars)
+                pars, lemm_pars = self.process_paragraph(par, pars, lemm_pars, "")
+            # save title
+            for idx, par in enumerate(pars):
+                pars[idx] = results_titles[idx] + par
         ##############################################################################################
 
         # tokenize for bm25
@@ -443,5 +448,9 @@ class Retriever:
 
         # get top n results
         results = bm25.get_top_n(tokenized_query, pars, n=max_docs)
+        paragraph_scores = bm25.get_scores(tokenized_query)
+        # sort the scores
+        paragraph_scores = np.sort(paragraph_scores)[::-1]
+        paragraph_scores = paragraph_scores[:max_docs]
 
-        return results, doc_list
+        return results, paragraph_scores

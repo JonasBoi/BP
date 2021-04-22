@@ -115,20 +115,6 @@ PREDEFINED_QUESTIONS = [
   "How many inches are in one feet?"
 ]
 
-# Predefined first ten questions from EfficientQA validation dataset
-FAKE_PREDEFINED_QUESTIONS = [
-  "the last time la dodgers won the world series",
-  "who sings ain't nothing but a good time",
-  "where does the movie the sound of music take place",
-  "statue coming out of the ground in washington dc",
-  "field hockey is the national sport of which country",
-  "who governs in america\u2019s representative democracy (republic) system",
-  "who is the song you're my best friend about",
-  "where was the church of latter day saints founded",
-  "who os the father of bridget jones baby",
-  "who is the nationalist leader associated with the american revolution"
-]
-
 # Example:
 #
 # {
