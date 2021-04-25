@@ -1,5 +1,5 @@
 from flask import Flask
-# from .QA_responder import qaResponder
+from .QA_responder import qaResponder
 
 # app init
 app = Flask(__name__)

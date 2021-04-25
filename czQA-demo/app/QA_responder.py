@@ -2,7 +2,7 @@ from .reader import Reader
 from .retriever import Retriever
 import warnings
 import re
-# import numpy as np
+import numpy as np
 
 
 class qaResponder:
@@ -38,11 +38,6 @@ class qaResponder:
         char_offsets = []
         passage_indeces = []
         scores = []
-        titles = []
-
-        # not mandatory
-        reranked_scores = []
-        aggregated_scores = []
 
         # delete null strings
         paragraphs = [x for x in paragraphs if len(x.strip())]
@@ -61,32 +56,46 @@ class qaResponder:
             all_answers = self.reader.get_answers(question, document)
 
             # choose the first valid answer - which is not empty
-            paragraph_answers = 0  # answers extracted from paragraph dependent on configuration["reader_top_k_answers"]
+            # answers extracted from paragraph dependent on configuration["reader_top_k_answers"]
+            par_answers = []
+            par_char_offsets = []
+            par_scores = []
+            par_passage_indeces = []
+
             for answer in all_answers:
-                if paragraph_answers >= max_answers:
-                    break
-                if (answer['text'] != '') and (len(re.split("\W", answer)) <= max_tokens):
+                if (answer['text'] != '') and (len(re.split("\W", answer['text'])) <= max_tokens):
                     if type(answer['text']) is not str:
                         continue  # this is just to make sure that the answer is really ok
 
                     # save probs and answer
-                    answers.append(answer['text'])
+                    par_answers.append(answer['text'])
                     answer_start = document.find(answer['text'])
-                    char_offsets.append([answer_start, answer_start+len(answer['text'])])
-                    scores.append(answer['score'])
-                    passage_indeces.append(idx)
-                    titles.append(title)
-                    # not mandatory
-                    reranked_scores.append(0)
-                    aggregated_scores.append(0)
+                    par_char_offsets.append([answer_start, answer_start+len(answer['text'])])
+                    par_scores.append(answer['score'])
+                    par_passage_indeces.append(idx)
+
+            for i, ans in enumerate(par_answers):
+                if i >= int(max_answers):
+                    break
+                answers.append(ans)
+                char_offsets.append(par_char_offsets[i])
+                scores.append(par_scores[i])
+                passage_indeces.append(par_passage_indeces[i])
 
         ############################################################
 
         # not mandatory
         ids = [0 for x in paragraphs]
+        reranked_scores = [0 for x in paragraphs]
+        aggregated_scores = [0 for x in paragraphs]
+
+        titles = [x.split("######")[0] for x in paragraphs]  # get paragraph titles
+        paragraphs = [x.split("######")[1] for x in paragraphs]  # strips the title from the beggining
         # get the best doc
         # get best answer from retriever according to reader
         # answer = answers[np.argmax(scores, axis=0)]
+        paragraph_scores = [str(x) for x in paragraph_scores]
+        scores = [str(x) for x in scores]
 
         response = {
             "question": question,

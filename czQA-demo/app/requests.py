@@ -1,4 +1,4 @@
-from .app import app  # , qa_responder
+from .app import app, qa_responder
 from flask import request, jsonify
 from .api.jsonschema import (CONFIGURATION_JSON_SCHEMA,
                              PREDEFINED_QUESTIONS,
@@ -12,11 +12,11 @@ def get_json_schema():
     schema = request.args.get('schema')
 
     if schema == "configuration":
-        return CONFIGURATION_JSON_SCHEMA
+        return jsonify(CONFIGURATION_JSON_SCHEMA)
     elif schema == "query-request":
-        return REQUEST_JSON_SCHEMA
+        return jsonify(REQUEST_JSON_SCHEMA)
     if schema == "query-response":
-        return RESPONSE_JSON_SCHEMA
+        return jsonify(RESPONSE_JSON_SCHEMA)
     else:
         return f"Unknown schema '{schema}'.", 400
 
@@ -48,4 +48,4 @@ def query():
 
     predictions = qa_responder.find_answer(question, r["configuration"])
 
-    return predictions
+    return jsonify(predictions)
