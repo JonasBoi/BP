@@ -32,36 +32,30 @@ class qaResponder:
 
         # retrieve the relevant paragraphs of context
         paragraphs, paragraph_scores = self.retriever.retrieve(question, max_docs=max_docs)
+        # delete null strings
+        paragraphs = [x for x in paragraphs if len(x.strip())]
 
-        # for saving the best results
+        # for saving the results
         answers = []
         char_offsets = []
         passage_indeces = []
         scores = []
 
-        # delete null strings
-        paragraphs = [x for x in paragraphs if len(x.strip())]
-
         # iterate over retrieved paragraphs
         for idx, document in enumerate(paragraphs):
             # strip whitespaces and document title
-            title = document.strip().split("######")[0]
             document = document.strip().split("######")[1]
-
-            # check if any document has been found for the question
-            if document == "":
-                continue
 
             # get answer -------------------------------------------
             all_answers = self.reader.get_answers(question, document)
 
-            # choose the first valid answer - which is not empty
-            # answers extracted from paragraph dependent on configuration["reader_top_k_answers"]
+            # for saving answers and data from this paragraph
             par_answers = []
             par_char_offsets = []
             par_scores = []
             par_passage_indeces = []
 
+            # choose the valid answers
             for answer in all_answers:
                 if (answer['text'] != '') and (len(re.split("\W", answer['text'])) <= max_tokens):
                     if type(answer['text']) is not str:
@@ -74,6 +68,7 @@ class qaResponder:
                     par_scores.append(answer['score'])
                     par_passage_indeces.append(idx)
 
+            # save x answers - dependent on configuration["extractive_reader"]["reader_top_k_answers"]
             for i, ans in enumerate(par_answers):
                 if i >= int(max_answers):
                     break
@@ -91,15 +86,17 @@ class qaResponder:
 
         titles = [x.split("######")[0] for x in paragraphs]  # get paragraph titles
         paragraphs = [x.split("######")[1] for x in paragraphs]  # strips the title from the beggining
-        # get the best doc
+
         # get best answer from retriever according to reader
         # answer = answers[np.argmax(scores, axis=0)]
+
+        # convert to string because of json
         paragraph_scores = [str(x) for x in paragraph_scores]
         scores = [str(x) for x in scores]
 
+        # create response json
         response = {
             "question": question,
-            # "answer": answer,
             "ranker": {
                 "paragraphs": paragraphs,
                 "titles": titles,

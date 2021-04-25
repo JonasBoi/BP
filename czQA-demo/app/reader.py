@@ -7,9 +7,10 @@ class Reader:
 
     def __init__(self, model_checkpoint, max_answer_length=10, n_best_size=20, max_length=384, stride=128,
                  use_cpu=False):
+
         # load all parameters of the reader
         self.max_answer_length = max_answer_length  # max answer span length
-        self.n_best_size = n_best_size  #
+        self.n_best_size = n_best_size  # number of best answers
         self.max_length = max_length  # max count of tokens in one tokenized passage
         self.stride = stride  # the length of overlap between two mini-batches of tokenizer
 

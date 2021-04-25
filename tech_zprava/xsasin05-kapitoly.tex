@@ -187,7 +187,7 @@ Funkce jsou znázorněny na obrázku \ref{aktivacni_funkce}. Vhodnost použití 
 
 \subsection{Dopředná a~zpětná propagace}
 Proces, kdy se opakovaně ze vstupů počítá výstup každého neuronu v~dané vrstvě a~stejně tak pro každou následující vrstvu, se nazývá dopředná propagace. Tímto postupem se postupně hodnoty vstupní vrstvy přetvoří na hodnoty ve vrstvě výstupní a~může se určit, jak byla síť úspěšná.\par
-Pro určení úspěšnosti každé takové iterace neuronové sítě se používá nákladová funkce (anglicky cost function pro jednu iteraci, loss function pro průměr všech), která udává jediné číslo charakterizující úspěšnost modelu. Nejznámější nákladovou funkcí je Střední kvadratická chyba (anglicky Mean Squared Error - MSE). Cílem je hodnotu této nákladové funkce postupně minimalizovat.\par \medskip
+Pro určení úspěšnosti každé takové iterace neuronové sítě se používá nákladová funkce (anglicky cost function pro jednu iteraci, loss function pro průměr všech), která udává jediné číslo charakterizující úspěšnost modelu. Nejznámější nákladovou funkcí je Střední kvadratická chyba (anglicky Mean Squared Error -- MSE). Cílem je hodnotu této nákladové funkce postupně minimalizovat.\par \medskip
 Postup optimalizace jednotlivých parametrů neuronové sítě pro zajištění minimalizace nákladové funkce se nazývá \textbf{zpětná propagace}. Je to v~podstatě opačný průchod neuronovou sítí, který má za úkol zjistit, které neurony se největší mírou podílely na výsledné chybě. Snížením významu těchto neuronů můžeme dosáhnout lepší úspěšnosti celé sítě. Naopak můžeme zvýšit význam propojení s~neurony, které výstup ovlivnily pozitivně.\par
 Základem tohoto výpočtu je, že chyba každého výstupního neuronu je vstupem parciální derivace vzhledem ke každému z~jeho vstupů. Celý postup zpětné propagace je velmi složitý a~pro intuitivní pochopení problematiky není klíčový, proto tu nebude podrobně rozebrán.\par
 Celý postup zpětné propagace je opakován a~parametry neuronové sítě jsou postupně optimalizovány.\par \medskip
@@ -214,7 +214,7 @@ LSTM, neboli Long Short-term Memory je speciální druh \emph{rekurentní} neuro
 	\label{RNN}
 \end{figure}
 
-Nejprve bude vysvětlen princip \textbf{rekurentní neuronové sítě} (dále RNN - Recurrent Neural Network).
+Nejprve bude vysvětlen princip \textbf{rekurentní neuronové sítě} (dále RNN -- Recurrent Neural Network).
 Jejich hlavním úkolem je vypořádat se se zpracováním sekvenčních dat, jako je text. Oproti například rozpoznávání vzorů v~obrázcích není možné pohlížet na každé slovo v~textu zvlášť. Slovo/slova předcházející by měly ovlivnit slovo současné. Stejně tak by měly následující slova ovlivnit význam slova současného (obousměrné rekurentní sítě).\par
 Schéma jednoduché RNN je vidět na obrázku \ref{RNN}. Zjednodušeně je to tedy více jednoduchých neuronových sítí propojených za sebe. Vstupem každé sítě $h_n$ je výstup předchozí sítě $h_{n-1}$ a~slovo $x_n$. Výstup $y_n$ je potom vstupem do další jednotky $h_{n+1}$.\par
 Analogicky funguje obousměrná RNN, které je propojená i v~opačném směru. Vstup je zpracováván od konce a~pro současné slovo je tedy brán v~úvahu i kontext slova nadcházejícího, jak je vidět na obrázku \ref{bidirRNN}.\par
@@ -489,7 +489,7 @@ Vytvoření takové datové sady je složitý úkol vyžadující velké množst
 
 %=========================================================================
 \section{Datové sady pro angličtinu}
-Pro angličtinu existuje celá řada datových sad zaměřených na odpovídání na otázky. Nejznámější z~nich je však SQuAD (\emph{Stanford Question Answering Dataset}) \cite{squad}. Dataset obsahuje asi 100 000 anotovaných dvojic otázka--odpověď z~více jak 500 různých článků z~anglické Wikipedie. Existuje také rozšířená verze SQuAD datasetu. SQuAD2.0 \cite{squad_v2} obsahuje navíc 50 000 otázek, na které v~kontextu neexistuje odpověď. Model tedy musí umět určit, když dokument odpověď neobsahuje.\par
+Pro angličtinu existuje celá řada datových sad zaměřených na odpovídání na otázky. Nejznámější z~nich je však SQuAD (\emph{Stanford Question Answering Dataset}) \cite{squad}. Dataset obsahuje asi 100 000 anotovaných dvojic otázka\,--\,odpověď z~více jak 500 různých článků z~anglické Wikipedie. Existuje také rozšířená verze SQuAD datasetu. SQuAD2.0 \cite{squad_v2} obsahuje navíc 50 000 otázek, na které v~kontextu neexistuje odpověď. Model tedy musí umět určit, když dokument odpověď neobsahuje.\par
 Další datasety jsou například NQ (Natural Questions) se zaměřením na otevřenou doménu nebo HOTPOTQA vyžadující spojování informací z více dokumentů pro zodpovězení otázky. Čeština takovou diverzitou datových sad nedisponuje.
 
 %=========================================================================
@@ -591,7 +591,7 @@ Retriever dostává na vstupu otázku, která je také hlavním vstupem do celé
     \item \textbf{rozpoznání (pojmenované) entity}, která by se mohla vyskytovat v~titulku článku a~usnadnit tím \emph{Wiki Search}.
 \end{itemize}
 Tímto tedy získáme seznam článků z~Wikipedie, který je následně upraven tak, aby se v~něm každý získaný článek vyskytoval pouze jednou.\par
-Jednotlivé články je následně třeba rozdělit na odstavce, normalizovat jejich délku, lemmatizovat je, odstranit stop slova a~indexovat je. Odstavce jsou poté seřazeny algoritmem BM25 a~z~nich vybrány první tři\footnote{V tomto případě pro účely experimentů -- nejúspěšnější varianta je vyhodnocena také s hodnotou 5 a 8.} nejvhodnější. Pro vyhledávání mezi odstavci je použita lemmatizovaná otázka s~odstraněnými stop slovy. Tři nejvhodnější odstavce jsou získány v~jejich původní, nezpracované podobě a~případně (při použití nativně anglického \emph{readeru}) jsou včetně otázky přeloženy do angličtiny.
+Jednotlivé články je následně třeba rozdělit na odstavce, normalizovat jejich délku, lemmatizovat je, odstranit stop slova a~indexovat je. Odstavce jsou poté seřazeny algoritmem BM25 a~z~nich vybrány první tři\footnote{V tomto případě pro účely experimentů -- nejúspěšnější varianta je vyhodnocena také s hodnotou 5, 8 a 10.} nejvhodnější. Pro vyhledávání mezi odstavci je použita lemmatizovaná otázka s~odstraněnými stop slovy. Tři nejvhodnější odstavce jsou získány v~jejich původní, nezpracované podobě a~případně (při použití nativně anglického \emph{readeru}) jsou včetně otázky přeloženy do angličtiny.
 
 \begin{figure}[hbt]
 	\centering
@@ -644,8 +644,8 @@ Pro podrobnější popis zvolených metrik viz \ref{metriky}. Metriky budou pou�
 
 \section{Existující systémy pro otevřenou doménu}
 \label{existing_work}
-Příkladem existujícího systému pro QA na otevřené doméně může být třeba dříve zmíněný článek \cite{drQA} (DrQA) prezentující \emph{retriever--reader framework}. Je poměrně jednoduchý a podobný navrženému systému v této práci. DrQA byl navržen pro odpovídání na otázky nad anglickou Wikipedií a jeho úspěšnost EM na datasetu SQuAD (1.1) je podle \cite{drQA} necelých 30\,\%.\par
-Novější implementací může být například systém R2-D2 \cite{fajcik2021pruning}, který patřil k nejvíce úspěšným systémům soutěže NeurIPS 2020 \cite{min2021neurips}. R2-D2, neboli \textit{Rank twice -- Read twice}, používá architekturu sestávající ze čtyř částí: \emph{retriever, reranker, }extraktivní a generativní \emph{reader}. Retriever používá DPR \cite{dpr}(popsáno v části \ref{dpr}) a reranker využívá enkodér transformer architektury. Jeho úspěšnost na datasetu NQ (Natural Questions) dosahuje 55\%\,EM. V zásadě jsou si state of the art systémy v architektuře retriever\,--\,reader velmi podobné, s drobnými odchylkami (jako je reranker, extraktivní/generativní reader). Implementace R2--D2 se navíc snaží omezit paměťovou náročnost modelu. Pro modely bez omezení dosahuje úspěšnost těch nejlepších (v extrakci odpovědi) více jak 60\%\,F1 skóre\footnote{\url{https://ai.google.com/research/NaturalQuestions/leaderboard}}.\par\medskip
+Příkladem existujícího systému pro QA na otevřené doméně může být třeba dříve zmíněný článek \cite{drQA} (DrQA) prezentující \emph{retriever\,--\,reader framework}. Je poměrně jednoduchý a podobný navrženému systému v této práci. DrQA byl navržen pro odpovídání na otázky nad anglickou Wikipedií a jeho úspěšnost EM na datasetu SQuAD (1.1) je podle \cite{drQA} necelých 30\,\%.\par
+Novější implementací může být například systém R2-D2 \cite{fajcik2021pruning}, který patřil k nejvíce úspěšným systémům soutěže NeurIPS 2020 \cite{min2021neurips}. R2-D2, neboli \textit{Rank twice -- Read twice}, používá architekturu sestávající ze čtyř částí: \emph{retriever, reranker, }extraktivní a generativní \emph{reader}. Retriever používá DPR \cite{dpr}(popsáno v části \ref{dpr}) a reranker využívá enkodér transformer architektury. Jeho úspěšnost na datasetu NQ (Natural Questions) dosahuje 55\%\,EM. V zásadě jsou si state of the art systémy v architektuře retriever\,--\,reader velmi podobné, s drobnými odchylkami (jako je reranker, extraktivní/generativní reader). Implementace \mbox{R2-D2} se navíc snaží omezit paměťovou náročnost modelu. Pro modely bez omezení dosahuje úspěšnost těch nejlepších (v extrakci odpovědi) více jak 60\%\,F1 skóre\footnote{\url{https://ai.google.com/research/NaturalQuestions/leaderboard}}.\par\medskip
 Pro češtinu existuje systém AQA (Automatic Question Answering) poprvé prezentován v práci \cite{aqa} a od té doby zdokonalován. Práce \cite{aqa} poskytující jakýsi benchmark pro evaluaci systému na otevřené doméně pro dataset SQAD (v1.0) je z roku 2016. Pozdější vyhodnocení pro zdokonalený systém a dataset SQAD v1.1 z roku 2018 je v článku \cite{aqa2018}. Výsledky systému vyhodnoceného v roce 2018 jsou shrnuty v tabulce \ref{tab:aqa_benchmark}. Novější vyhodnocení systému fungujícím na otevřené doméně architektury retriever\,--\,reader pro dataset SQAD 3.0 není k dispozici.
 \begin{table}[H]
 \centering
@@ -744,7 +744,7 @@ Soubor s názvy článků je pouze jednoduchý text snadný pro zpracování. Na
 Pro abstrakty článků je to o něco složitější, protože jsou uloženy v poměrně rozměrném XML souboru. Každý záznam obsahuje titulek, url, text abstraktu a~odkazy. Po načtení je dump zpracován tak, že je ponechána pouze informace o názvu článku a~text jeho abstraktu. Výsledný zpracovaný dump je uložen jako soubor JSON s asi čtvrtinovou velikostí souboru původního. Získání a~zpracování konkrétních článků je popsáno až v sekci \ref{retriever_imp}.
 
 \subsection{Extrakce informací z datasetu SQAD}
-Dataset SQAD v3.0 \cite{sqad_download} je dostupný ve velmi specifické struktuře. Jednotlivé otázky datové sady jsou rozesety po $13,476$ složkách, z nichž každá obsahuje 7\,--\,9 souborů \uv{vert}. Důležité pro nás jsou pouze soubory obsahující otázku a~extrakci odpovědi. Na obrázku \ref{question_format} je příklad formátu, ve kterém jsou otázky a~odpovědi uloženy. 
+Dataset SQAD v3.0 \cite{sqad_download} je dostupný ve velmi specifické struktuře. Jednotlivé otázky datové sady jsou rozesety po $13,476$ složkách, z nichž každá obsahuje 7--9 souborů \uv{vert}. Důležité pro nás jsou pouze soubory obsahující otázku a~extrakci odpovědi. Na obrázku \ref{question_format} je příklad formátu, ve kterém jsou otázky a~odpovědi uloženy. 
 
 \begin{figure}[hbt]
 	\centering
@@ -917,8 +917,8 @@ Metody EM a F1 (používané např. pro vyhodnocení na \cite{squad}, \cite{squa
 \begin{tabular}{l}
     \textbf{otázka:} Kde se narodil Gabriel Jonas Lippmann?\\
     \emph{referenční odpověď:} Bonnevoie\\
-    \emph{odpověď systému 1:} Bonnevoie, Lucembursko -- \textbf{EM} -- 0\\
-    \emph{odpověď systému 2:} Bonnevoie -- \textbf{EM}-- 1
+    \emph{odpověď systému 1:} Bonnevoie, Lucembursko -- \textbf{EM} = 0\\
+    \emph{odpověď systému 2:} Bonnevoie -- \textbf{EM} = 1
 \end{tabular}
 \end{center}
 Pro vyhodnocování je referenční i získaná odpověď převedena před porovnáním na malá písmena. Při vyhodnocování systému s readerem ALBERT je brána v úvahu i původní, nepřeložená odpověď.
@@ -931,7 +931,7 @@ ELM je speciálně navržená metrika pro toleranci drobných rozdílů oproti r
     \textbf{otázka:} Kdy se koná dostihový závod Velká pardubická?\\
     \emph{referenční odpověď:} druhou říjnovou neděli\\
     \emph{odpověď systému:} druhá říjnová neděle \\
-    \textbf{EM} -- 0 , \textbf{ELM} -- 1\\
+    \textbf{EM} = 0 , \textbf{ELM} = 1\\
 \end{tabular}
 \end{center}
 
@@ -947,7 +947,7 @@ T3M je obdobou EM \ref{EM}, pro shodu je však testována každá z nejlepších
 MRR (\emph{Mean Reciprocal Rank}) je obdobou T3M, zohledňuje však, na kolikátém místě byla odpověď nalezena (T3M zohledňuje pouze to, jestli byla vůbec nalezena). Pokud dosáhla odpověď shodná s referenční odpovědí nejvyšší skóre (byla vybrána), hodnota MRR je 1, pokud byla na druhém místě, hodnota je 1/2 a pokud na třetím, hodnota MRR je 1/3. Pokud nebyla odpověď nalezena vůbec, hodnota MRR je 0 \cite{MRR}.
 
 \subsection{F1 skóre}
-Je jakýmsi kompromisem mezi naivním skóre a EM. Při jeho výpočtu jsou použity dvě metriky --- \emph{recall} (úplnost) a \emph{precision} (přesnost) \cite{information_retrieval}.
+Je jakýmsi kompromisem mezi naivním skóre a EM. Při jeho výpočtu jsou použity dvě metriky -- \emph{recall} (úplnost) a \emph{precision} (přesnost) \cite{information_retrieval}.
 \begin{equation}
     \text{\textbf{F1}} = 2\cdot \frac{precision \cdot recall}{precision + recall} 
 \end{equation}
@@ -983,7 +983,7 @@ je $precision = 0,41$, $recall = 1$ a $\text{\textbf{F1}} = 0,82$.\par \medskip
 F1 tedy zohledňuje přesnost i úplnost odpovědi a je velmi směrodatnou metrikou pro odpovídání na otázky.
 
 \subsection{Lidské vyhodnocení}
-Otevřená doména je problematická pro automatické vyhodnocování. Jak je uvedeno například v \cite{min2021neurips}, otázka může mít více možných odpovědí, pokud není jednoznačně položena. Odpověď může být také obecnější, nebo specifičtější (př. z \ref{EM}), ale stále odpovídat na otázku. Z článku \cite{min2021neurips} tedy vyplývá, že systémy jsou hodnoceny lépe při vyhodnocení lidmi. Konkrétně, procento odpovědí označených jako \uv{rozhodně správně} bylo u systémů v průměru o 17\,--\,25\,\% lepší, než pouhé porovnání řetězců odpovědí pomocí EM.\par
+Otevřená doména je problematická pro automatické vyhodnocování. Jak je uvedeno například v \cite{min2021neurips}, otázka může mít více možných odpovědí, pokud není jednoznačně položena. Odpověď může být také obecnější, nebo specifičtější (př. z \ref{EM}), ale stále odpovídat na otázku. Z článku \cite{min2021neurips} tedy vyplývá, že systémy jsou hodnoceny lépe při vyhodnocení lidmi. Konkrétně, procento odpovědí označených jako \uv{rozhodně správně} bylo u systémů v průměru o 17--25\,\% lepší, než pouhé porovnání řetězců odpovědí pomocí EM.\par
 Proto je pro každý experiment také náhodně vybráno 200 otázek pro lidské vyhodnocení, aby se vzal alespoň minimální ohled na diskriminační povahu automatické evaluace.
 
 %=========================================================================
@@ -1125,9 +1125,9 @@ Při vyhodnocení na celé testovací sadě se hodnoty od výsledků na čtvrtin
 V této sekci jsou výsledky práce porovnány s podobnými systémy stejného účelu, pro které je dostupné vyhodnocení na standardních metrikách.\par
 \begin{table}[H]
 \centering
-\begin{tabular}{|l|l|l||l|l|}
+\begin{tabular}{|l|l|c||l|l|}
 \hline
-Systém     & dataset   & počet testovacích otázek & \textbf{EM} & \textbf{NS} \\ \hline \hline
+systém     & dataset   & počet testovacích otázek & \textbf{EM} & \textbf{NS} \\ \hline \hline
 AQA 2018   & SQAD v1.0 & 3 301                    & 49,83       & 59.58       \\ \hline
 AQA 2018   & SQAD v1.1 & 3 301                    & 38,08       & 46,26       \\ \hline
 \textbf{Tato práce} & SQAD v3.0 & 11 273                   & 43,89       & 62,96       \\ \hline
@@ -1138,7 +1138,7 @@ AQA 2018   & SQAD v1.1 & 3 301                    & 38,08       & 46,26       \\
 Výsledky práce jsou porovnány s výsledky systému AQA \cite{aqa}, konkrétně s poslední dostupnou vyhodnocenou variantou tohoto systému z roku 2018 \cite{aqa2018}, která byla vyhodnocena na 3301 otázkách z datasetu SQAD v1.0 a 1.1. Výsledky jsou shrnuty v tabulce \ref{tab:aqa_compare} a jsou porovnány pomocí metrik EM a NS. Metrika NS není v práci specifikována, pracuje se v~ní však s \uv{plnou shodou} (EM) a \uv{částečnou shodou}, která je definována jako odpověď, která se přesně neshoduje s referenční, protože některá slova přebývají, nebo chybí. \emph{Částečná shoda} uváděna při vyhodnocení systému AQA je tedy značena jako NS -- naivní skóre (viz \ref{metriky}), což je metrika této práce, která popisu nejvíce odpovídá. NS pro AQA je součtem hodnot \emph{plné} a \emph{částečné} shody uvedených v \cite{aqa2018}.\par
 Z výsledků uvedených v tabulce \ref{tab:aqa_compare} je patrné, že systém AQA převyšuje výsledky této práce pouze v metrice EM a to pouze na části zastaralého datasetu SQAD v1.0. Z tabulky je patrné (a je tak uvedeno i v práci \cite{aqa2018}), že při vyhodnocení na stejně velkém vzorku vybraného z aktualizované verze datasetu 1.1, úspěšnost systému výrazně klesla (z EM 49,83\% na EM 38,08\%). Takový (možná i výraznější) pokles by šlo očekávat i při vyhodnocení systému na datasetu SQAD v3.0 použitého v této práci, která navíc vyhodnocuje systém na výrazně větším počtu vzorků. Systém prezentovaný v mé práci navíc dosahuje výrazně vyšších hodnot naivního skóre, které koresponduje s procentem použitelných výsledků více, než přesná shoda (jak je uvedeno v části \ref{human_eval}).\par
 Výsledky práce tedy považuji ve srovnání s dostupným vyhodnocení systému AQA, který představuje relevantní porovnání s výsledky mé práce, za úspěch.\par
-Výsledky mohou být porovnány také se \textit{state of the art} systémy, které však existují pouze pro angličtinu a jsou vyhodnoceny na datasetu NQ. Například v sekci \ref{existing_work} zmíněný systém R2--D2 (55\,\% EM), nebo nejlepší výsledky na datasetu NQ uvedené v jeho oficiálním žebříčku (až 64\,\% F1). Rozdílnost datasetu sice neposkytuje příliš validní porovnání, jsem však ale přesvědčen, že výsledky této práce takových kvalit nedosahují. Přesto si systém v porovnání s existujícími systémy nevede příliš špatně.
+Výsledky mohou být porovnány také se \textit{state of the art} systémy, které však existují pouze pro angličtinu a jsou vyhodnoceny na datasetu NQ. Například v sekci \ref{existing_work} zmíněný systém R2-D2 (55\,\% EM), nebo nejlepší výsledky na datasetu NQ uvedené v jeho oficiálním žebříčku (až 64\,\% F1). Rozdílnost datasetu sice neposkytuje příliš validní porovnání, jsem však ale přesvědčen, že výsledky této práce takových kvalit nedosahují. Přesto si systém v porovnání s existujícími systémy nevede příliš špatně.
 
 
 %=========================================================================
@@ -1158,11 +1158,11 @@ Dataset je pro analýzu chyb nejprve rozdělen do 5 částí, které jsou vyhodn
 \textbf{4} & \textbf{38,70}       & 53,36       & 62,19       & \textbf{42,16}        \\ \hline
 \textbf{5} & 40,68       & 52,38       & \textbf{60,07}       & 44,18        \\ \hline
 \end{tabular}
-\caption{Vyhodnocení systému na jednotlivých pětinách datasetu (1 -- 5), kde každá pětina má asi 2255 vzorků, pro první pětinu jsou tedy vyhodnoceny vzorky s číslem 1 až 2255. Tučně jsou uvedeny nejnižší hodnoty (v \%).}
+\caption{Vyhodnocení systému na jednotlivých pětinách datasetu (1--5), kde každá pětina má asi 2255 vzorků, pro první pětinu jsou tedy vyhodnoceny vzorky s číslem 1 až 2255. Tučně jsou uvedeny nejnižší hodnoty (v \%).}
 \label{tab:partial_eval}
 \end{table}
 
-Nejlépe dopadla při vyhodnocení s velkým náskokem první část vyhodnocovací sady. Nejhůře část 4 (otázky 6765 -- 9020), kde přesná shoda nedosáhla 40\,\%. Pro tuto část je tedy proveden rozbor chyb. Pro rozbor byly vybrány vzorky, u kterých nebylo dosaženo přesné shody, nebo bylo dosažené F1 skóre méně, než 0,5. Získáno bylo tedy 982 vzorků pro bližší analýzu.\par
+Nejlépe dopadla při vyhodnocení s velkým náskokem první část vyhodnocovací sady. Nejhůře část 4 (otázky 6765--9020), kde přesná shoda nedosáhla 40\,\%. Pro tuto část je tedy proveden rozbor chyb. Pro rozbor byly vybrány vzorky, u kterých nebylo dosaženo přesné shody, nebo bylo dosažené F1 skóre méně, než 0,5. Získáno bylo tedy 982 vzorků pro bližší analýzu.\par
 Prvním směrodatným údajem je skóre TkM -- tedy přesná shoda v alespoň jedné extrakci odpovědi, která byla pro přečtené dokumenty provedena. Hodnota tohoto skóre dosahuje 15,78\,\%. Tyto chyby jsou tedy způsobeny špatným výběrem získané odpovědi, která je závislá na skóre určeném \emph{readerem}.\par
 Ze zbývajících 827 vzorků bylo dosaženo NS 13,66\,\%, což indikuje alespoň minimální použitelnost tohoto zlomku získaných odpovědí. Zbývá tedy zjistit příčinu chyb u 714 odpovědí, kde nebylo dosaženo žádné shody.\par
 Pro zbývající vzorky bylo provedeno vyhodnocení, které má za úkol zjistit, jestli se referenční odpověď nachází v některém z top $n$ (kde pro analyzovaný systém $n=8$) dokumentů. Ta byla nalezena ve 37,11\,\% analyzovaných vzorků. Pro tyto shody bylo vypočítáno také skóre MRR 25,68\,\%, které zhodnocuje i pořadí relevance těchto dokumentů, ve kterém byly získány retrieverem.\par
@@ -1208,12 +1208,11 @@ Přínosné by bylo také další rozšíření datasetu SQAD, nebo tvorba nové
 \label{conclusion}
 Práce popisuje tvorbu systému schopného odpovídat na otázky nad českou Wikipedií.\par
 Popisuje metody zpracování textu, strojového učení, modely vhodné pro porozumění textu a extrakci odpovědi a zhodnocuje také metody získávání relevantních pasáží. Popisuje dostupné aplikace popsaných postupů pro češtinu. Zhodnocuje dostupnost a vhodnost existujících datových sad pro trénink i vyhodnocení systému.\par
-Po rozebrání teorie vztahující se k tématu je popsán návrh systému a jeho komponent. Popsány jsou použité nástroje a to, jak byl výsledný systém implementován. Práce poté prezentuje množství experimentů a variant systému a jejich podrobné vyhodnocení. Pro nejúspěšnější variantu je poté provedena evaluace na datasetu SQAD 3.0. Analyzovány jsou výsledky vyhodnocení, příčiny chyb i možnosti dalšího vývoje.\par
+Po rozebrání teorie vztahující se k tématu je popsán návrh systému a jeho komponent. Popsány jsou použité nástroje a to, jak byl výsledný systém implementován. Práce poté prezentuje množství experimentů a variant systému a jejich podrobné vyhodnocení. Pro nejúspěšnější variantu je poté provedena evaluace na datasetu SQAD v3.0. Analyzovány jsou výsledky vyhodnocení, příčiny chyb i možnosti dalšího vývoje.\par
 Podařilo se vytvořit systém, který splňuje požadavky zadání. Při řešení bylo experimentováno se dvěma přístupy -- použití anglického modelu ALBERT, pro který jsou pasáže strojově překládány a použití vícejazyčného modelu BERT. Oba systémy byly natrénovaný pro extrakci odpovědi. Porovnány byly také morfologické analyzátory MorphoDiTa a Majka a jejich vliv na získání relevantních pasáží.\par
 Nejlépe se osvědčila varianta systému využívající vícejazyčný BERT trénovaný na českém překladu datasetu SQuAD 2.0 a využívající nástroj MorpoDiTa pro morfologickou analýzu. Tato varianta systému byla vyhodnocena na datasetu SQAD v3.0 (bez ano/ne odpovědí). Podařilo se vytvořit systém, který dosahuje úspěšnosti 43,89\,\% EM a 55,42\,\% F1 skóre a převyšuje výsledky systému AQA z roku 2018. Nastavuje také laťku pro další práce na podobných systémech.\par
 Pro systém byla provedena analýza chyb a jejich příčin a také ruční vyhodnocení části chybně zodpovězených otázek. Ruční vyhodnocení nasvědčuje, že by mohla být reálná použitelnost odpovědí až o 23\,\% vyšší (až 69\,\%), než nasvědčuje metrika přesné shody EM. Pro systém využívající anglický model ALBERT je tento rozdíl mnohem větší (12,88\,\%EM, přes 50\,\% při lidském vyhodnocení), což je způsobeno deformací frází při opakovaném překladu pasáže/odpovědi. Diskutována jsou také úskalí použití datasetu SQAD pro vyhodnocení systému na otevřené doméně, jak ruční vyhodnocení nasvědčuje.\par
-Další vývoj by mohl zahrnovat použití DPR pro hodnocení pasáží textu, zpracování a indexace celé Wikipedie, začlenění modulu pro klasifikaci otázek a odpovědí, trénink ryze českých kvalitních modelů jako je ALBERT či rozšíření existujících a tvorbu nových datasetů pro češtinu.
-%%TODO vytvořit plakát
-
+Další vývoj by mohl zahrnovat použití DPR pro hodnocení pasáží textu, zpracování a indexace celé Wikipedie, začlenění modulu pro klasifikaci otázek a odpovědí, trénink ryze českých kvalitních modelů jako je ALBERT, či rozšíření existujících a tvorbu nových datasetů pro češtinu.
 %=========================================================================
 %===============================================================================
+%%TODO vytvořit plakát

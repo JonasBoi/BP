@@ -6,6 +6,6 @@ app = Flask(__name__)
 
 # qa system init
 app.logger.info("Backend initialization.")
-# qa_responder = qaResponder()
+qa_responder = qaResponder()
 
 from . import requests

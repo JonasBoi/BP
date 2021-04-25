@@ -235,7 +235,7 @@ class Retriever:
 
     def get_doc_list(self, question):
         """
-        Returns top 1-3 wiki arcitles that might answer the question topic
+        Returns top wiki arcitles that might answer the question topic
 
         """
 
@@ -280,7 +280,7 @@ class Retriever:
 
     def normalize_length(self, par, max_len):
         """
-        Splits too long paragraph into smaller ones
+        Splits long paragraphs into smaller ones
 
         """
 
@@ -325,7 +325,7 @@ class Retriever:
         return doc
 
     def process_paragraph(self, par, processed_pars, processed_lemm_pars, doc_title):
-        # for albert, the max paragraph length shall be shorter due to translation limits
+        # the max paragraph length
         max_len = 2000
 
         # check max paragraph length
@@ -348,7 +348,7 @@ class Retriever:
 
     def split_documents(self, doc_list):
         """
-        Splits each retrieved wiki article into paragraphs and normalizes its lengths
+        Splits each retrieved wiki article into paragraphs and process it
 
         """
 
@@ -439,17 +439,16 @@ class Retriever:
 
         # finally build the index from the processed paragraphs
         bm25 = BM25Plus(tok_text)
-        # either BM25 function can be used - the results are similar
-        # bm25 = BM25Okapi(tok_text)
+        # either BM25 (BM25Okapi) function can be used - the results are similar
 
         # tokenize and lemmatize the query
         tokenized_query = ' '.join(self.delete_common(self.lemmatize(question.lower())))
         tokenized_query = re.split("\W", tokenized_query)
 
-        # get top n results
+        # get top n paragraphs
         results = bm25.get_top_n(tokenized_query, pars, n=max_docs)
         paragraph_scores = bm25.get_scores(tokenized_query)
-        # sort the scores
+        # sort the paragraph scores
         paragraph_scores = np.sort(paragraph_scores)[::-1]
         paragraph_scores = paragraph_scores[:max_docs]
 
