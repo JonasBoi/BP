@@ -44,7 +44,7 @@ def supported_models():
 @app.route('/query', methods=['POST'])
 def query():
     r = request.get_json()
-    question = r["question"][:64]
+    question = r["question"][:200]
 
     predictions = qa_responder.find_answer(question, r["configuration"])
 

@@ -33,7 +33,7 @@ CONFIGURATION_JSON_SCHEMA = {
         "top_k": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 10,
+          "maximum": 20,
           "default": 5
         }
       },
@@ -62,8 +62,8 @@ CONFIGURATION_JSON_SCHEMA = {
         "reader_top_k_answers": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 5,
-          "default": 3
+          "maximum": 30,
+          "default": 10
         },
         # maximum answer length in tokens
         "reader_max_tokens_for_answer": {
@@ -104,35 +104,17 @@ CONFIGURATION_JSON_SCHEMA = {
 }
 
 PREDEFINED_QUESTIONS = [
-  "Which robot does a weee sound in Star Wars?",
-  "What is the answer to life, the universe, and everything?",
-  "Who was the first president of USA?",
-  "What is equal to pi?",
-  "Which animal is a reservoir of SARS?",
-  "Which flooded cave pit is the deepest in the world?",
-  "What does the term \"corpus\" mean in latine?",
-  "What is symbol of electrical resistance?",
-  "How many inches are in one feet?"
+  "Kdy se slaví svátek Cyrila a Metoděje v česku a Slovensku?",
+  "Dokdy řádil Velký požár Londýna?",
+  "Jak se jmenuje německý automobilový závodník a sedminásobný mistr světa ve Formuli 1?",
+  "Kdo napsal komedii Lakomec?",
+  "Kdy se společnosti SpaceX poprvé podařilo vyslat na orbitu stroj a pak s ním přistát ve vodách Tichého oceánu?",
+  "Co se kromě tenisu hraje na antuce?",
+  "Ve které opeře zpívá Královna noci tón f3?",
+  "Jaký je stavový číselný kód vrácený serverem, když nenalezne požadovaný soubor?",
+  "Co patří mezi Edisonovy nejznámější vynálezy?"
 ]
 
-# Example:
-#
-# {
-#   "question": "the last time la dodgers won the world series",
-#   "configuration": {
-#     "retriever_model": "dpr-pruned",
-#     "retriever_top_k": 100,
-#     "retriever_reranking": true,
-#     "reranker_model": "concat",
-#     "extractive_reader_model": "electra",
-#     "abstractive_reader_model": "fusion-in decoder",
-#     "reader_top_k_answers": 100,
-#     "reader_max_tokens_for_answer": 5,
-#     "reranking_and_fusion": true,
-#     "reranking_and_fusion_type": "readers fusion"
-#   }
-# }
-#
 REQUEST_JSON_SCHEMA = {
   "type": "object",
   "properties": {
@@ -143,33 +125,6 @@ REQUEST_JSON_SCHEMA = {
   "additionalProperties": False
 }
 
-
-# Example:
-#
-# {
-#   "question": "the last time la dodgers won the world series",
-#   "answer": "1988",
-#   "passages": {
-#     "paragraphs": ["in the west in the early 6th century. The system ...", ...],
-#     "titles": ["Julian calendar", ...],
-#     "ids": [62451, ...],
-#     "scores": [47.797794342041016, ...],
-#     "reranked_scores": [4.303440570831299, ...],
-#   },
-#   "extractive_reader": {
-#     "answers": ["1988", ...],
-#     "passage_indices": [0, ...],
-#     "char_offsets": [[269,273], ...],
-#     "scores": [-0.00048680813051760197, ...],
-#     "reranked_scores": [-0.1050909012556076, ...],
-#     "aggregated_scores": [-0.12190021140611282]
-#   },
-#   "abstractive_reader": {
-#     "answers": ["1988"],
-#     "scores": [1]
-#   }
-# }
-#
 RESPONSE_JSON_SCHEMA = {
   "type": "object",
   "properties": {

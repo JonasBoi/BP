@@ -8,4 +8,4 @@ app = Flask(__name__)
 app.logger.info("Backend initialization.")
 qa_responder = qaResponder()
 
-from . import requests
+from . import routes
