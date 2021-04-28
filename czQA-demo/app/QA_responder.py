@@ -5,7 +5,7 @@ import re
 from scipy.special import log_softmax
 
 
-class qaResponder:
+class qa_Responder:
     def __init__(self):
         warnings.filterwarnings("ignore")
 

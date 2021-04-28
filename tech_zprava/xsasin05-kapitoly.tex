@@ -2,11 +2,11 @@
 %===============================================================================
 
 \chapter{Úvod}
-Odpovídání na otázky je dobře prozkoumaný a~populární úkol z~oblasti zpracování přirozeného jazyka. Využití kolem nás, v~běžném životě, můžeme vidět třeba u~vyhledávacích nástrojů, komunikačních agentů nebo hlasových asistentů. Má také potenciál jako budoucnost získávání informací.\par 
-Výzkum se v~dané oblasti soustředí na metody strojového učení pro vyznačení odpovědi na otázku v~nalezeném kontextu. Kromě porozumění textu jsou v~oblasti důležité také metody pro zhodnocení relevance dokumentů používané všemi vyhledávacími nástroji a techniky zpracování textu, které jsou užitečné pro optimální funkci vyhledávacích algoritmů.\par
+Odpovídání na otázky je dobře prozkoumaný a~populární úkol z~oblasti zpracování přirozeného jazyka (NLP). Využití kolem nás, v~běžném životě, můžeme vidět třeba u~vyhledávacích nástrojů, komunikačních agentů nebo hlasových asistentů. Má také potenciál jako budoucnost získávání informací.\par 
+Výzkum se v~dané oblasti soustředí na metody strojového učení pro vyznačení odpovědi na otázku v~nalezeném kontextu. Kromě porozumění textu jsou v~oblasti důležité také metody pro zhodnocení relevance dokumentů používané všemi vyhledávacími nástroji a~v~neposlední řadě také techniky zpracování textu.\par
 Pro češtinu je množství a velikost dostupných datových sad oproti angličtině měnší a~je tedy obtížné dosáhnout s~ní podobných výsledků, jako u~jazyků s~mnoha zdroji (angličtina, němčina, francouzština \dots). Obzvlášť v~kontextu toho, že pro většinu úkolů na poli porozumění textu se v~posledních letech nejlépe osvědčily velké modely předtrénované na velmi rozsáhlých korpusech textu. Ty pro češtinu prozatím bohužel nejsou ve stejné kvalitě dostupné. Čeština na tom ale není tak špatně. Má rozsáhlou Wikipedii, existují pro ni tedy vícejazyčné modely. Výzkum v oblasti její morfologie je na dobré úrovni a její strojový překlad do angličtiny také. Jsou pro ni také dostupné kvalitní nástroje pro zpracování textu.\par \smallskip
-V~této práci se snažím otestovat přístup, který využívá vícejazyčného modelu nebo strojového překladu češtiny do angličtiny, aby mohlo být použito jednoho z~robustních předtrénovaných modelů. Kromě metod pro extrakci odpovědi v~práci rozebírám možnosti řazení dokumentů dle jejich relevance k~otázce. Jako báze znalostí je použita česká Wikipedie.\par
-Cílem práce je vytvořit systém, který by byl úspěšný v odpovídání na otázky z datové sady SQAD v3.0 a porovnat jej s existujícími systémy, připadně nastavit laťku pro další.\par \smallskip
+V~této práci experimentuji s přístupy, které využívají vícejazyčného modelu nebo strojový překlad, aby mohlo být použito jednoho z~robustních předtrénovaných modelů. Kromě metod pro extrakci odpovědi v~práci rozebírám možnosti řazení dokumentů dle jejich relevance k~otázce. Jako báze znalostí je použita česká Wikipedie.\par
+Cílem práce je vytvořit systém pro češtinu, který by byl úspěšný v odpovídání na otázky z testovací datové sady SQAD v3.0 s pomocí české Wikipedie a porovnat jej s existujícími systémy, připadně nastavit laťku pro další.\par \smallskip
 Začal jsem popsáním metod pro zpracování textu v~kapitole \ref{text_processing}. Popsány jsou zde metody reprezentace slov a~způsoby zpracování textu vhodné pro porozumění textu, extrakci odpovědi a~pro algoritmy získání/řazení relevantních dokumentů. Kapitola \ref{language_comprehension} se zabývá popisem neuronových sítí pro porozumění textu a~extrakci odpovědi. Popsány jsou moderní architektury a~modely použité v~práci. V~kapitole \ref{available_datasets} jsou poté prozkoumány datové sady vhodné pro trénink a~vyhodnocení výsledného systému. Následuje kapitola \ref{chapter:design_}, kde je prezentován návrh systému a přehled již existujících. Kapitola \ref{chapter:implementace} je popisem implementace systému, který je postaven na zmíněných postupech, včetně popisu použitých technologií pro jeho realizaci. V kapitole \ref{system_evaluation} je výsledný systém vyhodnocen s~použitím standardních metrik a porovnán se současným stavem, tedy podobnými systémy, které slouží ke stejnému účelu.
 
 %=========================================================================
@@ -15,7 +15,7 @@ Začal jsem popsáním metod pro zpracování textu v~kapitole \ref{text_process
 \chapter{Reprezentace slov a~zpracování textu}
 \label{text_processing}
 
-Předtím, než se vrhneme na vysvětlení poměrně složitých jazykových modelů a~vyhledávacích algoritmů, bude v~této kapitole vysvětleno pár základních pojmů a~technik.\par 
+Předtím, než se práce dostane k vysvětlení poměrně složitých jazykových modelů a~hodnotících funkcí, je v~této kapitole vysvětleno pár základních pojmů a~technik pro zpracování a reprezentaci textu.\par 
 Počítač lidské řeči na elementární úrovni příliš nerozumí, jsou mu ale mnohem bližší čísla a~statistika. Proto musíme nejdříve porozumět tomu, s~jakou reprezentací slov moderní jazykové modely pracují a~do jaké podoby je tedy potřeba zdrojový text dostat. Vysvětleny jsou tedy termíny související s~reprezentací slov pomocí vektorů, neboli \uv{word embeddings} a~tokenizace textu.\par 
 Také je potřeba prozkoumat možnosti zpracování textů a~slov na jejich morfologické úrovni. Tato úloha je na pomezí informatiky a~lingvistiky a~používají se pro ni speciální nástroje. Použité techniky jako lemmatizace a~odstranění stop-slov zajistí optimální funkčnost některých použitých algoritmů.\par
 Po přečtení kapitoly by měl být čtenář teoreticky vybaven pro pochopení konceptů vysvětlených v~kapitolách \ref{language_comprehension} a~\ref{document_indexing}, které na zde popsaných technologiích staví a~částečně se s~nimi překrývají.
@@ -23,12 +23,12 @@ Po přečtení kapitoly by měl být čtenář teoreticky vybaven pro pochopení
 %=========================================================================
 \section{Reprezentace slov}
 \label{reprezentace_slov}
-Jak už bylo řečeno, je složité pracovat s~textem v~takové podobě, na jakou jsou lidé zvyklí. Počítač v~ní nedokáže vidět důležité sémantické souvislosti, které jsou pro přirozený jazyk tak důležité. Musíme tedy z~textu a~slov v~něm získat nějakou matematickou reprezentaci, která je počítači bližší a~se kterou dokáží dále pracovat neuronové sítě. \par
+Jak už bylo řečeno, je složité pracovat s~textem v~takové podobě, na jakou jsou lidé zvyklí. Počítač v~ní nedokáže vidět důležité sémantické souvislosti, které jsou pro přirozený jazyk tak důležité. Musíme tedy z~textu a~slov v~něm získat nějakou matematickou reprezentaci, která je počítači bližší a~se kterou dokáží dále nakládat neuronové sítě. \par
 Pro takovou reprezentaci jsou nejpoužívanější vektory pevně dané dimenze známé jako \uv{word embeddings}. Pro představu například (běžně) 300 desetinných čísel pro popis každého slova v~textu. Vektory slov ve slovníku nesou důležitou informaci o~sémantické příbuznosti jednotlivých slov. Po promítnutí do spojitého prostoru jsou si vektory, které reprezentující sémanticky podobná slova, blízko, jak zobrazuje obrázek \ref{word_embeddings}.\par
-Po aplikaci těchto myšlenek zmíněných v~článcích \cite{mikolov2013embeddings} a~\cite{mikolov2013_2} byl zaznamenán výrazný pokrok v~úlohách z~oblasti zpracování přirozeného jazyka, jako strojový překlad, porozumění textu, odhad emocí, klasifikace atp.
+Pro toto téma jsou důležité články \cite{mikolov2013embeddings} a~\cite{mikolov2013_2}, ze kterých také čerpá tato sekce. Díky nim byl zaznamenán výrazný pokrok v~úlohách z~oblasti zpracování přirozeného jazyka, jako strojový překlad, porozumění textu, odhad emocí, klasifikace atp.
 Vektory reprezentující slova jsou většinou získávány analýzou rozsáhlých textových korpusů. Snaží se zachytit sémantickou blízkost slov na základě jejich koexistence v~podobných kontextech.\par 
 Například slova \emph{pohovka} a~\emph{gauč} se nejspíše budou vyskytovat v~podobných situacích, protože jsou to synonyma a~jejich sémantika je téměř totožná.\par
-Výsledné vektory nám poté umožňují provádět se slovy také velmi zajímavé matematické operace, jako je sčítat, nebo odčítat a~je schopen zachytit velmi zajímavé vztahy jako například:
+Výsledné vektory nám umožňují provádět se slovy také velmi zajímavé matematické operace, jako je sčítat, nebo odčítat a~je možné zachytit pomocí nich velmi zajímavé sémantické vztahy jako například:
 \begin{center}
 [Král] $-$ [Muž] $+$ [Žena] $=$ [Královna]\\
 \medskip
@@ -43,23 +43,23 @@ V~následující části budou popsány vlastnosti a~popis nejznámějších met
 	\centering
 	\scalebox{0.5}{
 	    \includegraphics{obrazky/word_represent.pdf}}
-	\caption{Část vektorového prostoru znázorňující reprezentace slov, které spojuje nějaké téma. (\url{https://ruder.io/word-embeddings-1/}))}
+	\caption{Část vektorového prostoru znázorňující reprezentace slov, které spojuje nějaké téma. (převzato z: \url{https://ruder.io/word-embeddings-1/}))}
 	\label{word_embeddings}
 \end{figure}
 %=========================================================================
 
 \subsection{Word2vec}
 
-Word2vec je technika prezentována v~článku \cite{mikolov2013embeddings} schopná naučit se vektorové reprezentace pomocí prediktivního modelu neuronové sítě. Základním konceptem dvou přístupů, které se pro trénink modelu používají, je predikce slov na základě sousedních slov v~tzv. kontextovém okně, které se postupně posouvá. Dostáváme tedy pro každé slovo pravděpodobnost, se kterou se bude vyskytovat v~blízkosti slova cílového.\par
-První model používaný pro trénink word2vec vektorů se nazývá Continuous Bag of Words, neboli CBOW. Neuronová síť se trénuje hádáním chybějícího slova v~kontextu známých sousedním slov kontextového okna.\par
-Druhá metoda funguje funguje na opačném principu a~nazývá se Continuous Skip-gram Model. Na základě současného slova se tedy model snaží předpovědět slova v~určitém vzdálenosti před, i po současném slově, v~závislosti na velikosti kontextového okna. Tato metoda se z~článku \cite{mikolov2013embeddings} jeví jako o~něco úspěšnější a~je dále zdokonalena v~článku \cite{mikolov2013_2}.\par
-Na obrázku \ref{cbow_and_skipgram} můžeme vidět rozdíl v~tom, jak projekční vrstva transformuje vstup na výstup v~případě obou architektur.
+Word2vec je technika prezentována v~článku \cite{mikolov2013embeddings} schopná naučit se vektorové reprezentace pomocí prediktivního modelu neuronové sítě. Základním konceptem dvou přístupů, které se pro trénink modelu používají, je predikce slov na základě slov sousedních v~tzv. kontextovém okně, které se postupně posouvá. Dostáváme tedy pro každé slovo pravděpodobnost, se kterou se může vyskytovat v~blízkosti slova cílového.\par
+První model používaný pro trénink word2vec vektorů se nazývá Continuous Bag of Words, neboli CBOW. Skrytá projekční vrstva neuronové sítě se trénuje hádáním chybějícího slova v~kontextu již známých sousedních slov kontextového okna.\par
+Druhá metoda funguje na opačném principu a~nazývá se Continuous Skip-gram Model. Na základě současného slova se tedy model snaží předpovědět slova v~určité vzdálenosti před, i po současném slově, v~závislosti na velikosti kontextového okna. Tato metoda se z~článku \cite{mikolov2013embeddings} jeví jako o~něco úspěšnější a~je dále zdokonalena v~článku \cite{mikolov2013_2}.\par
+Na obrázku \ref{cbow_and_skipgram} je vidět rozdíl v~tom, jak projekční vrstva transformuje vstup na výstup v~případě obou architektur.
 
 \begin{figure}[hbt]
 	\centering
 	\scalebox{0.5}{
 	    \includegraphics{obrazky/cbow_skipgram.pdf}}
-	\caption{Obrázek architrektury CBOW přepovídající slovo na základě kontextu a Skip-grap předpovídající kontext na základě slova. Převzato z \cite{mikolov2013embeddings}.}
+	\caption{Obrázek architrektury CBOW přepovídající slovo na základě kontextu a Skip-grap předpovídající kontext na základě slova. Kontextové okno je znázorněno jako $w(t-2)$ až $(t+2)$. Převzato z \cite{mikolov2013embeddings}.}
 	\label{cbow_and_skipgram}
 \end{figure}
 
@@ -67,7 +67,7 @@ Na obrázku \ref{cbow_and_skipgram} můžeme vidět rozdíl v~tom, jak projekčn
 
 \subsection{GloVe}
 
-GloVe, neboli Global Vectors for Word Representation je technika prezentována v~článku \cite{GloVe}. Výsledkem je vektorový prostor o~pevně dané dimenzi stejně, jako u~word2vec reprezentace. Liší se však způsobem získání daných reprezentací.\par Zatímco word2vec je prediktivní model, GloVe je spíše modelem statistickým. Klade tedy důraz hlavně na počet výskytů slov a~počet jejich výskytů v~podobných kontextech. Dostaneme tedy nějakou matici společných výskytů slov v~korpusu.\par
+GloVe, neboli Global Vectors for Word Representation je technika představena v~článku \cite{GloVe}. Výsledkem je vektorový prostor o~pevně dané dimenzi stejně, jako u~word2vec reprezentace. Liší se však způsobem získání daných reprezentací.\par Zatímco word2vec je prediktivní model, GloVe je spíše modelem statistickým. Klade tedy důraz hlavně na počet výskytů slov a~počet jejich výskytů v~podobných kontextech. Dostaneme tedy nějakou matici společných výskytů slov v~korpusu.\par
 Jeho hlavní výhodou je, že se nesoustředí pouze na slova v~těsném kontextu, jak už slovo \emph{Global}, ukryté v~GloVe, napovídá. Reprezentace je tedy schopná zachytit sémentické souvislosti v~širším kontextu, ale základní idea není konceptu word2vec příliš daleko.
 
 %=========================================================================
@@ -83,29 +83,29 @@ Slovník je nejprve naplněn všemi znaky v~textu a~jazykový model je na tomto 
 \label{preprocessing}
 Zpracování textu je důležitou součástí oblasti zpracování přirozeného jazyka. S~textem se totiž pracuje lépe, pokud jsme schopni odstranit některé záludnosti a~nadbytečnosti přirozeného jazyka a~dostat ho do podoby, který je pro automatické zpracování vhodnější. Jednotlivé nástroje pro efektivní zpracování textu v~práci jsou poté uvedeny v~části \ref{pouzite_nastroje}.\par
 První část této sekce navazuje na část \ref{reprezentace_slov} o~reprezentaci jednotlivých slov textu a~zabývá se postupem rozdělení textu na tzv. \emph{tokeny}, které mohou být později převedeny na jejich vektorovou reprezentaci.\par
-Druhá část je věnována postupům pro zpracování a~pokud možno normalizaci textu pro optimální využití vyhledávacích algoritmů. Statistické metody využívány těmito algoritmy jsou efektivnější, pokud jsou z~textu odstraněny například slova nesoucí zanedbatelnou informaci. Mohou být také zmateny různými tvary daných slov.
+Druhá část je věnována postupům pro zpracování a~pokud možno normalizaci textu pro optimální využití hodnotících funkcí. Statistické metody využívány těmito algoritmy jsou efektivnější například pokud jsou z~textu odstraněny slova nesoucí zanedbatelnou informaci.
 
 \subsection{Tokenizace vstupního textu}
 \textbf{Tokenizace} je převod textu jako posloupnosti jednotlivých znaků na posloupnost jednotlivých tokenů. Například rozdělení textu \uv{Adam šel po škole domů.} na posloupnost jednotlivých tokenů:
 \begin{center}
     \_Adam $+$ \_šel $+$ \_po $+$ \_škole $+$ \_domů $+$ \_.
 \end{center}
-Primitivní přístup je rozdělení textu pomocí bílých znaků a~interpunkčních znamének, který ale nebere ohled např na tečky uprostřed zkratek v~angličtině a~těžko se vypořádává se složeninami. Získané tokeny je pak taky třeba normalizovat pro následný převod na word embeddings.\par
-V~přístupu uvedeném v~sekci \ref{wordpiece_embb} jsou slova děleny na tokekeny podle toho, která podslova v~daném textu jsou slovníku známy. Můžeme si uvést příklad z~angličtiny, s~jímž podobným se ještě jistě setkáme i v~sekci \ref{bert_albert}. Věta \uv{I~like playing.} by tedy byla převedena na následující tokeny:
+Primitivní přístup je rozdělení textu pomocí bílých znaků a~interpunkčních znamének, který ale nebere ohled např na tečky uprostřed zkratek nebo se těžce vypořádává se složeninami. Získané tokeny je pak taky třeba normalizovat pro následný převod na word embeddings.\par
+V~přístupu uvedeném v~sekci \ref{wordpiece_embb} jsou slova děleny na tokekeny podle toho, která podslova v~daném textu jsou slovníku známy. Může být uveden příklad z~angličtiny, s~jímž podobným se ještě jistě setkáme i v~sekci \ref{bert_albert}. Věta \uv{I~like playing.} by tedy byla převedena na následující tokeny:
 \begin{center}
     \_I $+$ \_like $+$ \_play $+$ \_ing $+$ \_.
 \end{center}
-Na uvedeném případě je vidět hlavně převedení posloupnosti znaků \uv{playing} na dvě podslova (tokeny) \emph{play} a~\emph{ing}.
+Na uvedeném případě je stěžejní hlavně převedení posloupnosti znaků \uv{playing} na dvě podslova (tokeny) \emph{play} a~\emph{ing}.
 
 \subsection{Normalizace délky textu a~rozdělení do vět}
-V~kontextu práce je normalizací délky textu myšlena jakási standardní maximální délka dokumentu, který je později předložen readeru k~vyznačení správné odpovědi. Tento přístup je užitečný ze několika důvodů.\par
+V~kontextu práce je normalizací délky textu myšlena jakási standardní maximální délka dokumentu, ze kterého je později provedena extrakce správné odpovědi. Tento přístup je užitečný ze několika důvodů.\par
 Algoritmy pro řazení dokumentů dle relevance sice berou na relativní délku každého textu ohled, nicméně některé články jako \cite{bm25_too_long} nasvědčují, že můžou být příliš dlouhé dokumenty znevýhodněny. Článek \cite{bm25_too_long} sice představuje úpravu klasického algoritmu pro minimalizaci tohoto problému, v~práci jsou ale i další důvody, proč je vhodné délku jednotlivých odstavců normalizovat.\par
 Model pro vyznačení správné odpovědi v~textu je trénován na datové sadě, která příliš dlouhé dokumenty nebere v~úvahu\footnote{Pro každou otázku je jen jeden odstavec kontextu, ne celý článek z~Wikipedie.} a~jak je naznačeno v~článku \cite{QA_long_multiple_span}, není na dlouhých dokumentech příliš úspěšný.\par
-Dalším důvodem je snaha nepřekládat pro účel vyznačení správné odpovědi příliš dlouhé úseky textu.\footnote{Hlavně kvůli určitým omezením dostupných nástrojů pro překlad.}
+Dalším důvodem je snaha nepřekládat pro účel vyznačení správné odpovědi (experimenty s modelem ALBERT v \ref{albert_eval}) příliš dlouhé úseky textu.\footnote{Hlavně kvůli určitým omezením dostupných nástrojů pro překlad.}
 
 \paragraph{Proč rozdělit text do vět?}
 Předpokládejme, že je text již rozdělen do jednotlivých odstavců. Pro každý odstavec je kontrolována jeho délka, jestli nepřesahuje délku maximální. Pokud bude maximální délka odstavce překročena, může být sice rozdělen jednoduše na poloviny, na třetiny a~tak dále podle potřeby, bude tím ale ztracena velká část kontextu při rozdělení některých vět v~půlce.\par
-Pro takový případ je vhodné vědět, kde jednotlivé věty začínají a~končí, aby bylo možné jednotlivé odstavce případně smysluplně rozdělit. Vhodné je také zařídit, aby se jednotlivé rozdělené \uv{pododstavce} částečně překrývaly a~obsahovaly třeba 3 poslední věty odstavce předchozího, pro maximální zachování původního kontextu.
+Pro takový případ je vhodné vědět, kde jednotlivé věty začínají a~končí, aby bylo možné jednotlivé odstavce případně smysluplně rozdělit. Vhodné je také zařídit, aby se jednotlivé rozdělené \uv{pododstavce} částečně překrývaly a~obsahovaly třeba 3 poslední věty odstavce předchozího -- pro maximální zachování původního kontextu.
 
 \subsection{Převod na malá písmena}
 \label{prevod_na_mala}
@@ -114,18 +114,17 @@ Pro některé případy může převod na malá písmeny znamenat ztrátu část
 
 \subsection{Odstranění stop slov}
 \label{stopwords}
-Ve zpracování přirozeného jazyka jsou \emph{stop slova} většinou souborem nejčastěji používaných slov v~daném jazyce\footnote{\url{https://en.wikipedia.org/wiki/Stop_word}}. Většinou jsou odstraňována, protože kvůli jejich vysokému výskytu nesou menší informační hodnotu a~jejich odstranění vede k~lepší funkci vyhledávacích algoritmů \cite{bm25_improvements}.\par
-Nejužívanější slova daného jazyka je možno najít například ve frekvenčních seznamech, které obsahují nejpoužívanější slova v~češtině. Získaný seznam je vhodné kriticky zhodnotit a~vyčlenit z~něj některá slova, která by pro vyhledávání mohla mít kritický význam.\footnote{Příklad: \uv{první}, \uv{země}, \uv{člověk} \dots} Většinou je zanedbatelná alespoň většina spojek, předložek či zájmen. Typickými příklady stop slov pro češtinu jsou: být, a, se, v, že \dots
+Ve zpracování přirozeného jazyka jsou \emph{stop slova} typicky souborem nejčastěji používaných slov v~daném jazyce \cite{information_retrieval}. Většinou jsou odstraňována, protože kvůli jejich vysokému výskytu nesou menší informační hodnotu a~jejich odstranění vede k~lepší funkci vyhledávacích algoritmů a hodnotících funkcí \cite{bm25_improvements}.\par
+Nejužívanější slova daného jazyka (například češtiny) je možno najít ve frekvenčních seznamech. Získaný seznam je vhodné kriticky zhodnotit a~vyčlenit z~něj některá slova, která by pro vyhledávání mohla mít kritický význam.\footnote{Příklad: \uv{první}, \uv{země}, \uv{člověk} \dots} Většinou je zanedbatelná alespoň většina spojek, předložek či zájmen. Typickými příklady stop slov pro češtinu jsou: být, a, se, v, že \dots
 
 \subsection{Získání lemmat}
-\textbf{Lemmatizace} je druh zpracování textu, při kterém je pro každé slovo nalezen základní tvar, tzv. \emph{lemma}.\footnote{Podobným postupem je \emph{stematizace}, která ale algoritmicky pouze odstraní koncovky a~předpony pro nalezení slovního kmene. Lemmatizátor pro nalezení základních tvarů používá morfologický slovník.}
+\textbf{Lemmatizace} je druh zpracování textu, při kterém je pro každé slovo nalezen základní tvar, tzv. \emph{lemma}.\footnote{Podobným postupem je \emph{stematizace}, která ale algoritmicky pouze odstraní koncovky a~předpony pro nalezení slovního kmene \cite{information_retrieval}.}
 \begin{center}
     ulicí běžely děti $\longrightarrow$ ulice běžet dítě\\
     ostrovy Středozemního moře $\longrightarrow$ ostrov Středozemní moře
 \end{center}
-Pro získání lemmat se používají speciální nástroje pro zpracování přirozeného jazyka. \emph{Lemma\-tizátory} mohou poskytovat také některé doplňkové informace o~mluvnichkých kategoriích jako rod, pád nebo slovní druh. Hlavním úskalím lemmatizátorů je mnohoznačnost jazyků jako je čeština, kdy může být více základních tvarů daného slova dle kontextu \footnote{\url{https://cs.wikipedia.org/wiki/Lemmatiz\%C3\%A1tor}}.\par
-Využití lemmatizace je různé, ale v~případě této práce je podobné, jako účel postupu uvedeného v~sekci \ref{prevod_na_mala}. Jednoduše se hodí, když pro dotaz obsahující \uv{\dots Liparských ostrovů} budou nalezeny i dokumenty obsahující základní tvar hledaného výrazu \uv{Liparské ostrovy}\par
-Lemmatizace je také užitečným nástrojem při odstranění stop slov, kdy můžeme například odstranit všechny tvary slovesa \uv{být}, zatímco seznam stop slov může obsahovat pouze jeho základní tvar.
+Pro získání lemmat se používají speciální nástroje pro zpracování přirozeného jazyka. \emph{Lemma\-tizátory} mohou poskytovat také některé doplňkové informace o~mluvnichkých kategoriích jako rod, pád nebo slovní druh. Hlavním úskalím lemmatizátorů je mnohoznačnost jazyků jako je čeština, kdy může být více základních tvarů daného slova dle kontextu \cite{information_retrieval}.\par
+Využití lemmatizace je různé, ale v~případě této práce je podobné, jako účel postupu uvedeného v~sekci \ref{prevod_na_mala} (převod na malá písmena). Lemmatizace je také užitečným nástrojem při odstranění stop slov. Mohou být odstraněny například všechny tvary slovesa \uv{být}, zatímco seznam stop slov může obsahovat pouze jeho základní tvar.
 
 
 %=========================================================================
@@ -134,9 +133,9 @@ Lemmatizace je také užitečným nástrojem při odstranění stop slov, kdy m�
 \chapter{Strojové učení pro extrakci odpovědi}
 \label{language_comprehension}
 
-Rozmach strojového učení umožnil obrovský pokrok v~oblastech NLP jako strojový překlad, rozpoznání entit, generování textu nebo také odpovídání na otázky. Proto na tomto přístupu staví všechny nejmodernější metody a~tímto směrem se také ubírá výzkum.\par
+Rozmach strojového učení umožnil obrovský pokrok v~oblastech NLP, jako je strojový překlad, rozpoznání entit, generování textu nebo odpovídání na otázky. Proto na tomto přístupu staví všechny nejmodernější metody a~tímto směrem se také ubírá výzkum.\par
 Účelem této kapitoly je vysvětlit čtenáři, jak fungují neuronové sítě a~jakým způsobem dokáže počítač porozumět textu a~naučit se vyznačit v~textu odpověď na danou otázku.\par
-Nejprve budou ve zkratce vysvětleny principy fungování a~učení neuronových sítí. Poté budou rozebrány nejznámější architektury neuronových sítí používané pro vypořádání se s~úkoly na poli zpracování přirozeného jazyka a~nakonec budou popsány nejmodernější modely, které na nich staví.
+Nejprve budou ve zkratce vysvětleny principy fungování a~učení neuronových sítí. Poté budou rozebrány nejznámější architektury neuronových sítí používané pro vypořádání se s~úkoly na poli zpracování přirozeného jazyka a~nakonec budou popsány nejmodernější modely, které na nich staví a jsou vhodné pro extrakci odpovědi z textu.
 \bigskip
 
 %=========================================================================
@@ -144,26 +143,26 @@ Nejprve budou ve zkratce vysvětleny principy fungování a~učení neuronových
 \label{neuronove_site}
 V~této části bude vysvětlen princip fungování neuronových sítí. Informace v~sekci byly převzaty z~článku \cite{neural_nets} a~z~prezentací Stanfordského kurzu NLP.\footnote{Dostupné z: \url{http://web.stanford.edu/class/cs224n/}}\par
 Neuronové sítě si můžeme zjednodušeně představit jako velkou funkci s~obrovským množstvím parametrů, která přetváří vstupy na výstupy. V~průběhu tréninku neuronové sítě se postupně všechny parametry optimalizují tak, aby síť přetvářela vstupy na výstupy co nejlépe.\par
-Fungují tu tři základní jednoduché vrstvy(\ref{three_layers}). Vstupní, skrytá (zde probíhá proces přetváření vstupů) a~výstupní, na které se přetvořený vstup objeví. Skrytá vrstva se navíc běžně skládá z~mnoha dalších vrstev.\par
+Základem jsou tři základní jednoduché vrstvy (obrázek \ref{three_layers}). Vstupní, skrytá (zde probíhá proces přetváření vstupů) a~výstupní, kde se přetvořený vstup objeví. Skrytá vrstva se navíc běžně skládá z~mnoha dalších vrstev.\par
 Každá z~těchto vrstev, ať už je vstupní, výstupní, nebo skrytá, se skládá z~dalších primitiv a~ty jsou nazývány jak jinak, než neurony. Každý neuron v~každé vrstvě je propojen s~každým neuronem vrstvy další, a~tak je propojena celá síť.
 
 \begin{figure}[hbt]
 	\centering
 	\scalebox{0.50}{
 	    \includegraphics{obrazky/neural_net.pdf}}
-	\caption{Schéme neuronové sítě s jednou skrytou vrstvou. Znázorněn je také práh neuronu $B$, jeden vstup z předchozí vrstvy $x_n$ a váha jednoho propojení $w_n$.}
+	\caption{Schéma neuronové sítě s jedinou skrytou vrstvou. Znázorněn je také práh neuronu $B$, jeden vstup z předchozí vrstvy $x_n$ a váha jeho propojení $w_n$.}
 	\label{three_layers}
 \end{figure}
 
 \subsection{Umělý neuron a~aktivační funkce}
-Umělý neuron je primitivní jednotka inspirována neuronem skutečným. Ten vypadá asi tak, že má tělo, do kterého přichází krátkými výběžky, tzv. \emph{dendrity} elektrické signály z~ostatním neuronů. Z~těla tohoto neuronu pak vychází jediný dlouhý výběžek, tzv. \emph{axon}. Neuron se tedy na základě signálů, které do něj přichází dendrity rozhodne (na základě nějaké minimální hranice přijatého signálu), zda-li bude, nebo nebude vysílat signál dál \footnote{\url{https://cs.wikipedia.org/wiki/Neuron}}.\par
+Umělý neuron je primitivní jednotka inspirována neuronem skutečným. Ten vypadá asi tak, že má tělo, do kterého přichází krátkými výběžky, tzv. \emph{dendrity} elektrické signály z~ostatním neuronů. Z~těla tohoto neuronu pak vychází jediný dlouhý výběžek, tzv. \emph{axon}. Neuron se tedy na základě signálů, které do něj přichází dendrity rozhodne (na základě nějaké minimální hranice přijatého signálu), zda-li bude, nebo nebude vysílat signál dál\footnote{\url{https://cs.wikipedia.org/wiki/Neuron} [cit. 23-03-2021] -- článek popisující funkci neuronu}.\par
 Funkce umělého neuronu je analogická. Jak už bylo popsáno v~úvodu sekce \ref{neuronove_site}, každý neuron je propojen s~každým neuronem vrstvy předcházející i vrstvy další. Na rozdíl od skutečného neuronu má tedy \uv{více axonů}, kterými je propojen s~další vrstvou.\par
-Každé propojení mezi každým neuronem má svoji váhu \emph{w}, která ovlivňuje důležitost jednotlivého vstupu do neuronu. Každý neuron má pak svůj práh \emph{B} a~aktivační funkci. Výstupem neuronu je tedy vážená suma vstupů do neuronu s~přičteným prahem a~aplikovanou aktivační funkcí, neboli 
+Každé propojení mezi každými dvěma neurony má svoji váhu \emph{w}, která ovlivňuje důležitost daného vstupu do neuronu. Každý neuron má také svůj práh \emph{B} a~aktivační funkci. Výstupem $y$ neuronu $i$ je tedy vážená suma vstupů do neuronu s~přičteným prahem a~aplikovanou aktivační funkcí, neboli 
 \begin{equation}
-F({\sum_{i=1}^n ({x_n}w_n)} + B)
+y_i = F({\sum_{k=1}^n ({x_n}w_n)} + B_i)
 \end{equation}
-kde $x_n$ je neuron předcházející vrstvy, $w_n$ je váha jeho propojení, $B$ je práh aktuálního neuronu a~$F$ je aktivační funkce. Znázornění vah propojení a~jednotlivých neuronů je vyznačeno na obrázku \ref{three_layers}.\par
-Všechny propojení jednotlivých neuronů a~jejich prahy v~dávají dohromady parametry neuronové sítě, které jsou v~průběhu tréninku optimalizovány pro každý neuron zvlášť. Pro síť, jako je na obrázku \ref{three_layers} je to třeba 30 jednotlivých vah propojení a~8 prahů jednotlivých neuronů (skryté a~výstupní vrstvy), tedy 38 parametrů v~tak jednoduché síti.\par
+kde $x_n$ je neuron předcházející vrstvy, $w_n$ je váha jeho propojení, $B_i$ je práh aktuálního neuronu $i$ a~$F$ je aktivační funkce. Znázornění vah propojení a~jednotlivých neuronů je vyznačeno na obrázku \ref{three_layers}.\par
+Všechna propojení jednotlivých neuronů s~jejich prahy dávají dohromady parametry neuronové sítě, které jsou v~průběhu tréninku optimalizovány pro každý neuron zvlášť. Pro síť, jako je na obrázku \ref{three_layers}, je to třeba 30 jednotlivých vah propojení a~8 prahů jednotlivých neuronů (skryté a~výstupní vrstvy), tedy 38 parametrů v~relativně jednoduché síti.\par
 \textbf{Aktivační (přenosová) funkce} rozhoduje, jestli bude daný neuron aktivován. Skutečný neuron má, zdá se, funkci skokovou. Umělé neurony však používají funkce s~postupnou aktivací. Běžné jsou tři (čtyři) základní varianty aktivačních funkcí: 
 
 \begin{itemize}
@@ -180,44 +179,44 @@ Funkce jsou znázorněny na obrázku \ref{aktivacni_funkce}. Vhodnost použití 
 	    \includegraphics[width=0.33\linewidth, height=1.5in]{obrazky/sigmoid.pdf}\hfill
     	\includegraphics[width=0.33\linewidth, height=1.5in]{obrazky/tanh.pdf}\hfill
     	\includegraphics[width=0.33\linewidth, height=1.5in]{obrazky/relu.pdf}\hfill
-	\caption{Jednotlivé aktivační funkce, zleva: sigmoidální ($H(f)=\langle 0,1 \rangle$), hyperbolické tangenty (tanh $H(f)=\langle -1,1 \rangle$) a ReLU ($H(f)=\langle 0,\inf \rangle$).}
+	\caption{Jednotlivé aktivační funkce. Zleva: sigmoidální ($H(f)=\langle 0,1 \rangle$), hyperbolické tangenty (tanh $H(f)=\langle -1,1 \rangle$) a ReLU ($H(f)=\langle 0,\inf \rangle$).}
 	\label{aktivacni_funkce}
 \end{figure}
 
 
 \subsection{Dopředná a~zpětná propagace}
-Proces, kdy se opakovaně ze vstupů počítá výstup každého neuronu v~dané vrstvě a~stejně tak pro každou následující vrstvu, se nazývá dopředná propagace. Tímto postupem se postupně hodnoty vstupní vrstvy přetvoří na hodnoty ve vrstvě výstupní a~může se určit, jak byla síť úspěšná.\par
-Pro určení úspěšnosti každé takové iterace neuronové sítě se používá nákladová funkce (anglicky cost function pro jednu iteraci, loss function pro průměr všech), která udává jediné číslo charakterizující úspěšnost modelu. Nejznámější nákladovou funkcí je Střední kvadratická chyba (anglicky Mean Squared Error -- MSE). Cílem je hodnotu této nákladové funkce postupně minimalizovat.\par \medskip
+Proces, kdy se opakovaně ze vstupů počítá výstup každého neuronu v~dané vrstvě a~stejně tak pro každou následující vrstvu, se nazývá dopředná propagace. Tímto postupem se postupně hodnoty vstupní vrstvy přetvoří na hodnoty ve vrstvě výstupní a~může se určit, jak byla síť v dané iteraci úspěšná.\par
+Pro určení úspěšnosti každé takové iterace neuronové sítě se používá nákladová funkce (anglicky \textit{cost function} pro jednu iteraci, \textit{loss function} pro průměr všech), která udává jediné číslo charakterizující úspěšnost modelu. Nejznámější nákladovou funkcí je Střední kvadratická chyba (anglicky \textit{Mean Squared Error} -- MSE). Cílem je hodnotu této nákladové funkce postupně minimalizovat.\par \medskip
 Postup optimalizace jednotlivých parametrů neuronové sítě pro zajištění minimalizace nákladové funkce se nazývá \textbf{zpětná propagace}. Je to v~podstatě opačný průchod neuronovou sítí, který má za úkol zjistit, které neurony se největší mírou podílely na výsledné chybě. Snížením významu těchto neuronů můžeme dosáhnout lepší úspěšnosti celé sítě. Naopak můžeme zvýšit význam propojení s~neurony, které výstup ovlivnily pozitivně.\par
-Základem tohoto výpočtu je, že chyba každého výstupního neuronu je vstupem parciální derivace vzhledem ke každému z~jeho vstupů. Celý postup zpětné propagace je velmi složitý a~pro intuitivní pochopení problematiky není klíčový, proto tu nebude podrobně rozebrán.\par
-Celý postup zpětné propagace je opakován a~parametry neuronové sítě jsou postupně optimalizovány.\par \medskip
+Základem tohoto výpočtu je, že chyba každého výstupního neuronu je vstupem parciální derivace vzhledem ke každému z~jeho vstupů. Zpětná propagace je opakována v každé iteraci a~parametry neuronové sítě jsou postupně optimalizovány \cite{neural_nets}.\par
+Celý postup zpětné propagace je velmi složitý a~pro intuitivní pochopení problematiky není klíčový, proto tu nebude podrobně rozebrán.\par
+\medskip
 Trénink neuronové sítě tedy probíhá následovně. Síti s~náhodně inicializovanými parametry je předložena část dat z~trénovací datové sady. Ty jsou pomocí dopředné propagace prostupem přes skrytou vrstvu přetvořeny na výstupy a~tím získány predikce neuronové sítě. Predikce jsou porovnány se základní pravdou (tzv. \emph{ground truth}) a~nákladovou funkcí je vyjádřeno, jak byly predikce daleko od pravdy. Pomocí zpětné propagace jsou postupně upraveny všechny parametry neuronové sítě.\par
 Postup je opakován, dokud úbytek nákladové funkce mezi jednotlivými iteracemi nezačne dlouhodobě stagnovat, nebo dokud nedosáhneme požadovaného počtu epoch.\par
-Při nesprávném tréninku neuronové sítě může dojít k~podtrénování (underfitting), nebo přetrénování (overfitting). Problémy při tréninku souvisí s~tzv. hyperparametry, mezi které patří počet skrytých vrstev, velikost modelu nebo \emph{learning rate}\footnote{Konstanta určující velikost kroku při každé iteraci zpětné propagace při úpravě parametrů neuronové sítě.}. Pomoct může také množství trénovacích dat nebo počet trénovacích epoch.
+Při nesprávném tréninku neuronové sítě může dojít k~podtrénování (\textit{underfitting}), nebo přetrénování (\textit{overfitting}). Problémy při tréninku souvisí s~tzv. hyperparametry, mezi které patří počet skrytých vrstev, velikost modelu nebo \emph{learning rate}\footnote{Konstanta určující velikost kroku při každé iteraci zpětné propagace, tedy úpravě parametrů neuronové sítě.}. Pomoci může také množství trénovacích dat nebo počet trénovacích epoch.
 
 %=========================================================================
 \section{Nejlepší architektury pro porozumění textu}
-V~této sekci budou popsány dvě nejznámější a~nejpoužívanější architektury používané pro zpracování přirozeného jazyka. Rozšiřují koncepty prezentované v~sekci \ref{neuronove_site} a~snaží se překonat problémy, které tradiční model představuje.\par
-První model v~části \ref{lstm} využívá k~překonání ztráty kontextu rekurentní neuronové sítě. Druhý model v~části \ref{transformers} spoléhá na paralelní zpracování a~vzájemnou pozornost mezi otázkou a~kontextem.
+V~této sekci budou popsány dvě nejznámější a~nejpoužívanější architektury pro zpracování přirozeného jazyka. Rozšiřují koncepty prezentované v~sekci \ref{neuronove_site} a~snaží se překonat problémy, které tradiční model neuronové sítě v souvislosti s porozuměním textu nese.\par
 
 \subsection{Long short-term memory}
 \label{lstm}
 Informace v~této sekci byly převzaty z~originální práce \cite{LSTM}, která architekturu představuje a~ze článku \cite{understandingLSTM}.\par
-LSTM, neboli Long Short-term Memory je speciální druh \emph{rekurentní} neuronové sítě, který se částečně vypořádává s~problémem ztráty kontextu v~delším úseku textu. Jednoduše řečeno, při učení neuronové sítě bychom byli rádi, aby pochopení současné věty dokázala ovlivnit i věta předcházející.\par
+LSTM, neboli Long Short-term Memory je speciální druh \emph{rekurentní} neuronové sítě, který se částečně vypořádává s~problémem ztráty kontextu v~delším úseku textu. Jednoduše řečeno, při učení neuronové sítě by bylo užitečné, aby pochopení současné věty dokázala ovlivnit i věta předcházející.\par
 
 \begin{figure}[hbt]
     \centering
 	\scalebox{0.9}{
 	    \includegraphics{obrazky/rnn.pdf}
 	}
-	\caption{Schéma rekurentní neuronové sítě inspirován obrázkem z \cite{understandingLSTM}. $X_t$ je vstupem neuronové sítě $A_t$ v čase $t$ a výstupem $h_t$.}
+	\caption{Schéma rekurentní neuronové sítě inspirováno obrázkem z \cite{understandingLSTM}. $X_t$ je vstupem neuronové sítě $A_t$ v čase $t$ a výstupem $h_t$.}
 	\label{RNN}
 \end{figure}
 
-Nejprve bude vysvětlen princip \textbf{rekurentní neuronové sítě} (dále RNN -- Recurrent Neural Network).
-Jejich hlavním úkolem je vypořádat se se zpracováním sekvenčních dat, jako je text. Oproti například rozpoznávání vzorů v~obrázcích není možné pohlížet na každé slovo v~textu zvlášť. Slovo/slova předcházející by měly ovlivnit slovo současné. Stejně tak by měly následující slova ovlivnit význam slova současného (obousměrné rekurentní sítě).\par
-Schéma jednoduché RNN je vidět na obrázku \ref{RNN}. Zjednodušeně je to tedy více jednoduchých neuronových sítí propojených za sebe. Vstupem každé sítě $h_n$ je výstup předchozí sítě $h_{n-1}$ a~slovo $x_n$. Výstup $y_n$ je potom vstupem do další jednotky $h_{n+1}$.\par
-Analogicky funguje obousměrná RNN, které je propojená i v~opačném směru. Vstup je zpracováván od konce a~pro současné slovo je tedy brán v~úvahu i kontext slova nadcházejícího, jak je vidět na obrázku \ref{bidirRNN}.\par
+Nejprve bude vysvětlen princip \textbf{rekurentní neuronové sítě} (dále RNN -- \textit{Recurrent Neural Network}).
+Jejich hlavním úkolem je vypořádat se se zpracováním sekvenčních dat, jako je text. Oproti například rozpoznávání vzorů v~obrázcích není možné pohlížet na každé slovo v~textu zvlášť. Slovo/slova předcházející by měla ovlivnit slovo současné. Stejně tak by měla následující slova ovlivnit význam slova současného (obousměrné rekurentní sítě).\par
+Schéma jednoduché RNN je vidět na obrázku \ref{RNN}. Zjednodušeně je to tedy více jednoduchých neuronových sítí propojených za sebe. Vstupem každé sítě $A_t$ v čase $t$ je výstup sítě $A_{t-1}$. Výstup $h_t$ je pak vstupem sítě $A_{t+1}$.\par
+Analogicky funguje obousměrná RNN, které je propojena i v~opačném směru. Vstup je zpracováván od konce a~pro současné slovo je tedy brán v~úvahu i kontext slova nadcházejícího, jak je vidět na obrázku \ref{bidirRNN}.\par
 
 \begin{figure}[hbt]
     \centering
@@ -229,7 +228,7 @@ Analogicky funguje obousměrná RNN, které je propojená i v~opačném směru. 
 \end{figure}
 
 \pagebreak\textbf{LSTM} (Long Short-term Memory) představuje vylepšení standardní RNN.\par \smallskip
-Mějme model, který má za úkol předpovědět následující slovo ve větě. Pokud se kontext potřebný pro predikci nachází v~těsné blízkosti předpovídaného slova (př.: \uv{vychlazené mléko z~\emph{lednice}}), je i běžná RNN schopná si souvislost propojit. Pro příklad, kdy je kontext \uv{dále v~minulosti} (př.:\uv{Učím se od 6 let anglicky \dots Vzhledem k~těmto okolnostem plynule ovládám \emph{angličtinu}}) není RNN schopná naučit se tuhle souvislost mezi kontextem a~hledaným slovem.\par \smallskip
+Mějme model, který má za úkol předpovědět následující slovo ve větě. Pokud se kontext potřebný pro predikci nachází v~těsné blízkosti předpovídaného slova (př.: \uv{vychlazené mléko z~\emph{lednice}}), je i běžná RNN schopná si souvislost propojit. Pro příklad, kdy je kontext \uv{dále v~minulosti} (př.:\uv{Učím se od 6 let anglicky \dots Vzhledem k~těmto okolnostem plynule ovládám \emph{angličtinu}}), není RNN schopná naučit se tuhle souvislost mezi kontextem a~hledaným slovem.\par \smallskip
 LSTM je tedy narozdíl od klasické RNN navržená tak, aby byla schopná pamatovat si dlouhodobé souvislosti v~textu při sekvenčním zpracování. Řeší tím tzv. \emph{problém mizejícího gradientu}.\par
 Model má stejnou opakující se strukturu jako RNN, rozdíl je však v~komplexnosti opakující se jednotky (či buňky). Struktura naznačená na obrázku \ref{lstm_cell} je poměrně složitá a~jejím hlavním komponentem jsou tzv. \emph{brány}. 
 
@@ -243,28 +242,27 @@ Model má stejnou opakující se strukturu jako RNN, rozdíl je však v~komplexn
 \end{figure}
 
 Brány jsou v~LSTM buňce celkem tři. Každá je složena z~vrstvy neuronové sítě se sigmoidální funkcí (\uv{S} v \ref{lstm_cell}) a~násobícího (\uv{$\times$} v \ref{lstm_cell}) operátoru. Brána je komponentem určujícím, kolik informace je možno propustit. Brány budou popsány zleva doprava.\par
-První, tzv. zapomínací brána určuje, kolik vstupní informace je zahozeno\footnote{Výstupem je číslo v~rozmezí (0,1), kde 0 znamená \uv{všechno zahodit} a~1 znamená \uv{všechno propustit}.}. Druhá, tzv. vstupní brána, určí, které hodnoty skrytého stavu buňky budou aktualizovány a~vrstva s~funkcí \emph{tanh} (\uv{tanh} v \ref{lstm_cell}) rozhodne o~nových kandidátních hodnotách, které po kombinaci s~výstupem sigmoidální vrstvy vytvoří nový skrytý stav buňky. Poslední bránou je výstupní, která spojuje informaci z~brány zapomínací a~vnitřním stavem buňky a~vytváří tím tedy výstup dané buňky.\par
-Jednotlivé LSTM buňky jsou za sebou sekvenčně propojeny stejně jako RNN. Při použití dvou LSTM sítí s~tou druhou propojenou v~opačném směru získáme obousměrnou LSTM síť. Výstupy obou sítí jsou poté pro získání výstupu zřetězeny.
+První, tzv. zapomínací brána určuje, kolik vstupní informace je zahozeno\footnote{Výstupem je číslo v~rozmezí (0,1), kde 0 znamená \uv{všechno zahodit} a~1 znamená \uv{všechno propustit}.}. Druhá, tzv. vstupní brána, určí, které hodnoty skrytého stavu buňky budou aktualizovány a~vrstva s~funkcí \emph{tanh} (\uv{tanh} v \ref{lstm_cell}) rozhodne o~nových kandidátních hodnotách, které po kombinaci s~výstupem sigmoidální vrstvy vytvoří nový skrytý stav buňky. Poslední bránou je výstupní, která spojuje informaci z~brány zapomínací s~vnitřním stavem buňky a~vytváří tím tedy výstup dané buňky.\par
+Jednotlivé LSTM buňky jsou za sebou sekvenčně propojeny stejně jako RNN. Při použití dvou LSTM sítí, kdy druhá je propojena v~opačném směru, získáme obousměrnou LSTM síť. Výstupy obou sítí jsou poté pro získání výstupu zřetězeny.
 
 \subsection{Transformers}
 \label{transformers}
-Informace v~této sekci byly převzaty z~originální práce \emph{Attention Is All You Need} \cite{Transformers}, práce \cite{attention_mechanism} a~článku \cite{Transformers-explained}. Sekce popisuje Transformer model používaný pro zpracování přirozeného jazyka a~mechanismus pozornosti, který s~ním úzce souvisí.\par
-Přístup použitý tímto modelem se dokázal oprostit od rekurentních modelů jako LSTM a~nahradil je na poli zpracování přirozeného jazyka jako nová state of the art architektura. Transformers nepoužívá sekvenční zpracování slov, ale zpracování paralelní.\par
-Jeho nejdůležitější myšlenkou je tzv. \textbf{mechanismus pozornosti} (anglicky \emph{attention mechanism}) představený článkem \cite{attention_mechanism} původně pro strojový překlad. Mechanismus pozornosti se však dále rozvíjel a~popularizoval do dalších odvětví strojového učení. Stručně bude tedy popsán.\par \medskip
+Informace v~této sekci byly převzaty z~originální práce \emph{Attention Is All You Need} \cite{Transformers}, práce \cite{attention_mechanism} a~článku \cite{Transformers-explained}. Sekce popisuje Transformers architekturu používanou pro zpracování přirozeného jazyka. Také se věnuje mechanismu pozornosti (\emph{attention mechanism}).\par
+Přístup použitý tímto modelem se dokázal oprostit od rekurentních modelů jako LSTM a~nahradil je na poli zpracování přirozeného jazyka jako nová \textit{state of the art} architektura. Transformers nepoužívá sekvenční zpracování slov, ale zpracování paralelní.\par
+Jeho nejdůležitější myšlenkou je tzv. \textbf{mechanismus pozornosti} (anglicky \emph{attention mechanism}) představený článkem \cite{attention_mechanism} -- původně pro strojový překlad. Mechanismus pozornosti se však dále rozvíjel a~popularizoval do dalších odvětví strojového učení. Stručně bude tedy popsán.\par \medskip
 
-Mechanismus vezme vektory dvou vět přirozeného jazyka naráz a~sestaví z~nich \emph{key(\textbf{K})-value(\textbf{V})} a~\emph{query(\textbf{Q})} matice (řádek -- vektor pro každé vstupní slovo). Ty vzniknou vynásobením vstupní word embedding matice speciální váhovou maticí, jejíž parametry se natrénují. Na matice jsou poté aplikovány následující operace pro získání výstupu attention mechanismu
+Mechanismus vezme vektory dvou vět přirozeného jazyka naráz a~sestaví z~nich \emph{key(\textbf{K})-value(\textbf{V})} a~\emph{query(\textbf{Q})} matice (řádek -- vektor pro každé vstupní slovo). Ty vzniknou vynásobením vstupní word embedding matice speciální váhovou maticí, jejíž parametry jsou trénovány. Na matice jsou poté aplikovány následující operace pro získání výstupu attention mechanismu (rovnice \ref{attention_dot_product}).
 
 \begin{equation}
     \label{attention_dot_product}
     softmax(\frac{Q \times K}{k})\times V
 \end{equation}
 
-kde k~je podle \cite{Transformers} konstanta 8 (mohly by bý stanoveny i jiné hodnoty) a~softmax funkce pro normalizaci výstupu do rozmezí (0,1).\par
-Vektory pro všechny vstupní slova respektive vstupní matice K, V~a Q mohou být ze stejné věty. Potom se používá termín \textbf{self-attention}.\par
-Tím je určeno, která část vstupu je relevantní (self-attention), nebo například která část dokumentu je relevantním kontextem dané otázky.\par
+V rovnici \ref{attention_dot_product} je $k$ podle \cite{Transformers} konstanta 8 (mohly by bý stanoveny i jiné hodnoty) a~softmax funkce je použita pro normalizaci výstupu do rozmezí (0,1).\par
+Vektory pro všechny vstupní slova respektive vstupní matice K, V~a Q mohou být ze stejné věty. Pro tuto variantu mechanismu se používá termín \textbf{self-attention}.\par 
 Jednoznačnou výhodou mechanismu pozornosti je, že je schopen podívat se na celý kontext naráz (narozdíl od RNN, která prochází vstup sekvenčně) a~vyznačit v~něm důležité pasáže. Tímto se zbavuje problému mizejícího gradientu.\par\medskip
 
-\textbf{Transformer} enkodér\footnote{Enkodér je část modelu, která vytvoří z~vektorů jednotlivých slov na vstupu vektor celého vstupního textu, reprezentující jeho význam.}\footnote{V původním článku představen model pro \emph{sequence to sequence} model vhodný pro překlad, který obsahuje i dekodér pro generování textu.} je model, jehož architektura je kombinací dopředné neuronové sítě a~mechanismu pozornosti. Jak už bylo popsáno, jeho hlavní výhodou je vlastnost\linebreak \emph{mechanismu pozornosti} zpracovávat vstupní slova paralelně, a~tím se naučit i vztahy mezi slovy na dlouhé vzdálenosti v~textu.\par
+\textbf{Transformer} enkodér\footnote{Enkodér je část modelu, která vytvoří z~vektorů jednotlivých slov na vstupu vektor celého vstupního textu, reprezentující jeho význam. V původním článku \cite{Transformers} představen model pro \emph{sequence to sequence} model vhodný pro překlad, který obsahuje i dekodér pro generování textu.} je model, jehož architektura je kombinací dopředné neuronové sítě a~mechanismu pozornosti. Jak už bylo popsáno, jeho hlavní výhodou je vlastnost\linebreak \emph{mechanismu pozornosti} zpracovávat vstupní slova paralelně, a~tím se naučit i vztahy mezi slovy na dlouhé vzdálenosti v~textu.\par
 
 \begin{figure}[hbt]
     \centering
@@ -278,7 +276,7 @@ Jednoznačnou výhodou mechanismu pozornosti je, že je schopen podívat se na c
 Na obrázku \ref{transformer_encoder} můžeme vidět zjednodušenou strukturu jednotky enkodéru. V~článku \cite{Transformers} tvoří enkodér 6 takových bloků propojených za sebe.\par
 Před vstupem do prvního bloku jsou jednotlivé tokeny vstupního textu převedeny na vektory (word embeddings), ke kterým je přidáno poziční kódování\footnote{identifikuje pořadí tokenu ve vstupním textu.}.\par
 Každý blok se pak skládá z~\uv{\emph{multi-head attention}} modulu a~plně propojené dopředné vrstvy. Obě části jsou následovány normalizační vrstvou.\par
-Nejzajímavější částí bloku enkodéru je multi-head attention modul, který je dále rozkreslen na obrázku \ref{multihead}. Modul je sofistikovanou implementací self-attention mechanismu popsaném dříve, který dokáže vyzdvihnout souvislost jednotlivých částí celého kontextu. 
+Nejzajímavější částí bloku enkodéru je multi-head attention modul, který je dále rozkreslen na obrázku \ref{multihead}. Modul je sofistikovanou implementací self-attention mechanismu popsaného dříve, který dokáže vyzdvihnout souvislost jednotlivých částí celého kontextu. 
 
 \begin{figure}[hbt]
     \centering
@@ -289,7 +287,7 @@ Nejzajímavější částí bloku enkodéru je multi-head attention modul, kter�
 	\label{multihead}
 \end{figure}
 
-Mechanismus ne obrázku \ref{multihead} vpravo je popsaný rovnicí (\ref{attention_dot_product}) a~je hlavním komponentem multi-head attention modulu znázorněném v~\ref{multihead} vlevo.\par
+Mechanismus na obrázku \ref{multihead} vpravo je popsaný rovnicí \ref{attention_dot_product} a~je hlavním komponentem multi-head attention modulu znázorněném v~\ref{multihead} vlevo.\par
 Multi-head znamená, že do modulu vstupuje 8 (dle práce \cite{Transformers}) trojic V,K,Q. Každá matice trojice V,K,Q je transformována lieární vrstvou a~na celou trojici je potom aplikován \emph{scaled dot-product attention} (self-attention) mechanismus. Tento postup je aplikován na každou z~osmi trojic paralelně, pokaždé však s~jinými váhami lineární vrstvy.
 
 %=========================================================================
@@ -297,45 +295,45 @@ Multi-head znamená, že do modulu vstupuje 8 (dle práce \cite{Transformers}) t
 \label{bert_albert}
 
 V~této sekci budou představeny modely založené na architektuře Transformer popsané v~sekci \ref{transformers}. Informace v~této sekci jsou převzaty z~původních článků \cite{BERT} a~\cite{ALBERT}.\par
-Předtrénované modely stavějící na této architektuře určily nový standard pro přicházející state of the art metody. Kromě jejich vysoké úspěšnosti je obrovskou výhodou také znovupoužitelnost předtřénovaných modelů. Modely je možno jednoduše dotrénovat (provést tzv. \emph{fine-tuning} po načtení modelu s~předtrénovanými parametry) pro celou řadu úkolů na poli NLP, jako je odpovídání na otázky, rozpoznání entit, klasifikace textu a~další.
+Předtrénované modely stavějící na této architektuře určily nový standard pro přicházející \textit{state of the art} metody. Kromě jejich vysoké úspěšnosti je obrovskou výhodou také znovupoužitelnost předtřénovaných modelů. Modely je možno jednoduše dotrénovat (provést tzv. \emph{fine-tuning} po načtení modelu s~předtrénovanými parametry) pro celou řadu úkolů na poli NLP, jako je odpovídání na otázky, rozpoznání entit, klasifikace textu a~další.
 
 \subsection{BERT}
-BERT (Bidirectional Encoder Representation from Transformers) je model pro reprezentaci přirozeného jazyka představený v~roce 2018 prací \cite{BERT}. Jeho hlavním přínosem je aplikace obousměrného tréninku Transformer architektury. Ukazuje, že model trénovaný v~obou směrech dokáže plně využít schopnost Transformerů zpracovávat vstupní text naráz, ne sekvenčně.\par\smallskip
-Hlavním přínosem práce \cite{BERT} je způsob, kterým probíhá předtrénink na velkých textových korpusech. Trénink na úkolech, které nemusí přímo souviset s~cílovým použitím dovolí modelu získat základní pochopení vlastností jazyka pro jeho správnou reprezentaci vytvořenou enkodérem. Pro předtrénink modelu BERT byly použity následující úkoly.
+BERT (\textit{Bidirectional Encoder Representation from Transformers}) je model pro reprezentaci přirozeného jazyka představený v~roce 2018 prací \cite{BERT}. Jeho hlavním přínosem je aplikace obousměrného tréninku Transformer architektury. Ukazuje, že model trénovaný v~obou směrech dokáže plně využít schopnost Transformerů zpracovávat vstupní text naráz, ne sekvenčně.\par\smallskip
+Hlavním přínosem práce \cite{BERT} je způsob, kterým probíhá předtrénink na velkých textových korpusech. Trénink na úkolech, které nemusí přímo souviset s~cílovým použitím, dovolí modelu získat základní pochopení vlastností jazyka pro jeho správnou reprezentaci vytvořenou enkodérem. Pro předtrénink modelu BERT byly použity následující úkoly.
 
 \begin{figure}[hbt]
 	\centering
 	\scalebox{1}{
 	    \includegraphics{obrazky/bert_pretraining_fine_tuning.pdf}
 	}
-	\caption{Vlevo předtrénink ekodéru BERT na úlohách \emph{ML modeling} a \emph{NSP}. Vpravo předtrénovaný BERT dotrénován na konkrétní úlohu odpovídání na otázky. Obrázek byl inspirován obrázkem 1 z článku \cite{BERT}.}
+	\caption{Vlevo předtrénink ekodéru BERT na úlohách \emph{ML modeling} a \emph{NSP}. Vpravo předtrénovaný model BERT dotrénován na konkrétní úlohu -- odpovídání na otázky. Obrázek byl inspirován obrázkem 1 z článku \cite{BERT}.}
 	\label{bert}
 \end{figure}
 
 \medskip
 \textbf{Maskované modelování jazyka} (ML modeling) 
-je úloha velmi podobná již dříve zmíněné úloze predikce následujícího slova ve větě.Je ale použit přístup, kdy je určité procento slov v~textu \emph{maskováno}, aby nebyl původní úkol kvůli obousměrné reprezentaci transformerů triviální.\par
-Při tréninku je 15\,\% slov každé věty nahrazeno [MASK] tokenem, jehož původní význam je poté na základě okolního kontextu hádán.\par
-Pro tento úkol je na enkodér BERTa napojena klasifikační vrstva, pomocí které je určena pravděpodobnost pro každého slovo ve slovníku, které má [MASK] token nahradit.\par
+je úloha velmi podobná již dříve zmíněné úloze predikce následujícího slova ve větě. Je ale použit přístup, kdy je určité procento slov v~textu \emph{maskováno}, aby nebyl původní úkol kvůli obousměrné reprezentaci transformerů triviální.\par
+Při tréninku je 15\,\% slov každé věty nahrazeno [MASK] tokenem, jehož původní význam je poté na základě okolního kontextu hádán \cite{BERT}.\par
+Pro tento úkol je na enkodér BERTa napojena klasifikační vrstva, pomocí které je určena pravděpodobnost pro každého slovo ve slovníku, které by mohlo [MASK] token nahradit.\par
 \smallskip
 \textbf{Predikce následující věty} (NSP) je druhým typem úlohy pro předtrénink BERTa. Jeho snahou je naučit model porozumět vztahu nejen mezi jednotlivými slovy, ale taky mezi významem celých vět.\par
-Trénovací datová sada je rozdělena na dvojice vět A~a B. Model má za úkol předpovědět, je-li věta B větou následující větu A~v~kontextu. V~50\,\% případů je věta B opravdu větou následující. Ve zbytku je to náhodně zvolená věta z~korpusu.\par
+Trénovací datová sada je rozdělena na dvojice vět A~a B. Model má za úkol předpovědět, je-li věta B větou navazující na větu A~v~kontextu. V~50\,\% případů je věta B opravdu větou následující. Ve zbytku je to náhodně zvolená věta z~korpusu.\par
 Práce \cite{BERT} také uvádí, že navzdory jednoduchosti tohoto úkolu je jeho přínos pro pozdější aplikaci modelu pro odpovídání na otázky velký.\par
 
 \paragraph{Formát vstupu}
-modelu BERT je koncipován tak, aby mohl být použit pro větší spektrum aplikací, pro které je zamýšlen. Proto je umožněno na vstupu pomocí jediné sekvence tokenů reprezentovat jak jednu, tak i dvě vstupní sekvence, jako třeba otázku a~odpověď.
+modelu BERT je koncipován tak, aby mohl být použit pro větší spektrum aplikací, pro které je zamýšlen. Proto je umožněno na vstupu pomocí jediné sekvence tokenů reprezentovat jak jednu, tak i dvě vstupní sekvence jako třeba otázku a~odpověď.
 
 \begin{figure}[hbt]
 	\centering
 	\scalebox{0.45}{
 	    \includegraphics{obrazky/bert_input_new.pdf}
 	}
-	\caption{Příklad formátu vstupu \uv{\emph{input}} modelu BERT převzatý z \cite{BERT}. Poziční (\emph{position}), segmentové a~token \emph{embeddings} a~speciální tokeny [CLS] a~[SEP].}
+	\caption{Příklad formátu vstupu \uv{\emph{input}} modelu BERT převzatý z \cite{BERT}. Znázorněno je: poziční (\emph{position}), segmentové a~token \emph{embeddings} a~speciální tokeny [CLS] a~[SEP].}
 	\label{bert_input}
 \end{figure}
 
-Pro vektorovou reprezentaci jednotlivých tokenů jsou použity Wordpiece embeddings \cite{wordpiece} popsány v~\ref{wordpiece_embb}. K~těm je přidáno poziční kódování kvůli použití Transformer architektury a~segmentační kódování, které identifikuje, které sekvenci vstupu jednotlivé tokeny náleží. Příklad je naznačen na obr. \ref{bert_input}.\par
-Pro popis vstupu jsou navíc použity dva speciální tokeny [CLS] a~[SEP]. [CLS] token je přidán vždy na začátek vstupu. Token [SEP] je přidán na konec každé sekvence. [CLS] token je využit také pro klasifikační úlohy (například předtrénink na NSP).
+Pro vektorovou reprezentaci jednotlivých tokenů jsou použity Wordpiece embeddings \cite{wordpiece} popsány v~\ref{wordpiece_embb}. K~těm je přidáno poziční kódování, kvůli použití Transformer architektury a~segmentové kódování, které identifikuje, které sekvenci vstupu jednotlivé tokeny náleží. Příklad je naznačen na obr. \ref{bert_input}.\par
+Pro popis vstupu jsou navíc použity dva speciální tokeny [CLS] a~[SEP]. [CLS] token je přidán vždy na začátek vstupu. Token [SEP] je přidán na konec každé sekvence. [CLS] token je využit také jako výstup pro klasifikační úlohy (například předtrénink na NSP).
 
 \subsection{ALBERT}
 Informace v~této sekci jsou převzaty ze článku \cite{ALBERT} \emph{A~Lite BERT for self-supervised learning of language representations}.\par
@@ -350,13 +348,13 @@ Díky odstranění provázanosti velikosti dimenze \emph{wordpiece embeddings} a
 Parametry napříč vrstvami jsou sdíleny, což zamezuje růstu počtu parametrů při zvětšování hloubky modelu a~způsobuje jejich efektivnější využití. Ve výsledku má velká verze modelu ALBERT mnohonásobně méně parametrů, než velká verze modelu BERT.
 
 \paragraph{Trénink návaznosti dvou vět} -- \textit{Inter-sentence coherence loss}\\
-Trénink modelu BERT pomocí predikce následující věty (NSP) se částečně překrýval s~úkolem predikce maskovaného tokenu, protože mohla být nesouvislost vět odhadnuta na základě nepříslušnosti slov stejnému tématu.\par
+Trénink modelu BERT pomocí predikce následující věty (NSP) se částečně překrýval s~úkolem predikce maskovaného tokenu, protože mohla být nesouvislost vět odhadnuta na základě nepříslušnosti slov ke stejnému tématu.\par
 Pro trénink modelu ALBERT je pro tento úkol použita stejná dvojice vět A~a B, u~kterých se určuje, zda-li B navazuje na A. Při nenávaznosti však není věta B náhodně vybrána z~jiného korpusu, ale je pouze prohozena s~větou A. Model je tak lépe schopen naučit se logickou souvislost vět, místo odhadu tématu, ke kterému se věty vztahují bez toho, aby na sebe logicky navazovaly.
 \bigskip\bigskip
 \paragraph{ALBERT (resp. BERT) pro odpovídání na otázky}
 Pro využití modelu ALBERT (resp. BERT) na konkrétní úkoly vyžadující porozumění textu je potřeba provést \emph{fine-tuning} modelu.\par
-Pro odpovídání na otázky je na výstup modelu napojena lineání vrstva, která je natrénována na určení indexu začátku a~konce odpovědi v~rámci celé vstupní sekvence. Pro začátek a~konec je poté vybrána validní\footnote{podmínky jako: start idx > end idx, odpověď se nenachází v~první sekvenci (otázce)} dvojice indexů označující rozsah odpověď.\par
-Pro \emph{fine-tuning} na daný úkol jsou optimalizovány parametry lineární klasifikační vrstvy i enkodéru ALBERT (resp. BERT) -- vyžaduje delší trénink, nebo pouze lineární vrstvy.
+Pro odpovídání na otázky je na výstup modelu napojena lineání vrstva, která je natrénována na určení indexu začátku a~konce odpovědi v~rámci celé vstupní sekvence. Pro začátek a~konec je poté vybrána validní\footnote{Podmínky jako: start idx > end idx, nebo to, že se odpověď se nenachází v~první sekvenci (otázce).} dvojice indexů označující rozsah odpověď.\par
+Pro \emph{fine-tuning} na daný úkol jsou optimalizovány parametry lineární klasifikační vrstvy i enkodéru ALBERT (resp. BERT), nebo pouze lineární vrstvy (což vyžaduje mnohem kratší trénink).
 
 %=========================================================================
 %===============================================================================
@@ -370,7 +368,7 @@ Informace v~této kapitole jsou převzaty z~prezentací Stanfordského kurzu \em
 Pro vyhledávání dokumentů s~použitím webových zdrojů jako Wikipedie jsou typické rozsáhlé texty které by bylo náročné procházet sekvenčně. Proto je důležité vytvořit strukturu, která je dále použita metodami pro řazení dokumentů a~umožní optimalizované vyhledávání. Taková struktura se nazývá \textbf{index}.\par
 Index poskytuje informace o~výskytu jednotlivých termů v~prohledávaných dokumentech a~je vytvořen ještě před začátkem vyhledávání. Nejpoužívanější variantou je tzv. \emph{invertovaný index}.\par
 Před vytvořením indexu je užitečné provést co nejlepší normalizaci prohledávaných dokumentů. Metody pro zpracování textu byly podrobně popsány v~kapitole \ref{preprocessing} (převod na malá písmena, lemmatizace, odstranění stop slov).\par
-\textbf{invertovaný index} je struktura obsahující všechny slova (termy) prohledávaného korpusu. Pro každý term je uložen seznam dokumentů (označených \emph{docID}), které daný výraz obsahují. Může obsahovat doplňující informace o~počtu výskytů termu v~dokumentu a~jeho délce. Informace jsou poté využity při řazení dokumentů, tzv. \emph{ohodnoceném vyhledávání}.
+\textbf{Invertovaný index} je struktura obsahující všechny slova (termy) prohledávaného korpusu. Pro každý term je uložen seznam dokumentů (označených \emph{docID}), které daný výraz obsahují. Může obsahovat doplňující informace o~počtu výskytů termu v~dokumentu a~jeho délce. Informace jsou poté využity při řazení dokumentů, tzv. \emph{ohodnoceném vyhledávání}.
 
 \subsection{Úskalí velké báze dat jako Wikipedie}
 Česká Wikipedie obsahuje velké množství článků (asi 3,5\,GB v~nekomprimonavé podobě). Pro prohledávání celé Wikipedie je potřeba vytvořit a~udržovat index, což je pro takový objem dat poměrně výpočetně a~paměťově náročné. Je složité pomocí běžných nástrojů sestavit index pro celou Wikipedii.\par
@@ -378,26 +376,28 @@ Dalším problémem je různá délka dokumentů, nestrukturovanost některého 
 Způsoby prohledávání Wikipedie a~vypořádání se se zmíněnými problémy jsou popsány v~části \ref{chapter:design_}, konkrétně \ref{design} a~kapitole o implementaci \ref{chapter:implementace}.
 
 %=========================================================================
-\section{Algoritmy pro řazení dokumentů}
-Při dotazování na vytvořený index nestačí výčet dokumentů, které termy přítomné v~dotazu obsahují. Ohodnocené vyhledávání umožňuje získání pouze množiny seřazených \emph{n} nejvíce relevantních dokumentů.\par
+\section{Ohodnocené vyhledávání pro řazení dokumentů}
+Při dotazování na vytvořený index nestačí pouze výčet dokumentů, které termy přítomné v~dotazu obsahují. Ohodnocené vyhledávání umožňuje (pomocí speciálních vztahů) získání množiny seřazených \emph{n} nejvíce relevantních dokumentů.\par
 
 \subsection{TF-IDF (Term frequency -- Inversed document frequency)}
 \label{tf-idf}
 
-\textbf{Četnost termu} (TF) je počet výskytů vyhledávaného termu v~daném dokumentu. Vycházíme z~předpokladu, že dokument s~deseti výskyty termu bude pro dotaz více relevantní, než dokument obsahující vyhledávaný term pouze jednou. Neznamená to však, že bude dokument $10\times$ více relevantní -- růst relevance není přímo úměrný TF.\par
+\textbf{Četnost termu} (TF -- rovnice \ref{tf_eq}) je počet výskytů vyhledávaného termu v~daném dokumentu. Vycházíme z~předpokladu, že dokument s~deseti výskyty termu bude pro dotaz více relevantní, než dokument obsahující vyhledávaný term pouze jednou. Neznamená to však, že bude dokument $10\times$ více relevantní -- růst relevance není přímo úměrný TF.\par
 Jednotlivé termy nenesou stejnou informační hodnotu (např. stop slova \ref{stopwords}) a~ojedinělé výrazy jsou často zásadní pro relevanci k~dotazu (což souvisí i s~neúměrným růstem relevance s~růstem TF).\par
 
 \begin{equation}
+\label{tf_eq}
     TF_{t,d} = log(1+tf_{t,d})
 \end{equation}
 
-\textbf{Četnost dokumentů} (DF) je počet dokumentů, které obsahují vyhledávaný term. Účel je v~identifikaci termů vyskytujících se jenom ve zlomku dokumentů, které nejspíš ponesou zásadní informační hodnotu a~adresovat tím neúměrnou závislost růst relevance dokumentu a~četnosti termu. Obrácená četnost dokumentů (IDF) dělí celkový počet dokumentů \emph{N} četností dokumentů pro daný term. Hodnota IDF je tedy vyšší pro vzácnější termy.\par
+\textbf{Četnost dokumentů} (DF) je počet dokumentů, které obsahují vyhledávaný term. Účel je v~identifikaci termů vyskytujících se jenom ve zlomku dokumentů, které nejspíš ponesou zásadní informační hodnotu a~adresovat tím neúměrnou závislost růstu relevance dokumentu a~četnosti termu. Obrácená četnost dokumentů (IDF -- viz rovnice \ref{idf_eq}) dělí celkový počet dokumentů \emph{N} četností dokumentů pro daný term. Hodnota IDF je tedy vyšší pro vzácnější termy.\par
 
 \begin{equation}
+\label{idf_eq}
     IDF_{d} = log(\frac{N}{df_t})
 \end{equation}
 
-\textbf{TF-IDF} je statistická metoda, která použitím těchto dvou metrik hodnotí relevanci dokumentu.
+\textbf{TF-IDF} je statistická metoda, která použitím uvedených dvou metrik hodnotí relevanci dokumentu.
 Pro výpočet váhy TF-IDF pro daný term \emph{t} v~dokumentu \emph{d} platí tedy:
 
 \begin{equation}
@@ -412,7 +412,7 @@ Ohodnocení \emph{S} dokumentu \emph{d} pro dotaz \emph{q} je potom sumou jednot
 
 \subsection{BM25 (Best Match 25)}
 \label{bm25}
-(Okapi) BM25 představeno v~\cite{bm25} je vylepšením klasické hodnotící funkce TF-IDF. Využívá poznatky statistiky a~pravděpodobnosti pro řazení dokumentů dle jejich relevance s~ohledem na vztah délky dokumntu a~četnost výskytů termu v~něm.\par
+(Okapi) BM25 představeno v~\cite{bm25} je vylepšením klasické hodnotící funkce TF-IDF. Využívá poznatky statistiky a~pravděpodobnosti pro řazení dokumentů dle jejich relevance s~ohledem na vztah délky dokumntu a~četnosti výskytů termu v~něm.\par
 Delší dokumenty budou mít pravděpodobně větší $tf_{t,d}$. To je potřeba ve výsledném ohodnocení zohlednit, aby nebyly delší dokumenty nutně zvýhodněny.
 Výsedný vzorec pro ohodnocení dokumentu \emph{d} pomocí BM25 vzhledem k~otázce \emph{q} je:
 \begin{equation}
@@ -420,7 +420,7 @@ Výsedný vzorec pro ohodnocení dokumentu \emph{d} pomocí BM25 vzhledem k~otá
 \end{equation}
 kde $tf$ a~$idf$ jsou metriky vysvětlené v~sekci \ref{tf-idf}, $dl$ je délka dokumentu $d$, $avdl$ je průměrná délka dokumentu v~kolekci a~$b,k_1$ jsou konstanty.
 \begin{itemize}
-    \item $k_1$ je konstanta ovlivňující dopad \emph{TF} na výsledné skóre dokumentu. Obvykle je volena v~rozmezí $k_1\in(1,2 ;2)$. Pro nízké hodnoty $k_1$ roste význam dokumentu s~rostoucí \emph{TF} poměrně rychle.
+    \item $k_1$ je konstanta ovlivňující dopad \emph{TF} na výsledné skóre dokumentu. Obvykle je volena v~rozmezí $k_1\in(1,2\,;\,2)$. Pro nízké hodnoty $k_1$ roste význam dokumentu s~rostoucí \emph{TF} poměrně rychle.
     \item $b$ ovlivňuje normalizaci délky dokumentu a~obvykle je volena hodnota $b=0,75$. Hodnota $b=1$ znamená úplnou a~$b=0$ žádnou normalizaci délky dokumentu.
 \end{itemize}
 
@@ -456,14 +456,14 @@ Závěr článku \cite{bm25_improvements} ale ukazuje, že neexistuje modifikace
 \subsection{DPR (Dense Passage Retrieval)}
 \label{dpr}
 DPR je technika představená článkem \cite{dpr}, která využívá architekturu dvou enkodérů.\par
-Pomocí jednoho z enkodérů je převeden každý dokument na jeho vektorovou reprezentaci, ze kterých je sestaven vyhledávací index.\par
-Druhý enkodér je určen pro získání reprezentace otázky. Pro vektor otázky je poté nalezen dokument (nebo $k$ dokumentů), jehož vektor je vektoru otázky nejblíže (rovnice~\ref{similarity}).\par
+Pomocí jednoho z enkodérů je převeden každý dokument na jeho vektorovou reprezentaci. Z těch je sestaven vyhledávací index.\par
+Druhý enkodér je určen pro získání reprezentace otázky. Pro vektor otázky je poté nalezen dokument (nebo více dokumentů), jehož vektor je vektoru otázky nejblíže (rovnice~\ref{similarity}).\par
 \begin{equation}
     \label{similarity}
     sim(q,d) = E_Q(q)\cdot E_D(d)
 \end{equation}
 V rovnici \ref{similarity} \cite{dpr} je $sim(q,d)$ skóre relevance otázky $q$ a dokumentu $d$, $E_Q$ je enkodér použitý pro reprezentaci otázky a $E_D$ pro reprezentaci dokumentu.\par
-Jako enkodéry jsou použity modely BERT (pro \cite{dpr}, ale použito také např. v \cite{fajcik2021pruning} pro implementaci systému R2-D2). Ty jsou trénovány tak, aby po výpočtu blízkosti vektorů otázky a relevantních pasáží měly relevantní pasáže nejmenší vzdálenost.
+Jako enkodéry jsou použity modely BERT (pro \cite{dpr}, ale použito také např. v \cite{fajcik2021pruning} pro implementaci systému R2-D2). Ty jsou trénovány tak, aby po výpočtu blízkosti vektorů otázky a relevantních pasáží měly relevantní pasáže co nejmenší vzdálenost.
 
 %=========================================================================
 %===============================================================================
@@ -471,12 +471,12 @@ Jako enkodéry jsou použity modely BERT (pro \cite{dpr}, ale použito také nap
 \chapter{Dostupné datové sady a~výběr}
 \label{available_datasets}
 Tato kapitola se zabývá popisem a~výběrem datových sad (datasetů) pro realizaci a~evaluaci systému.\par
-Datová sada je v~oblasti strojového učení velká anotovaná (člověkem popsaná) kolekce dat pro trénink a~vyhodnocování neuronových sítí. Obvykle obsahuje pro každý příklad vstupní data a~jejich popis (anotaci).\\
+Datová sada je v~oblasti strojového učení velká anotovaná (člověkem popsaná) kolekce dat pro trénink a~vyhodnocování neuronových sítí nebo celých systémů. Obvykle obsahuje pro každý příklad vstupní data a~jejich popis (anotaci).\\
 Datové sady je možno rozdělit podle toho, v~jaké fázi vývoje s~nimi pracujeme.
 \begin{itemize}
-    \item \textbf{Trénovací} Používá se pro naučení neuronové sité. Při zpracovávání trénovací datové sady se model učí a~upravuje své parametry. Na konci tréninku by měl model konvergovat ke 100\,\% úspěšnosti na trénovací datové sadě.
-    \item \textbf{Validační (dev)} Slouží pro průběžné vyhodnocení existujícího modelu v~průběhu vývoje. Model se z~validačních dat neučí. Může být využit například k~úpravě hyperparametrů nebo zastavení tréninku modelu, když se jeho úspěšnost na validační datové sadě přestane zlepšovat. Vytvořen může být vybraným zlomkem trénovacího datasetu nepoužitým pro trénink.
-    \item \textbf{Testovací} Obsahuje příklady z~reálného světa, na kterých je model/systém vyhodnocen po dokončení jeho vývoje. Testovací dataset je často shodný s~validačním.
+    \item \textbf{Trénovací (train)} Používá se pro naučení neuronové sité. Při zpracovávání trénovací datové sady se model učí a~upravuje své parametry. Na konci tréninku by měl model konvergovat ke 100\% úspěšnosti na trénovací datové sadě.
+    \item \textbf{Validační (dev)} Slouží pro průběžné vyhodnocení existujícího modelu při vývoji. Model se z~validačních dat neučí. Může být využita například k~úpravě hyperparametrů nebo zastavení tréninku modelu, když se jeho úspěšnost na validační datové sadě přestane zlepšovat. Vytvořen může být vybraným zlomkem trénovacího datasetu nepoužitým pro trénink.
+    \item \textbf{Testovací (test)} Obsahuje příklady z~reálného světa, na kterých je model/systém vyhodnocen po dokončení jeho vývoje. Testovací dataset je často shodný s~validačním.
 \end{itemize}
 Pro trénink neuronových sítí pro odpovídání na otázky by měla datová sada obsahovat hlavně:
 \begin{itemize}
@@ -485,37 +485,37 @@ Pro trénink neuronových sítí pro odpovídání na otázky by měla datová s
     \item odpověď
     \item případně doplňující informace (jako začátek odpovědi, délku odpovědi \dots)
 \end{itemize}
-Vytvoření takové datové sady je složitý úkol vyžadující velké množství lidských zdrojů. Je potřeba nasbírat dostatečné množství dokumentů, pro které někdo musí vymyslet otázky a~vyznačit v~dokumentech příslušné odpovědi. Tvorba datových sad obvykle probíhá pomocí \emph{crowdsourcingu}\footnote{\emph{Crowdsourcing je nové slovo označující proces získání potřebné služby, nápadů, příspěvků, pomoci při řešení problémů od velké skupiny lidí.} (\url{https://wikisofia.cz/wiki/Crowdsourcing})}.
+Vytvoření takové datové sady je složitý úkol vyžadující velké množství lidských zdrojů. Je potřeba nasbírat dostatečné množství dokumentů, pro které někdo musí vymyslet otázky a~vyznačit v~dokumentech příslušné odpovědi. Tvorba datových sad obvykle probíhá pomocí \emph{crowdsourcingu}\footnote{\emph{Crowdsourcing je nové slovo označující proces získání potřebné služby, nápadů, příspěvků, pomoci při řešení problémů od velké skupiny lidí.} (\url{https://wikisofia.cz/wiki/Crowdsourcing} [cit. 22-03-2021])}.
 
 %=========================================================================
 \section{Datové sady pro angličtinu}
-Pro angličtinu existuje celá řada datových sad zaměřených na odpovídání na otázky. Nejznámější z~nich je však SQuAD (\emph{Stanford Question Answering Dataset}) \cite{squad}. Dataset obsahuje asi 100 000 anotovaných dvojic otázka\,--\,odpověď z~více jak 500 různých článků z~anglické Wikipedie. Existuje také rozšířená verze SQuAD datasetu. SQuAD2.0 \cite{squad_v2} obsahuje navíc 50 000 otázek, na které v~kontextu neexistuje odpověď. Model tedy musí umět určit, když dokument odpověď neobsahuje.\par
-Další datasety jsou například NQ (Natural Questions) se zaměřením na otevřenou doménu nebo HOTPOTQA vyžadující spojování informací z více dokumentů pro zodpovězení otázky. Čeština takovou diverzitou datových sad nedisponuje.
+Pro angličtinu existuje celá řada datových sad zaměřených na odpovídání na otázky. Nejznámější z~nich je však SQuAD (\emph{Stanford Question Answering Dataset}) \cite{squad}. Dataset obsahuje asi 100 000 anotovaných dvojic otázka\,--\,odpověď z~více jak 500 různých článků z~anglické Wikipedie. Existuje také rozšířená verze SQuAD datasetu. SQuAD2.0 \cite{squad_v2} obsahuje navíc 50 000 otázek, na které v~ přiloženém kontextu neexistuje odpověď. Model tedy musí umět určit, když dokument odpověď neobsahuje.\par
+Další datasety jsou například NQ (Natural Questions) se zaměřením na otevřenou doménu nebo HOTPOTQA vyžadující pro zodpovězení otázky spojování informací z více dokumentů. Čeština takovou diverzitou datových sad nedisponuje.
 
 %=========================================================================
 \section{Datové sady pro češtinu}
-Čeština nabízí poměrně omezené zdroje\footnote{Co se týká datasetů pro odpovídání na otázky, existuje pouze právě zmíněný SQAD. Angličtina nabízí datasety specializované např. pro otevřenou doménu.} oproti anglickým datovým sadám.\par 
-Nejznámější je datová sada SQADv3 (Simple Question Answering Database) \cite{sqad}. Obsahuje přes 13 000 příkladů otázek s~odpovědí v~přiloženém kontextu pocházejícím z~české Wikipedie. Datová sada otázky směřované na časový údaj, entitu, lokaci, osobu \dots \,včetně 16\,\% ano/ne otázek. Velikost datasetu je přesně popsána v tabulce \ref{tab:sqad_size}.\par
-Existuje také česká verze anglického datasetu SQuAD prezentovaná v~práci \cite{czech_squad}. Datová sada je strojovým překladem původního datasetu SQuAD 1.1 a~SQuAD2.0. Oproti anglické verzi však obsahuje asi 70 000 otázek pro první (1.1) a~110 000 otázek pro druhou (2.0) verzi datové sady SQUAD (tabulka \ref{tab:squad_size}). Ztráta části rozsahu datové sady je způsobena problémy s~vyznačením odpovědi ve strojově přeložené verzi dokumentu.
+Čeština nabízí poměrně omezené zdroje\footnote{Co se týká datasetů pro odpovídání na otázky, existuje pouze zmíněný SQAD. Angličtina nabízí datasety specializované např. pro otevřenou doménu.} oproti anglickým datovým sadám.\par 
+Nejznámější je datová sada SQAD (Simple Question Answering Database) \cite{sqad}. Obsahuje přes 13 000 příkladů otázek s~odpovědí v~přiloženém kontextu pocházejícím z~české Wikipedie. Datová sada obsahuje otázky směřované na časový údaj, entitu, lokaci, osobu \dots \,včetně 16\,\% ano/ne otázek. Velikost datasetu je přesně popsána v tabulce \ref{tab:sqad_size}.\par
+Existuje také česká verze anglického datasetu SQuAD prezentovaná v~práci \cite{czech_squad}. Datová sada je strojovým překladem původního datasetu SQuAD 1.1 a~SQuAD2.0. Oproti anglické verzi však obsahuje asi 70 000 otázek pro první (1.1) a~110 000 otázek pro druhou (2.0) verzi datové sady SQuAD (tabulka \ref{tab:squad_size}). Ztráta části rozsahu datové sady je způsobena problémy s~vyznačením odpovědi ve strojově přeložené verzi dokumentu.
 
 %=========================================================================
 \section{Výběr trénovacích a~testovacích dat}
 \label{dataset_choice}
-Pro systém je potřeba vybrat data pro natrénování modelů pro vyznačení odpovědi v~získaném textu a~pro validaci výsledného systému.\par
+Pro systém je potřeba vybrat data pro natrénování modelů pro extrakci odpovědi a~pro validaci výsledného systému.\par
 Pro trénink anglického modelu byl vybrán anglický SQuAD 1.1 a 2.0 (obsahující i validační část datasetu). Po zvážení bylo rozhodnuto použítí a porovnání obou verzí datasetu. Testovací data obsahují pouze otázky, pro které existuje na otevřené doméně odpověď a bude tedy porovnáno, která verze datasetu byla pro trénink readeru vhodnější.\par
-Pro trénink českého modelu byl vybrán český překlad anglického datasetu SQuAD 1.1 a 2.0 \cite{czech_squad} kvůli jeho velikosti a~porovnatelnosti s~anglickou verzí datové sady.\par
+Pro trénink českého (vícejazyčného) modelu byl vybrán český překlad anglického datasetu SQuAD 1.1 a 2.0 \cite{czech_squad} kvůli jeho velikosti a~porovnatelnosti s~anglickou verzí datasetu.\par
 \medskip
-Jako testovací datová sada byl zvolen český dataset SQADv3, ze kterého bylo odstraněno 16\,\% otázek očekávajících ano/ne odpovědi. Datová sada nejlépe odpovídá reálnému scénáři užití systému, protože obsahuje otázky a~odpovědi z~článků z~české Wikipedie (narozdíl od trénovacích datasetů).\par
+Jako testovací datová sada byl zvolen český dataset SQAD v3.0, ze kterého bylo odstraněno 16\,\% otázek očekávajících ano/ne odpovědi. Datová sada nejlépe odpovídá reálnému scénáři užití systému, protože obsahuje otázky a~odpovědi z~článků z~české Wikipedie (narozdíl od trénovacích datasetů).\par
 V době použití byly zjištěny jiné hodnoty pro velikost datových sad, které jsou uvedeny v tabulce \ref{tab:squad_size_new}.
 
 \begin{table}[H]
     \centering
     \begin{tabular}{|c|l|l|l|}
         \hline
-        \multicolumn{2}{|l|}{Dataset}         & \begin{tabular}[c]{@{}l@{}}Anglické\\  otázky\end{tabular} & \begin{tabular}[c]{@{}l@{}}České \\ otázky\end{tabular} \\ \hline
-        \multirow{2}{*}{SQuAD 1.1} & Trénink  & 87,599                                                     & 64,164                                                  \\ \cline{2-4} 
+        \multicolumn{2}{|l|}{Dataset}         & \begin{tabular}[c]{@{}l@{}}Anglické\\  otázky\end{tabular} & \begin{tabular}[c]{@{}l@{}}České \\ otázky\end{tabular} \\ \hline \hline
+        \multirow{2}{*}{\textbf{SQuAD 1.1}} & Trénink  & 87,599                                                     & 64,164                                                  \\ \cline{2-4} 
                                    & Validace & 10,570                                                     & 8,739                                                   \\ \hline
-        \multirow{2}{*}{SQuAD 2.0} & Trénink  & 130,319                                                    & 107,088                                                 \\ \cline{2-4} 
+        \multirow{2}{*}{\textbf{SQuAD 2.0}} & Trénink  & 130,319                                                    & 107,088                                                 \\ \cline{2-4} 
                                    & Validace & 11,873                                                     & 10,845                                                  \\ \hline
         \end{tabular}
         \caption{Velikost datasetů SQuAD 1.1 a~2.0 pro češtinu a~angličtinu podle \cite{czech_squad}.}
@@ -526,10 +526,10 @@ V době použití byly zjištěny jiné hodnoty pro velikost datových sad, kter
 \centering
 \begin{tabular}{|c|l|l|l|}
 \hline
-\multicolumn{2}{|l|}{Dataset}         & \begin{tabular}[c]{@{}l@{}}Anglické\\  otázky\end{tabular} & \begin{tabular}[c]{@{}l@{}}České \\ otázky\end{tabular} \\ \hline
-\multirow{2}{*}{SQuAD 1.1} & Trénink  & 88,638                                                     & 69,169                                                  \\ \cline{2-4} 
+\multicolumn{2}{|l|}{Dataset}         & \begin{tabular}[c]{@{}l@{}}Anglické\\  otázky\end{tabular} & \begin{tabular}[c]{@{}l@{}}České \\ otázky\end{tabular} \\ \hline \hline
+\multirow{2}{*}{\textbf{SQuAD 1.1}} & Trénink  & 88,638                                                     & 69,169                                                  \\ \cline{2-4} 
                            & Validace & 10,808                                                     & 9,615                                                   \\ \hline
-\multirow{2}{*}{SQuAD 2.0} & Trénink  & 131,958                                                    & 115,415                                                 \\ \cline{2-4} 
+\multirow{2}{*}{\textbf{SQuAD 2.0}} & Trénink  & 131,958                                                    & 115,415                                                 \\ \cline{2-4} 
                            & Validace & 12,171                                                     & 12,066                                                  \\ \hline
 \end{tabular}
 \caption{Velikost datasetů SQuAD 1.1 a~2.0 zjištěná při jejich použití.}
@@ -538,8 +538,8 @@ V době použití byly zjištěny jiné hodnoty pro velikost datových sad, kter
 
 \section*{Úskalí datasetu SQAD}
 Dataset SQAD má pro použití na otevřené doméně podobné nevýhody jako SQuAD. Otázky jsou přímo vázané ke konkrétnímu článku, z čehož vyvstávají problémy pro jejich jiné využití.\par 
-Některé otázky nemusí dávat bez přiloženého kontextu smysl a je tedy nemožné pro ně najít odpověď. Některé mohou být také nejednoznačné a správných odpovědí pro ně může být bez kontextu několik, v datasetu se však nachází pouze ta jediná, která je extrakcí z přiloženého kontextu. \par 
-Dalším z možných problémů je také vázanost datasetu na časové období, kdy byl zveřejněn (2019). Příkladem může být otázka \uv{Kolik evropských států tvoří Evropskou unii?} pro kterou už odpověď \uv{28} není realitou.\par
+Některé otázky nemusí dávat bez přiloženého kontextu smysl a je tedy nemožné (nebo velmi obtížné) pro ně najít odpověď. Některé mohou být také nejednoznačné a správných odpovědí pro ně může být bez kontextu několik, v datasetu se však nachází jako referenční pouze jediná, která je extrakcí z přiloženého kontextu. \par 
+Dalším z možných problémů je také vázanost datasetu na časové období, kdy byl vytvořen/zveřejněn (2019). Příkladem může být otázka \uv{Kolik evropských států tvoří Evropskou unii?}, pro kterou už odpověď \uv{28} není realitou (viz Brexit).\par
 Procházet ručně a vyselektovat pro odstranění takové otázky z datové sady je pro jednoho člověka náročné a proto to bude případně zohledněno až při lidském vyhodnocení zmíněném v části \ref{metriky}.
 
 \begin{table}[H]
@@ -549,7 +549,7 @@ Procházet ručně a vyselektovat pro odstranění takové otázky z datové sad
 Dataset            & počet záznamů & bez ano/ne      \\ \hline
 \textbf{SQAD v3.0} & 13,476        & \textbf{11,273} \\ \hline
 \end{tabular}
-\caption{Velikost datasetu SQAD v3.0 při jeho použití pro testování systému.}
+\caption{Velikost datasetu SQAD v3.0 při jeho použití pro vyhodnocení systému.}
 \label{tab:sqad_size}
 \end{table}
 
@@ -558,7 +558,7 @@ Dataset            & počet záznamů & bez ano/ne      \\ \hline
 
 \chapter{Návrh systému a~jeho komponent}
 \label{chapter:design_}
-V~této kapitole je rozebrán návrh systému, než přijde popis implementace jeho jednotlivých částí (\ref{chapter:implementace}). Nejprve je popsán generický návrh modelu pro odpovídání na otázky, zvolený přístup k~řešení problému a~motivace za finálním návrhem. Následuje rozdělení problému na části a~jejich návrh včetně popisu blokových schémat hlavních komponent. Na závěr kapitoly je diskutován návrh vyhodnocení výsledného systému v kontextu otevřené domény.
+V~této kapitole je rozebrán návrh systému, než přijde popis implementace jeho jednotlivých částí (v kapitole \ref{chapter:implementace}). Nejprve je popsán generický koncept systému pro odpovídání na otázky, zvolený přístup k~řešení a~motivace za finálním návrhem. Následuje rozdělení problému na části a~jejich návrh včetně popisu blokových schémat hlavních komponent. Diskutován je návrh vyhodnocení výsledného systému v kontextu otevřené domény. Na závěr kapitoly je zmíněno několik existujících řešení.
 
 \begin{figure}[hbt]
 	\centering
@@ -571,27 +571,27 @@ V~této kapitole je rozebrán návrh systému, než přijde popis implementace j
 
 %=========================================================================
 \section{Zvolený přístup k~problému}
-Odpovídání na otázky na otevřené doméně (open-domain QA) má obvykle dvě hlavní (na sobě téměř nezávislé) části, jak je naznačeno na obrázku \ref{qa_scheme}. První částí je \emph{Retriever}, který má za úkol získat z~internetu (pro nás z~Wikipedie) relevantní dokumenty, které by mohly obsahovat odpověď a~druhou je \emph{Reader}, který provede extrakci odpovědi ze získaného kontextu \cite{drQA}.\par
+Odpovídání na otázky na otevřené doméně (open-domain QA) má obvykle dvě hlavní (na sobě téměř nezávislé) části, jak je naznačeno na obrázku \ref{qa_scheme}. První částí je \emph{Retriever}, který má za úkol získat z~internetu (pro nás z~Wikipedie) relevantní dokumenty, které by mohly obsahovat odpověď na danou otázku. Druhým blokem je \emph{Reader}, který provádí extrakci odpovědi ze získaného kontextu \cite{drQA}.\par
 \noindent\emph{Retriever} části systému je věnována pozornost v~sekci \ref{retriever_imp}.\par
-Pro návrh systému bylo však největší dilema v~realizaci \emph{Reader} části systému pro kvalitní extrakci odpovědi v~češtině. Chtěl jsem využít některého z~populárních předtrénovaných modelů (\ref{bert_albert}) založených na Transformers \cite{Transformers} architektuře (\ref{transformers}). Proto jsem se rozhodl vyzkoušet přístup, kdy je nativně anglickému ALBERT modelu, který dosahuje špičkových výsledků\footnote{\url{https://rajpurkar.github.io/SQuAD-explorer/}}, strojově přeložen vstupní dokument i otázka z~češtiny do angličtiny.\par
-Pro porovnání jsem zvolil vícejazyčný model BERTa (m-BERT\footnote{\url{https://github.com/google-research/bert/blob/master/multilingual.md} -- Zjednodušeně řečeno je to model BERT předtrénován na korpusech mnoha jazyků.}), který podporuje 104 světových jazyků s~nejrozsáhlejší Wikipedií, trénovaný na českém překladu datové sady SQuAD 1.1 \cite{czech_squad} \cite{squad}.\par
+Pro návrh systému byla největším dilematem realizace \emph{Reader} části systému pro kvalitní extrakci odpovědi v~češtině. Chtěl jsem využít některého z~populárních předtrénovaných modelů (\ref{bert_albert}) založených na Transformers \cite{Transformers} architektuře (\ref{transformers}). Proto jsem se rozhodl vyzkoušet přístup, kdy je nativně anglickému ALBERT modelu, který dosahuje špičkových výsledků\footnote{\url{https://rajpurkar.github.io/SQuAD-explorer/}}, strojově přeložen vstupní dokument i otázka z~češtiny do angličtiny.\par
+Pro porovnání jsem zvolil pro extrakci odpovědi vícejazyčný model BERT (m-BERT\footnote{\url{https://github.com/google-research/bert/blob/master/multilingual.md} -- Zjednodušeně řečeno je to model BERT předtrénován na korpusech mnoha jazyků.}), který podporuje 104 světových jazyků s~nejrozsáhlejší Wikipedií. \emph{Fine-tuning} je proveden na českém překladu datové sady SQuAD 1.1 a 2.0 \cite{czech_squad} \cite{squad}. Výsledný systém využívá varianty, která se osvědčila v experimentech jako nejúspěšnější (viz kapitola \ref{system_evaluation}).\par
 
 %=========================================================================
 \section{Návrh jednotlivých částí systému}
 \label{design}
-V~této sekci bude popsán návrh systému, tedy hlavně \emph{Retrieveru}, \emph{Readeru} a~části pro zpracování datové sady SQAD v3.0 \cite{sqad} pro závěrečné vyhodnocení.
+V~této sekci je popsán návrh systému, tedy hlavně \emph{Retrieveru} a \emph{Readeru}. Diskutován je také návrh vyhodnocení systému na datasetu SQAD v3.0.
 
 \subsection{Návrh Retrieveru}
 Získání \emph{n} relevantních dokumentů kandidujících pro zodpovězení otázky vyžaduje několik na sebe navazujících kroků (obrázek \ref{retriever-simple-scheme}). V~návrhu a~implementaci jsou použity metody předzpracování textu a~řazení dokumentů popsané v~kapitolách \ref{text_processing} a~\ref{document_indexing}.\par
-Retriever dostává na vstupu otázku, která je také hlavním vstupem do celého systému. Dříve, než se na základě otázky začnou přímo prohledávat odstavce české Wikipedii, bude dobré z~otázky získat co nejvíce informací, které by mohly vést ke \emph{spraveným článkům}. Až po jejich získání jsou jednotlivé články rozděleny na odstavce a~ty prohledávány.\par
+Retriever dostává na vstupu otázku, která je také hlavním vstupem do celého systému. Dříve, než se na základě otázky začnou přímo prohledávat odstavce české Wikipedii, bude dobré z~otázky získat co nejvíce informací, které by mohly vést k těm \emph{správným článkům}. Až po jejich získání jsou jednotlivé články rozděleny na odstavce, které jsou řazeny.\par
 \noindent K~získání článku jsou použity tři metody:
 \begin{itemize}
     \item \textbf{základní Wiki Search} nezpracované otázky, který někdy přináší uspokojivé výsledky, ale většinou je nedostačující,
     \item \textbf{získání relevantního titulku článku} (pomocí BM25 \ref{bm25}) z~\emph{dumpu} titulků\footnote{\url{https://cs.wikipedia.org/wiki/Wikipedie:St\%C3\%A1hnut\%C3\%AD_datab\%C3\%A1ze}} a~abstraktů české Wikipedie po lemmatizaci otázky a~odstranění stop slov,
-    \item \textbf{rozpoznání (pojmenované) entity}, která by se mohla vyskytovat v~titulku článku a~usnadnit tím \emph{Wiki Search}.
+    \item \textbf{rozpoznání (pojmenované) entity} v otázce, která by se mohla vyskytovat v~titulku článku a~usnadnit tím \emph{Wiki Search}.
 \end{itemize}
 Tímto tedy získáme seznam článků z~Wikipedie, který je následně upraven tak, aby se v~něm každý získaný článek vyskytoval pouze jednou.\par
-Jednotlivé články je následně třeba rozdělit na odstavce, normalizovat jejich délku, lemmatizovat je, odstranit stop slova a~indexovat je. Odstavce jsou poté seřazeny algoritmem BM25 a~z~nich vybrány první tři\footnote{V tomto případě pro účely experimentů -- nejúspěšnější varianta je vyhodnocena také s hodnotou 5, 8 a 10.} nejvhodnější. Pro vyhledávání mezi odstavci je použita lemmatizovaná otázka s~odstraněnými stop slovy. Tři nejvhodnější odstavce jsou získány v~jejich původní, nezpracované podobě a~případně (při použití nativně anglického \emph{readeru}) jsou včetně otázky přeloženy do angličtiny.
+Jednotlivé články je následně třeba rozdělit na odstavce, normalizovat jejich délku, lemmatizovat je, odstranit stop slova a~vytvořit jejich index. Odstavce jsou poté seřazeny hodnotící funkcí BM25 a~z~nich vybrány první \textit{tři}\footnote{V tomto případě pro účely experimentů -- nejúspěšnější varianta je vyhodnocena také s použitím hodnot 5, 8 a 10.} s nejlepším skóre. Pro vyhledávání mezi odstavci je použita lemmatizovaná otázka s~odstraněnými stop slovy. Tři nejvhodnější odstavce jsou získány v~jejich původní, nezpracované podobě a~případně (při použití nativně anglického \emph{readeru} ALBERT) jsou včetně otázky přeloženy do angličtiny.
 
 \begin{figure}[hbt]
 	\centering
@@ -617,12 +617,12 @@ Následuje podrobný návrh struktury \emph{retrieveru} znázorňující podrobn
 Část systému pro extrakci odpovědi ze získaného dokumentu byla navržena ve dvou variantách.
 \begin{itemize}
     \item \textbf{Anglický ALBERT} s~lineární klasifikační vrstvou pro určení začátku a~konce odpovědi, pro který jsou vstupní dokumenty a~otázka strojově přeloženy do angličtiny. Výsledná odpověď je přeložena opět zpět do češtiny.
-    \item \textbf{Vícejazyčný BERT (m-BERT)} opět s~lineární klasifikační vrstvou pro určení začátku a~konce odpovědi, který dokáže odpovídat přímo na českých dokumentech.
+    \item \textbf{Vícejazyčný BERT (m-BERT)} opět s~lineární klasifikační vrstvou pro určení začátku a~konce odpovědi, který dokáže odpovídat přímo v češtině.
 \end{itemize}
-Pro obě varianty je však postup (až na překlad pro anglický ALBERT, který je však součástí \emph{retrieveru}) shodný.\par
-Model dostane k~přečtení tři nejvíce relevantní odstavce získané \emph{retrieverem}. Pro každý odstavec je provedena extrakce odpovědi, kdy je vybrána vždy právě jedna validní odpověď s~největším \uv{skóre}(nenormalizovaná logaritmická pravděpodobnost) pro daný dokument. Ze získaných odpovědí je vybrána ta, kterou si je model nejvíce jistý (ta s~největším skóre) a~případně (při použití ALBERT-en modelu) přeložena zpátky do češtiny.\par
-\noindent Ostatní odpovědi jsou také uloženy pro získání statistických dat při vyhodnocení. \emph{Reader} tak vybere kromě odpovědi také finální dokument, ze kterého je odpověď získána, který může být použit pro získání některých dalších informací/kontextu uživatelem.\par
-Schéma \emph{readeru} pro extrakci finální odpovědi je naznačeno na obrázku \ref{reader_schema}. Modely použité k~implementaci a~naznačeny v~návrhu byly blíže popsány v~kapitole \ref{language_comprehension}, konkrétně v~sekci \ref{bert_albert}.
+Pro obě varianty je postup získání odpovědi (až na překlad pro anglický ALBERT, který je však součástí \emph{retrieveru}) shodný.\par
+Model dostane k~přečtení tři nejvíce relevantní odstavce získané \emph{retrieverem}. Pro každý odstavec je provedena extrakce odpovědi, kdy je vybrána vždy právě jedna validní odpověď s~největším \uv{skóre} (nenormalizovaná logaritmická pravděpodobnost) pro daný dokument. Ze získaných odpovědí je vybrána ta, kterou si je model nejvíce jistý (ta s~největším skóre) a~případně (při použití ALBERT modelu) přeložena zpět do češtiny.\par
+\noindent Ostatní odpovědi jsou také uloženy -- pro získání statistických dat při vyhodnocení. \emph{Reader} tak vybere kromě odpovědi také dokument/odstavec, ze kterého je odpověď získána. Může tak být použit pro získání některých dalších informací/kontextu uživatelem.\par
+Schéma \emph{readeru} pro extrakci finální odpovědi je naznačeno na obrázku \ref{reader_schema}. Modely, které byly použity k~implementaci a~jsou naznačeny v~návrhu byly blíže popsány v~kapitole~\ref{language_comprehension}, konkrétně v~sekci \ref{bert_albert}.
 
 \begin{figure}[hbt]
 	\centering
@@ -636,17 +636,17 @@ Schéma \emph{readeru} pro extrakci finální odpovědi je naznačeno na obrázk
 \subsection{Návrh vyhodnocení}
 Pro vyhodnocení byl vybrán český dataset SQAD v3.0, jak už bylo několikrát zmíněno. Pro vyhodnocení musely být navrženy metriky respektující charakteristiku datové sady i to, že se pohybujeme v~rámci otevřené domény. Kromě tradičních metrik EM (\emph{exact match}) a~F1 (popsány blíže v~kapitole \ref{metriky}) jsem se při návrhu vyhodnocení systému snažil respektovat několik věcí:
 \begin{itemize}
-    \item Kvůli otevřené doméně může být odpověď nalezena z~jiného kontextu v~jiném tvaru.
+    \item Kvůli otevřené doméně může být odpověď nalezena z~jiného kontextu, v~jiném tvaru.
     \item Potřebujeme metriku pro ohodnocení samotného \emph{retrieveru} v~úspěšnosti nalezeného dokumentu.
-    \item Metriku pro zohlednění i správných odpovědí, které byly nalezeny, i když nebyly například vybrány \emph{readerem} jako nejvhodnější.
+    \item Metriku pro zohlednění správných odpovědí, které byly nalezeny, i když nebyly vybrány \emph{readerem} jako nejvhodnější.
 \end{itemize}
-Pro podrobnější popis zvolených metrik viz \ref{metriky}. Metriky budou použity pro porovnání systému využívající dva navržené přístupy v \emph{reader} části a~také aspektů ovlivňující \emph{retriever}.
+Pro podrobnější popis zvolených metrik viz \ref{metriky}. Metriky jsou použity pro porovnání variant systému i vyhodnocení jeho výsledné verze.
 
 \section{Existující systémy pro otevřenou doménu}
 \label{existing_work}
 Příkladem existujícího systému pro QA na otevřené doméně může být třeba dříve zmíněný článek \cite{drQA} (DrQA) prezentující \emph{retriever\,--\,reader framework}. Je poměrně jednoduchý a podobný navrženému systému v této práci. DrQA byl navržen pro odpovídání na otázky nad anglickou Wikipedií a jeho úspěšnost EM na datasetu SQuAD (1.1) je podle \cite{drQA} necelých 30\,\%.\par
-Novější implementací může být například systém R2-D2 \cite{fajcik2021pruning}, který patřil k nejvíce úspěšným systémům soutěže NeurIPS 2020 \cite{min2021neurips}. R2-D2, neboli \textit{Rank twice -- Read twice}, používá architekturu sestávající ze čtyř částí: \emph{retriever, reranker, }extraktivní a generativní \emph{reader}. Retriever používá DPR \cite{dpr}(popsáno v části \ref{dpr}) a reranker využívá enkodér transformer architektury. Jeho úspěšnost na datasetu NQ (Natural Questions) dosahuje 55\%\,EM. V zásadě jsou si state of the art systémy v architektuře retriever\,--\,reader velmi podobné, s drobnými odchylkami (jako je reranker, extraktivní/generativní reader). Implementace \mbox{R2-D2} se navíc snaží omezit paměťovou náročnost modelu. Pro modely bez omezení dosahuje úspěšnost těch nejlepších (v extrakci odpovědi) více jak 60\%\,F1 skóre\footnote{\url{https://ai.google.com/research/NaturalQuestions/leaderboard}}.\par\medskip
-Pro češtinu existuje systém AQA (Automatic Question Answering) poprvé prezentován v práci \cite{aqa} a od té doby zdokonalován. Práce \cite{aqa} poskytující jakýsi benchmark pro evaluaci systému na otevřené doméně pro dataset SQAD (v1.0) je z roku 2016. Pozdější vyhodnocení pro zdokonalený systém a dataset SQAD v1.1 z roku 2018 je v článku \cite{aqa2018}. Výsledky systému vyhodnoceného v roce 2018 jsou shrnuty v tabulce \ref{tab:aqa_benchmark}. Novější vyhodnocení systému fungujícím na otevřené doméně architektury retriever\,--\,reader pro dataset SQAD 3.0 není k dispozici.
+Novější implementací může být například systém R2-D2 \cite{fajcik2021pruning}, který patřil k nejvíce úspěšným systémům soutěže NeurIPS 2020 \cite{min2021neurips}. R2-D2, neboli \textit{Rank twice -- Read twice}, používá architekturu sestávající ze čtyř částí: \emph{retriever, reranker, }extraktivní a generativní \emph{reader}. Retriever používá DPR \cite{dpr}(popsáno v části \ref{dpr}) a reranker využívá enkodér transformer architektury. Jeho úspěšnost na datasetu NQ (Natural Questions) dosahuje 55\%\,EM. V zásadě jsou si state of the art systémy v architektuře retriever\,--\,reader velmi podobné, s drobnými odchylkami (jako je reranker, extraktivní/generativní reader). Implementace \mbox{R2-D2} se navíc snaží omezit paměťovou náročnost modelu. Pro modely bez omezení dosahuje úspěšnost těch nejlepších více jak 60\%\,F1 skóre\footnote{\url{https://ai.google.com/research/NaturalQuestions/leaderboard}}.\par\medskip
+Pro češtinu existuje systém AQA (Automatic Question Answering) poprvé prezentován v práci \cite{aqa} a od té doby zdokonalován. Práce \cite{aqa}, poskytující jakýsi benchmark pro evaluaci systému na otevřené doméně pro dataset SQAD (v1.0), je z roku 2016. Pozdější vyhodnocení pro zdokonalený systém a dataset SQAD v1.1 z roku 2018 je v článku \cite{aqa2018}. Výsledky systému vyhodnoceného v roce 2018 jsou shrnuty v tabulce \ref{tab:aqa_benchmark}. Novější vyhodnocení systému fungujícího na otevřené doméně architektury retriever\,--\,reader pro dataset SQAD 3.0 není k dispozici.
 \begin{table}[H]
 \centering
     \begin{tabular}{|l|l|c|}
@@ -661,13 +661,13 @@ Pro češtinu existuje systém AQA (Automatic Question Answering) poprvé prezen
 
 \chapter{Implementace a~použité technologie}
 \label{chapter:implementace}
-Obsahem této kapitoly je popis použitých nástrojů a~implementace jednotlivých částí systému. Je popsáno jak a~pomocí jakých knihoven byl návrh z kapitoly \ref{chapter:design_} realizován a~jaké problémy bylo potřeba vyřešit. Rozebrán je taky postup zpracování dat potřebných pro funkci systému i jeho vyhodnocení.
+Obsahem této kapitoly je výčet použitých nástrojů a~popis implementace jednotlivých částí systému. Je popsáno jak a~pomocí jakých knihoven byl návrh z kapitoly \ref{chapter:design_} realizován a~jaké problémy bylo potřeba vyřešit. Rozebráno je také zpracování dat potřebných pro funkci systému i jeho vyhodnocení.
 
 %=========================================================================
 \section{Použité nástroje a~technologie pro implementaci}
 \label{pouzite_nastroje}
-V této sekci budou popsány použité technologie a~knihovny použité při implementaci výsledného systému.\par
-Pro implementaci byl vybrán jazyk \textbf{Python} (3.7.10), který nabízí největší množství knihoven a~nástrojů vhodných pro realizaci systému. Zároveň je vhodný ke zpracování dat a~je sympatický svou jednoduchou syntaxí. Nabízí také prostředí \emph{Jupyter notebook}, který je velmi pohodlný pro vývoj.\par
+V této sekci jsou popsány technologie a~knihovny použité při implementaci výsledného systému.\par
+Pro implementaci byl vybrán jazyk \textbf{Python} (3.7.10), který nabízí největší množství knihoven a~nástrojů vhodných pro realizaci systému. Zároveň je vhodný ke zpracování dat a~je sympatický svou jednoduchou syntaxí. Nabízí také prostředí \emph{Jupyter notebook}, které je velmi pohodlné pro práci s daty a vývoj.\par
 Některé knihovny implementují poznatky popsané v kapitolách \ref{text_processing}, \ref{language_comprehension} a~\ref{document_indexing}. Knihovny běžného charakteru, jako je například \texttt{json}, ve výčtu nejsou uvedeny.
 
 \begin{itemize}
@@ -676,30 +676,29 @@ Některé knihovny implementují poznatky popsané v kapitolách \ref{text_proce
     Nabízí implementace mnohých druhů neuronových sítí a~tensorových operací s GPU akcelerací (CUDA).
     
     \item \textbf{HuggingFace -- Transformers}\footnote{\url{https://huggingface.co/transformers/}}
-    je populární (open-source) implementací nejznámějších Transformers architektur jako BERT nebo ALBERT (dále RoBERTa, XLM \dots) vyvinuta společností HuggingFace.\par
-    Nabízí nástroje pro jednoduchou práci s modely, předzpracování jejich vstupu, trénink atd. Pro implementace modelů obecného využití jako BERT nabízí také jejich verze pro konkrétní úlohy, jako je odpovídání na otázky (extrakce odpovědi). Pro každou architekturu je k dispozici typicky několik předtrénovaných verzí (BERT base, BERT large \dots).\par
-    Je implementována jak pro PyTorch, tak i pro velmi podobný framework TensorFlow\footnote{\url{https://tensorflow.org/}}.
+    je populární (open-source) implementací nejznámějších Transformers architektur, jako je BERT nebo ALBERT (dále RoBERTa, XLM \dots), vyvinuta společností HuggingFace.\par
+    Nabízí nástroje pro jednoduchou práci s modely, předzpracování jejich vstupu, trénink atd. Pro implementace modelů obecného využití jako BERT nabízí také jejich verze pro konkrétní úlohy, jako je odpovídání na otázky (extrakce odpovědi). Pro každou architekturu je k dispozici typicky několik předtrénovaných verzí (BERT base, BERT large \dots), které je možné dotrénovat pro specifický úkol.\par
     
     \item \textbf{HuggingFace -- Datasets}\footnote{\url{https://huggingface.co/docs/datasets/}}
     umožňuje snadnou práci s veřejně dostupnými datasety. Usnadňuje jejich načtení a~efektivní předzpracování.\par 
-    Díky dostupnosti zdrojových kódů Umožňuje také úpravu skriptu pro načtení datové sady pro načtení jiné, která doposud v oficiálním seznamu knihovny není dostupná.
+    Díky dostupnosti zdrojových kódů umožňuje také úpravu skriptu pro načtení jiné datové sady, která doposud v oficiálním seznamu knihovny není dostupná.
     
     \item \textbf{DeepPavlov}\footnote{\url{https://deeppavlov.ai/}}
-    je open-source framework, postavený na Pytorch, TensorFlow a~Keras, pro usnadnění vývoje a~výzkumu v oblasti zpracování přirozeného jazyka, konkrétně dialogových systémů.
+    je open-source framework, postavený na Pytorch, TensorFlow\footnote{\url{https://tensorflow.org/}} a~Keras, pro usnadnění vývoje a~výzkumu v oblasti zpracování přirozeného jazyka, konkrétně dialogových systémů.
     
     \item \textbf{Rank-bm25}\footnote{\url{https://github.com/dorianbrown/rank\_bm25}}
     je knihovnou implementující hodnotící algoritmy z rodiny BM25 \cite{bm25_improvements} (Okapi, BM25+, BM25L).\par
     Nabízí velmi jednoduché API pro indexaci a~řazení dokumentů.
     
     \item \textbf{NumPy}\footnote{\url{https://numpy.org/}}
-    nabízí jako knihovna velmi efektivní operace pro práci s vektory a~maticemi a~vícerozměrnými poli. Je nabízena pod licencí BSD (open-source).
+    nabízí jako knihovna velmi efektivní operace pro práci s vektory, maticemi a~vícerozměrnými poli. Je nabízena pod licencí BSD (open-source).
     
     \item \textbf{NLTK}\footnote{\url{https://www.nltk.org/}}
-    (Natural Language Toolkit) je open-source knihovna nabízející nástroje pro zpracování textu a~přirozeného jazyka.\par Prostřednictvím jednoduchého API umožňuje tokenizaci (včetně dělení na věty), stematizaci, tagování částí textu a~jiné. 
+    (Natural Language Toolkit) je open-source knihovna nabízející nástroje pro zpracování textu a~přirozeného jazyka.\par Prostřednictvím jednoduchého API umožňuje tokenizaci (včetně dělení na věty), stematizaci, nebo tagování částí textu. 
     
-    \item \textbf{MorphoDiTa\footnote{\url{https://ufal.mff.cuni.cz/morphodita}} (corpy)\footnote{\url{https://corpy.readthedocs.io/en/stable/api/morphodita.html}}}
+    \item \textbf{MorphoDiTa\footnote{\label{note9}\url{https://ufal.mff.cuni.cz/morphodita}} (corpy)\footnote{\url{https://corpy.readthedocs.io/en/stable/api/morphodita.html}}}
     je open-source nástrojem pro morfologickou analýzu umožnující například tokenizaci nebo lemmatizaci textu.\par
-    Pro použití je potřeba také natrénovaný jazykový model, který je nabízený na webových stránkách v poznámce pod čarou pro češtinu a~angličtinu. Jednoduché API pro práci s MorphoDiTou nabízí knihovna \textbf{corpy}.
+    Pro použití je potřeba také natrénovaný jazykový model, který je k dispozici na webových stránkách\cref{note9} pro češtinu a~angličtinu. Jednoduché API pro práci s MorphoDiTou nabízí knihovna \textbf{corpy}.
     
     \item \textbf{Majka}\footnote{\url{https://nlp.fi.muni.cz/czech-morphology-analyser/}}
     je podobně jako MorphoDiTa morfologickým analyzátorem.\par Majka provádí analýzu za použití morfologických slovníků. Slovníky jsou dostupné pro celou řadu jazyků, jako je čeština, slovenština, polština, angličtina, \dots
@@ -717,7 +716,7 @@ Některé knihovny implementují poznatky popsané v kapitolách \ref{text_proce
     
     \item \textbf{Google Colab}\footnote{\url{https://colab.research.google.com/notebooks/intro.ipynb}}
     je služba nabízející přístup k virtuálnímu stroji, který zprostředkovává přístup k Jupyter Notebooku v cloudu.\par 
-    Virtuální stroje nabízí (bez rozšířené placené verze) asi 12\,GB RAM, úložiště s možností připojení a~přístup k Google Drive a~výkonné GPU s pamětí 16\,GB vhodné pro akceleraci výpočtů. Dokonce jsou dostupné i běhová prostředí s TPU pro paralelizaci výpočtů.\par
+    Virtuální stroje nabízí (bez rozšířené placené verze) asi 12\,GB RAM, úložiště s možností připojení a~přístupu ke Google Drive a~výkonné GPU s pamětí 16\,GB, vhodné pro akceleraci výpočtů. Dokonce jsou dostupná i běhová prostředí s TPU pro paralelizaci výpočtů.\par
     Běhová prostředí vždy disponují množstvím předinstalovaných, běžně používaných knihoven (PyTorch, TensorFlow a~další).
     
 \end{itemize}
@@ -725,26 +724,26 @@ Některé knihovny implementují poznatky popsané v kapitolách \ref{text_proce
 %=========================================================================
 \section{Zpracování dat v práci}
 \label{data_processing}
-Následující sekce popisuje, jak byla zpracována data, se kterými se v práci pracuje. \par
-\noindent Nejprve je popsáno zpracování datasetu SQuAD a~jeho českého překladu, na kterých je trénován \emph{reader}. Poté je popsáno zpracování dumpů obsahující titulky a~abstrakty článků české Wikipedie. Vysvětleno je také zpracování českého datasetu SQAD v3.0 a~také formát uložení odpovědí při vyhodnocení testování systému, aby na nich mohla být provedena evaluace. 
+Následující sekce popisuje data, se kterými se v průběhu implementace nakládá. \par
+Nejprve je popsáno zpracování datasetů SQuAD, na kterých je trénován \emph{reader}. Poté je objasněno zpracování \textit{dumpů}, které obsahují titulky a~abstrakty článků české Wikipedie. Vysvětleno je také parsování českého datasetu SQAD v3.0 a~formát uložení odpovědí systému pro jeho pozdější evaluaci. 
 
 \subsection{Předzpracování datové sady SQuAD}
-Pro načtení datasetu SQuAD byla použita knihovna Huggingface \texttt{ datasets }, která načte trénovací i dev dataset dostupný ve formátu JSON. Pro načtení je použit skript \emph{squad.py}, který lze díky open-source povaze knihovny upravit a~použít i pro načtení české verze datasetu SQuAD \cite{cz_suqad_download} (skripty \emph{czech\_squad.py} a~\emph{czech\_squad2.py}). Stejně jednoduchý postup lze použít i pro načtení verze 2.0 obou datasetů.\par
-Po načtení obsahuje dataset položku \emph{train} a~\emph{validation} pro trénink a~vyhodnocení natrénovaného modelu pro extrakci odpovědi. Velikosti jednotlivých částí jsou zmíněny v tabulce \ref{tab:squad_size_new}. Každá otázka ve SQuAD datasetu obsauje id, titulek, kontext(dokument), otázku a~odpověď. Odpovědí může být i více, pro odpověď je také uveden index znaku, na kterém začíná.\par
-Z knihovny \texttt{transformers} je poté potřeba načíst tokenizér, který převede otázku a~kontext každé položky v datasetu do podoby stravitelné modelem (tokeny reprezentovány token ID pro předtrénovaný slovník modelu a~speciální tokeny jako [CLS] a~[SEP]). Pro více\-jazyčný BERT lze použít \texttt{BertTokenizerFast}, pro ALBERT zas \texttt{AlbertTokenizerFast}.\par
+Pro stažení a zpracování datasetu SQuAD byla použita knihovna Huggingface \texttt{ datasets}, která načte trénovací dataset dostupný ve formátu JSON. Pro načtení je použit skript \emph{squad.py}, který lze díky open-source povaze knihovny upravit a~použít i pro načtení českého překladu datasetu SQuAD \cite{cz_suqad_download} (viz \emph{czech\_squad.py} a~\emph{czech\_squad2.py}). Stejně jednoduchý postup lze použít i pro načtení verze 2.0 datasetu.\par
+Po načtení obsahuje dataset položku \emph{train} a~\emph{validation} -- pro trénink a~vyhodnocení modelu pro extrakci odpovědi. Velikosti jednotlivých částí jsou zmíněny v tabulce \ref{tab:squad_size_new}. Každá otázka ve SQuAD datasetu obsauje id, titulek, kontext (dokument), otázku a~odpověď. Možných odpovědí může být i více. Pro odpověď je také uveden index znaku, na kterém v pasáži začíná.\par
+Z knihovny \texttt{transformers} je potřeba načíst tokenizér, který převede otázku a~kontext každé položky v datasetu do podoby stravitelné modelem (tokeny reprezentovány pomocí token ID předtrénovaného slovníku modelu a~speciální tokeny jako [CLS] a~[SEP]). Pro více\-jazyčný BERT lze použít \texttt{BertTokenizerFast}, pro ALBERT zas \texttt{AlbertTokenizerFast}.\par
 \pagebreak
 Modely BERT a~ALBERT založené na Transformer architektuře mají pevně danou maximální délku vstupní sekvence tokenů. Proto je potřeba tokenizér nastavit tak, aby byly příliš dlouhé vstupy rozděleny na sekvenci kratších, ideálně s nějakým přesahem za sebou následujích oddělených částí (\texttt{return\_overflowing\_tokens=True}).\par
-Při práci s odpovědí je v datasetu vyznačen pouze index počátečního znaku. Nastavením tokenizéru \texttt{return\_offsets\_mapping=True} získáme pro každý token také indexy vstupního řetězce znaků, na kterých se nachází.\par
-S použitím popsaných metod jsou k původnímu datasetu přidány informace o indexu \emph{počátečního a~koncového tokenu} každé odpovědi pro daný tokenizér daného modelu.\par 
-Funkce, která zpracování implementuje, byla vypůjčena z HuggingFace notebooku\footnote{\url{https://colab.research.google.com/github/huggingface/notebooks/blob/master/}} a~pomocí metody datasetu \texttt{map()} je aplikována na všechny vzorky datasetu.
+Při práci s odpovědí je v datasetu vyznačen pouze index počátečního znaku. Nastavením tokenizéru \texttt{return\_offsets\_mapping=True} získáme pro každý token také indexy vstupního řetězce, na kterých se daný token nachází.\par
+S použitím popsaných metod jsou k původnímu datasetu přidány informace o indexu \emph{počátečního a koncového tokenu} každé odpovědi (může se lišit pro různé tokenizéry).\par 
+Funkce, která zpracování implementuje, byla vypůjčena z HuggingFace notebooku\footnote{\url{https://colab.research.google.com/github/huggingface/notebooks/blob/master/}} a~pomocí metody \texttt{map()} třídy \texttt{Dataset} je aplikována na všechny vzorky datasetu.
 
 \subsection{Práce s dumpem Wikipedie}
-V práci byly použity dva různé soubory pro získání relevantních článků Wikipedie. Prvním je dump názvů článků a~druhým je dump abstraktů.\par
+V práci byly použity dva různé soubory pro získání relevantních článků Wikipedie. Prvním je dump s názvy článků a~druhým je dump abstraktů.\par
 Soubor s názvy článků je pouze jednoduchý text snadný pro zpracování. Na každý řádek souboru připadá jeden název článku. Před vytvořením indexu je tedy třeba pouze nahradit podtržítka v názvech mezerou a~uložit názvy jednotlivých článků do seznamu.\par
-Pro abstrakty článků je to o něco složitější, protože jsou uloženy v poměrně rozměrném XML souboru. Každý záznam obsahuje titulek, url, text abstraktu a~odkazy. Po načtení je dump zpracován tak, že je ponechána pouze informace o názvu článku a~text jeho abstraktu. Výsledný zpracovaný dump je uložen jako soubor JSON s asi čtvrtinovou velikostí souboru původního. Získání a~zpracování konkrétních článků je popsáno až v sekci \ref{retriever_imp}.
+Pro abstrakty článků je to o něco složitější, protože jsou uloženy v poměrně rozměrném XML souboru. Každý záznam obsahuje titulek, url, text abstraktu a~odkazy. Po načtení je dump zpracován tak, že je ponechána pouze informace o názvu článku a~text jeho abstraktu. Výsledný zpracovaný dump je uložen jako soubor JSON o asi čtvrtinové velikosti původního XML souboru. Získání a~zpracování konkrétních článků je popsáno až v sekci \ref{retriever_imp}.
 
 \subsection{Extrakce informací z datasetu SQAD}
-Dataset SQAD v3.0 \cite{sqad_download} je dostupný ve velmi specifické struktuře. Jednotlivé otázky datové sady jsou rozesety po $13,476$ složkách, z nichž každá obsahuje 7--9 souborů \uv{vert}. Důležité pro nás jsou pouze soubory obsahující otázku a~extrakci odpovědi. Na obrázku \ref{question_format} je příklad formátu, ve kterém jsou otázky a~odpovědi uloženy. 
+Dataset SQAD v3.0 \cite{sqad_download} je dostupný ve velmi specifické struktuře. Jednotlivé otázky datové sady jsou rozesety po $13,476$ složkách (každá obsahuje jeden záznam), z nichž každá čítá \mbox{7--9} souborů formátu VERT. Důležité pro nás jsou pouze soubory obsahující otázku a~extrakci odpovědi. Na obrázku \ref{question_format} je příklad formátu, ve kterém jsou otázky a~odpovědi uloženy. 
 
 \begin{figure}[hbt]
 	\centering
@@ -755,15 +754,15 @@ Dataset SQAD v3.0 \cite{sqad_download} je dostupný ve velmi specifické struktu
 	\label{question_format}
 \end{figure}
 
-Pro každý záznam musí být tedy otevřeny a~zpracovány soubory obsahující otázku a~odpověď. První sloupec souboru obsahuje na každém řádku \emph{token} otázky/odpovědi, druhý sloupec jejich lemmata. Při zpracování je také potřeba brát ohled na speciální znaky.\par
-Pro každý záznam je při zpracování uložena otázka, extrakce odpovědi a~lamma extrakce odpovědi. Záznamy obsahující \uv{ano/ne} odpovědi byly ze zpracování vynechány. Zpracovaný dataset je uložen ve formátu JSON (obr. \ref{fig:sqad_processed}) pro jeho pozdější snadnější a~rychlejší zpracování.
+Pro každý záznam musí být tedy otevřeny a~zpracovány soubory obsahující otázku a~odpověď. První sloupec souboru obsahuje na každém řádku \emph{token} otázky, resp. odpovědi, druhý sloupec jejich lemmata. Při zpracování je také potřeba brát ohled na speciální znaky.\par
+Pro každý záznam je uložena otázka, extrakce odpovědi a~lemma extrakce odpovědi. Záznamy obsahující ano/ne odpovědi byly ze zpracování vynechány. Zpracovaný dataset je uložen ve formátu JSON (obr. \ref{fig:sqad_processed}) pro jeho pozdější snadnější a~rychlejší použití.
 
 \begin{figure}[hbt]
 	\centering
 	\scalebox{0.35}{
 	    \includegraphics{obrazky/sqad_processed_format.pdf}
 	}
-	\caption{Příklad formátu JSON zpracovaného datasetu SQAD v3.0.}
+	\caption{Příklad formátu zpracovaného datasetu SQAD v3.0.}
 	\label{fig:sqad_processed}
 \end{figure}
 %===========================================================================
@@ -772,13 +771,13 @@ Pro každý záznam je při zpracování uložena otázka, extrakce odpovědi a~
 Pro uložení výsledků byl opět zvolen formát JSON, aby mohla být evaluace provedena až po získání odpovědí.\par
 \begin{figure}[hbt]
 	\centering
-	\scalebox{0.4}{
+	\scalebox{0.52}{
 	    \includegraphics{obrazky/answer_saved_format.pdf}
 	}
-	\caption{Příklad formátu JSON uložené odpovědi s doplňkovými informacemi.}
+	\caption{Příklad formátu uložené odpovědi s doplňkovými informacemi.}
 	\label{fig:saved_answer}
 \end{figure}
-Pro každý zodpovězený záznam je uloženo číslo otázky \uv{2}, otázka \emph{question}, odpověď \emph{answer}, originální nepřeložená odpověď \emph{answer\_orig} (při použití m-BERT modelu, jako v příkladu, shodná s \emph{answer}), extrakce odpovědi podle datasetu SQAD \emph{answer\_sqad} a~její lemma \emph{answer\_sqad\_lemma}. Dále jsou pro podrobnější analýzu výsledků k dispozici názvy článků \emph{articles}, ve kterých systém odpověď vyhledával, kontext \emph{document}, ze kterého byla finální odpověď vybrána, první tři nejlepší odpovědi \emph{all\_answers} a~(nenormalizované) pravděpodobnosti \emph{all\_log\_probs} jednotlivých odpovědí z \emph{all\_answers}.\par
+Pro každý zodpovězený záznam je uloženo číslo otázky -- \uv{3}, otázka -- \emph{question}, odpověď~--~\emph{answer}, originální/nepřeložená odpověď -- \emph{answer\_orig} (při použití m-BERT readeru shodná s \emph{answer}), referenční odpověď dle datasetu SQAD -- \emph{answer\_sqad} a~její lemma~--~\mbox{\emph{answer\_sqad\_lemma}}. Dále jsou pro podrobnější analýzu výsledků k dispozici názvy článků~--~\emph{articles}, které systém prohledával, kontext -- \emph{document}, ze kterého byla finální odpověď vybrána, první tři nejlepší odpovědi -- \emph{all\_answers} a~skóre -- \emph{scores} jednotlivých odpovědí z \emph{all\_answers}. K dispozici jsou také plné texty nejrelevantnějších pasáží získaných retrieverem -- \emph{all\_documents}.\par
 Soubor zodpovězených záznamů je pak pojmenován podle toho, jaký rozsah otázek obsahuje a~přidáno je i časové razítko.
 \begin{center}
     answers\_1-3000\_\_04-04-2021\_09:53.json
@@ -787,11 +786,11 @@ Soubor zodpovězených záznamů je pak pojmenován podle toho, jaký rozsah ot�
 %=========================================================================
 \section{Implementace a~trénink readeru}
 \label{reader_imp}
-Pro implementaci \emph{readeru} systému byla použita knihovna\texttt{ transformers } od HuggingFace, která nabízí velmi jednoduché rozhraní pro trénink modelů.\par
+Pro implementaci \emph{readeru} byla použita knihovna\texttt{ transformers }od HuggingFace, která nabízí velmi jednoduché rozhraní pro trénink modelů.\par
 
 \subsection{Trénink}
-Pro trénink ALBERT modelu byla použita třída \texttt{ AlbertForQuestionAnswering } a~předtrénovaný model \texttt{albert-base-v2\footnote{\url{https://huggingface.co/albert-base-v2}} }(11 milionů parametrů). Model není příliš velký a dosahuje podobných výsledků, jako jeho větší verze \texttt{large} nebo \texttt{xlarge}. Pro \emph{fine-tuning} byl použit dataset SQuAD 1.1 a 2.0.\par
-Pro druhý model byl použit\texttt{ BertForQuestionAnswering } z knihovny\texttt{ transformers.} Předtrénovaný model\texttt{ bert-base-multilingual-cased\footnote{\url{https://huggingface.co/bert-base-multilingual-cased}} } (110 milionů parametrů). Pro fine-tuning byl použit český překlad datasetu SQuAD 1.1 a 2.0. Pro načtení obou datasetů byl použit upravený skript \emph{squad.py}.\par
+Pro trénink ALBERT modelu byla použita třída\texttt{ AlbertForQuestionAnswering }a~předtrénovaný model \texttt{albert-base-v2\footnote{\url{https://huggingface.co/albert-base-v2}} }(11 milionů parametrů). Model není příliš velký a dosahuje podobných výsledků, jako jeho větší verze \texttt{large} nebo \texttt{xlarge}. Pro \emph{fine-tuning} byl použit dataset SQuAD 1.1 a 2.0.\par
+Pro druhý model byl použit\texttt{ BertForQuestionAnswering }z knihovny\texttt{ transformers }a předtrénovaný model\texttt{ bert-base-multilingual-cased\footnote{\url{https://huggingface.co/bert-base-multilingual-cased}}} (110 milionů parametrů). Pro fine-tuning byl použit český překlad datasetu SQuAD 1.1 a 2.0. Pro načtení obou datasetů byl použit upravený skript \texttt{squad.py}\footnote{\url{https://github.com/huggingface/datasets/blob/master/datasets/squad/squad.py}} (viz skript \texttt{czech\_squad(2).py}).\par
 Všechny modely byly trénovány pomocí třídy\texttt{ Trainer }s následujícími parametry:
 \begin{itemize}
     \item \emph{batch size} (velikost dávky) -- $16$
@@ -823,15 +822,15 @@ Po \emph{fine-tuningu} je úspěšnost modelů (F1 a EM, viz \ref{metriky}) na j
 \end{table}
 
 \subsection{Extrakce odpovědi}
-Třída zajišťující extrakci odpovědi se nazývá \texttt{Reader}. Pro extrakci odpovědi z kontextu je nejprve potřeba vytvořit její instanci. Většina parametrů pro inicializaci jsou volitelné, musíme však zadat cestu k natrénovanému modelu (\texttt{model\_checkpoint}) v úložišti a jeho typ (\texttt{model\_type}). Můžeme také upravit maximální délku odpovědi (\texttt{max\_answer\_length}) a maximální počet validních odpovědí (\texttt{n\_best\_size}), které model vybere. \emph{Reader} načte tokenizér a model, který bude pro extrakci odpovědi využívat a použije GPU, pokud je k dispozici.\par
-Pro extrakci odpovědi je poté možné volat jedinou instanční metodu \texttt{get\_answers}, která vyžaduje otázku s kontextem a vrací pole o velikosti \texttt{n\_best\_size} obsahující nejlepší kandidáty pro odpověď. Každá odpověď se skládá z textu "text" a skóre "score".\par
-Pro každý dokument je poté vybrána nejlépe hodnocená odpověď s neprázdným textem.
+Třída zajišťující extrakci odpovědi se nazývá \texttt{Reader} a pro extrakci odpovědi z kontextu je nejprve potřeba vytvořit její instanci. Většina parametrů pro inicializaci je volitelná, musí však být zadána alespoň cesta k natrénovanému modelu v úložišti (\texttt{model\_checkpoint}) a jeho typ (\texttt{model\_type}). Může být upravena také maximální délka získané odpovědi (pomocí parametru\texttt{ max\_answer\_length}) a maximální počet validních odpovědí (\texttt{n\_best\_size}), které model vybere. \emph{Reader} načte tokenizér a model, který bude pro extrakci odpovědi využívat a použije pro jejich akceleraci GPU, pokud je k dispozici.\par
+Pro extrakci odpovědi je poté možné volat jedinou instanční metodu \texttt{get\_answers}, která vyžaduje jako parametry otázku a kontext. Vrací pole o velikosti \texttt{n\_best\_size} obsahující nejlepší kandidáty pro odpověď. Každá odpověď se skládá z textu "text"\;a skóre "score".\par
+Pro každý dokument je vybrána nejlépe ohodnocená odpověď s neprázdným textem.
 
 %=========================================================================
 \section{Implementace retrieveru}
 \label{retriever_imp}
-Pro získání relevantních dokumentů je implementována třída \texttt{Retriever}. Pro její inicializaci je třeba zadat cestu k modelu (\texttt{dita\_file}) pro nástroj MorphoDiTa, který provádí lemmatizaci, cestu k souboru s titulky článků Wikipedie (\texttt{wiki\_titles}) a ke zpracovanému JSON souboru s abstrakty Wikipedie (\texttt{wiki\_abstracts}). Místo MorphoDiTy může \texttt{Retriever} použít i nástroj Majka (\texttt{majka=True}), pro který je potřeba zadat cestu k souboru s morfologickým slovníkem (\texttt{majka\_file}). Pokud není k dispozici zpracovaný soubor s abstrakty, lze původní dump abstraktů převést na formátovaný JSON pomocí funkce \texttt{parse\_abstracts()}.\par
-Při vytváření instance \texttt{Readeru} je načten lemmatizátor, sestaven index titulků článků a index abstraktů článků Wikipedie, načten tokenizér (pro rozdělení textu na věty) a načten model pro rozpoznávání entit.\par
+Pro získání relevantních dokumentů je implementována třída \texttt{Retriever}. Pro její inicializaci je třeba zadat cestu k modelu pro nástroj MorphoDiTa (\texttt{dita\_file}), který provádí lemmatizaci, cestu k souboru s titulky článků Wikipedie (\texttt{wiki\_titles}) a ke zpracovanému JSON souboru s abstrakty Wikipedie (\texttt{wiki\_abstracts}). Místo MorphoDiTy může \texttt{Retriever} použít i nástroj Majka (\texttt{majka=True}), pro který je potřeba zadat cestu k souboru s morfologickým slovníkem (\texttt{majka\_file}). Pokud není k dispozici zpracovaný soubor s abstrakty, lze původní dump abstraktů převést na formátovaný JSON pomocí funkce \texttt{parse\_abstracts()}.\par
+Při vytváření instance \texttt{Readeru} je načten lemmatizátor, sestaven index titulků článků a index abstraktů článků Wikipedie, načten tokenizér (rozdělení na věty) a model pro rozpoznávání entit (pro stažení je třeba nastavit parametr \texttt{download\_ner\_model=True}).\par
 
 \paragraph{Použitá stop slova --}
 Pokud je potřeba při zpracování textů v průběhu vyhledávání relevantního dokumentu odstranit stop slova, je pro to využit následující seznam\footnote{\scriptsize \url{https://cs.wiktionary.org/wiki/P\%C5\%99\%C3\%ADloha:Frekven\%C4\%8Dn\%C3\%AD\_seznam\_(\%C4\%8De\%C5\%A1tina)}}:
@@ -846,25 +845,24 @@ Dále je k dispozici seznam pro odstranění interpunkce:
 \paragraph{Tvorba indexu --}
 Pro vytvoření indexu pro prohledávání je použita třída \texttt{BM25Okapi} z dříve zmíněné knihovny \texttt{rank-bm25}. Každý titulek/abstrakt je převeden na malá písmena, lemmatizován a poté jsou z něj odstraněny stop slova. Získány jsou zpracované tokeny každého titulku/abstraktu. Index titulků/abstraktů je poté vytvořen pomocí \texttt{BM25Okapi} z takto zpracovaných titulků/abstraktů.
 
-\paragraph{Rozpoznání pojmenovaných entit --}
-Rozpoznání pojmenovaných entit (NER - \emph{Named Entity Recognition}) je další úloha na poli NLP. Uveďme alespoň příklad jejího použití:
+\paragraph{Rozpoznání pojmenovaných entit}(NER - \emph{Named Entity Recognition}) je další úloha na poli NLP. Uveďme alespoň příklad jejího použití:
 \begin{center}
     Kdy vynalezl Alfred Nobel dynamit? $\longrightarrow$ Alfred Nobel
 \end{center}
 NER může usnadnit vyznačení klíčových slov pro vyhledávání.\par
-Pro rozpoznání pojmenované entity v otázce je použita knihovna \texttt{deeppavlov}. Využívá natrénovaný model \texttt{ner\_ontonotes\_bert\_mult}, který je vytvořen funkcí \texttt{build\_model()}.
+Pro rozpoznání pojmenované entity v otázce je použita knihovna \texttt{deeppavlov}. Využívá natrénovaný model \texttt{ner\_ontonotes\_bert\_mult}, který je načten funkcí \texttt{build\_model()}.
 
 \subsection{Získání relevantních dokumentů}
-Inicializace třídy \texttt{Retriever} trvá hlavně kvůli tvorbě indexů a načtení modelu pro NER poměrně dlouho\footnote{Asi 10 minut, pokud není potřeba stáhnout \texttt{deeppavlov} model pro NER. Pokud lze načíst vytvořený model přes \texttt{pickle}, může to být pouze kolem jedné minuty.}. Po jeho inicializaci je potřeba pro získání relevantních dokumentů pouze jediná instanční metoda \texttt{retrieve()}, která pro zadanou otázku získá $n$ (v práci 3) relevantních dokumentů.\par
-Získání dokumentů probíhá následovně:
+Inicializace instance třídy \texttt{Retriever} trvá, hlavně kvůli tvorbě indexů a načtení modelu pro NER, poměrně dlouho\footnote{Asi 10 minut, pokud není potřeba stáhnout \texttt{deeppavlov} model pro NER. Pokud lze načíst vytvořený index pomocí modulu\texttt{ pickle}, může to být pouze kolem jedné minuty.}. Po jeho inicializaci je potřeba pro získání relevantních dokumentů pouze jediná instanční metoda \texttt{retrieve()}, která pro zadanou otázku získá $n$ relevantních dokumentů (dle parametru \texttt{max\_docs}).\par
+Získání dokumentů probíhá v těle metody \texttt{retrieve()} následovně:
 \begin{enumerate}
     \item Nejprve jsou získány názvy článků metodou \texttt{get\_doc\_list()}, které jsou výsledkem vyhledávání metody \texttt{search()} knihovny \texttt{wikipedia}. Jednotlivé vstupy do vyhledávání jsou následující:
     \begin{itemize}
-        \item V otázce jsou rozpoznány pojmenované entity
+        \item V otázce jsou rozpoznány pojmenované entity (pomocí NER).
         \item Otázka je převedena na malá písmena, lemmatizována a jsou z ní odstraněny stop slova.
         \begin{itemize}
-            \item Pomocí metody vytvořeného indexu titulků \texttt{get\_top\_n()} je získán nejvíce relevantní titulek článku vzhledem k otázce.
-            \item Pomocí metody vytvořeného indexu abstraktů \texttt{get\_top\_n()} je získán nejvíce relevantní titulek článku vzhledem k otázce.
+            \item Pomocí metody vytvořeného indexu titulků (\texttt{get\_top\_n()}) je získán nejvíce relevantní titulek článku vzhledem k otázce.
+            \item Pomocí metody vytvořeného indexu abstraktů (\texttt{get\_top\_n()}) je získán nejvíce relevantní titulek článku vzhledem k otázce.
         \end{itemize}
         \item Otázka je pro vyhledání použita nezpracovaná.
     \end{itemize}
@@ -872,29 +870,53 @@ Získání dokumentů probíhá následovně:
     
     \item Pro každý získaný název článku je získán jeho textový obsah metodou \texttt{page()} kni\-hovny \texttt{wikipedia}. Ten je rozdělen na jednotlivé odstavce a jsou z něj odstraněny nepotřebné části jako reference a odkazy.
     
-    \item Je zkontrolováno, jestli některý z odstavců nepřesahuje maximální délku. Je-li potřeba odstavec dále rozdělit, je použita metoda \texttt{normalize\_length()}, která využívá tokenizéru knihovny \texttt{nltk}. Ten rozdělí odstavec na věty a spojuje jednotlivé věty, dokud není dosaženo maximální délky. Pro zbývající věty je vytvořen další odstavec, který obsahuje také poslední 2 věty odstavce předcházejícího.
+    \item Je zkontrolováno, jestli některý z odstavců nepřesahuje maximální délku. Je-li potřeba odstavec dále rozdělit, je použita metoda \texttt{normalize\_length()}, která využívá tokenizéru knihovny \texttt{nltk}. Ten rozdělí odstavec na věty, které spojuje, dokud není dosaženo maximální délky pasáže. Pro zbývající věty je vytvořen další odstavec, který obsahuje také poslední 2 věty odstavce předcházejícího.
     
     \item Po normalizaci délky získaných odstavců je potřeba získat jejich zpracovanou verzi, aby mohl být sestaven index pro vyhledávání. Každý odstavec je tedy převeden na malá písmena, lemmatizován a jsou z něj odstraněna stop slova (a interpunkce). Pro každý odstavec je získán seznam takto normalizovaných tokenů, které jsou použity pro tvorbu indexu \texttt{BM25Okapi} pro vyhledávání.
     
-    \item Původní lemmatizovaná otázka převedená na malá písmena bez stop slov je použita pro vyhledávání v indexu získaných odstavců pomocí metody \texttt{get\_top\_n()}. Tím jsou získány (nezpracované\footnote{Zpracování probíhá pouze pro tvorbu indexu.}) nejvíce relevantní odstavce -- dokumenty pro danou otázku.
+    \item Původní lemmatizovaná otázka bez stop slov převedená na malá písmena je použita pro vyhledání v indexu získaných odstavců pomocí metody \texttt{get\_top\_n()}. Tím jsou získány (nezpracované\footnote{Zpracování probíhá pouze pro tvorbu indexu jednotlivých pasáží.}) nejvíce relevantní odstavce -- pasáže pro danou otázku.
 \end{enumerate}
-\pagebreak
+
 \section*{Nalezení odpovědi na otázku}
 Celý tok programu systémem je následující:
 \begin{itemize}
-    \item Je vytvořena instance třídy pro extrakci odpovědi \texttt{Reader}, instance třídy pro získání relevantních dokumentů \texttt{Retriever} a také instance překladače \texttt{Translator} knihovny \texttt{googletrans}.
+    \item Je vytvořena instance třídy pro extrakci odpovědi \texttt{Reader}, instance třídy pro získání relevantních dokumentů \texttt{Retriever} a také instance překladače \texttt{Translator} knihovny \texttt{googletrans} (použití modelu ALBERT).
     
     \item Po zadání otázky je volána funkce \texttt{find\_answer()}, která získá odpověď na otázku.
     \begin{itemize}
         \item Pomocí \emph{retrieveru} jsou získány relevantní dokumenty
         \item V případě použití nativně anglického modelu ALBERT jsou dokumenty spolu s otázkou přeloženy pomocí funkce \texttt{transtale()} do angličtiny.
         \item Pro každý získaný dokument je provedena extrakce odpovědi a vybrána nejlépe ohodnocená neprázdná odpověď.
-        \item Ze získaných extrakcí odpovědi z jednotlivých dokumentů je vybrána ta, která má nejvyšší skóre. Použita je metoda \texttt{argmax()} knihovny \texttt{numpy}. Pomocí získaného indexu je vybrán dokument i odpověď.
-        \item Vybraná odpověď je při použití anglického modelu pro extrakci přeložena zpět do češtiny.
-        \item Funkce vrací odpověď. Pro podrobné vyhodnocení dále: (odpověď před překladem), dokument, ve kterém byla odpověď nalezena, seznam nejlepších odpovědí, seznam skóre nejlepších odpovědí, seznam sum skóre nejlepších odpovědí, seznam článků Wikipedie, které byly pro nalezení odpovědi procházeny a seznam nejlepších dokumentů, které byly pro nalezení odpovědi přečteny.
+        \item Ze získaných extrakcí odpovědi z jednotlivých dokumentů je vybrána ta, která má nejvyšší skóre. Použita je metoda \texttt{argmax()} knihovny \texttt{numpy}. Pomocí získaného indexu (nejvyšší hodnoty skóre) je vybrán dokument i odpověď.
+        \item Vybraná odpověď je při použití modelu ALBERT přeložena zpět do češtiny.
+        \item Funkce vrací odpověď. Pro podrobné vyhodnocení dále: (odpověď před překladem), dokument, ve kterém byla odpověď nalezena, seznam nejlepších odpovědí, seznam skóre nejlepších odpovědí, seznam článků Wikipedie, které byly pro nalezení odpovědi procházeny a seznam nejlepších pasáží, ze kterých byla provedena extrakce.
     \end{itemize}
 \end{itemize}
 
+\section*{Implementace demonstrační aplikace}
+Pro předvedení funkce systému byla vytvořena demonstrační aplikace\footnote{Dostupná z adresy \url{http://pcknot2.fit.vutbr.cz:8502/}}, pro kterou byl implementován webový server. Ten je napojen na již dříve existující webový klient. V rámci práce byl tedy pro aplikaci vytvořen pouze backend.
+
+\begin{figure}[hbt]
+	\centering
+	\scalebox{1}{
+	    \includegraphics{obrazky/web_demo.pdf}
+	}
+	\caption{Schéma architektury demonstrační webové aplikace.}
+	\label{web_demo_schema}
+\end{figure}
+
+Schéma architektury je naznačeno na obrázku \ref{web_demo_schema}. Pro realizaci jednoduchého serveru byl použit framework Flask\footnote{\url{https://flask.palletsprojects.com/}}. Pomocí něj je implementována obsluha několika jednoduchých požadavků, které jsou klientem zasílány.\par
+\pagebreak
+V případě dotazu \texttt{GET} může server poskytnout konfiguraci modelu, výčet předdefinovaných ukázkových otázek a JSON schémata, která určují strukturu konfigurace, požadavku a odpovědi.\par
+Při zaslání požadavku \texttt{POST} získá server navíc data ve formátu JSON, která obsahují otázku a požadovanou konfiguraci systému. Server volá pro získání odpovědi metodu\linebreak \texttt{find\_answer() }třídy\texttt{ qa\_Responder}, která zastřešuje systém pro odpovídání. Metoda\linebreak získá odpověď na otázku a vrátí ji v určeném formátu. Server poté zašle odpověď ve formátu JSON klientovi, a tím je obsloužen jeho požadavek.\par
+\noindent Odpověď serveru ve formátu JSON obsahuje: 
+\begin{itemize}
+\itemsep-0.1em 
+    \item otázku,
+    \item jednotlivé odstavce, jejich skóre (získáno hodnotící funkci BM25) a titulek článku každé pasáže,
+    \item jednotlivé odpovědi a jejich skóre, pro každou index odstavce, ze kterého pochází a také index znaku začátku, resp. konce odpovědi (tzv. \texttt{char\_offset}).
+\end{itemize}
+Maximální počet získaných pasáží a odpovědí je určen konfigurací požadované klientem.
 
 %=========================================================================
 %===============================================================================
@@ -1199,6 +1221,7 @@ Pro otázky, které nebyly správně zodpovězeny a byly klasifikovány jako chy
 Práce pokládá základ systému, který nabízí velký prostor pro další vylepšení. Návrhy toho, jak by mohlo být řešení rozšířeno například v rámci navazujících prací je popsáno v této části.\par
 Nejdříve co se týká první části systému -- retrieveru pro získávání relevantních pasáží. Řazení pomocí hodnotící funkce BM25 by mohlo být nahrazeno modernějším přístupem DPR popisovaným v části \ref{dpr}, ať už za použití vícejazyčného BERTa, nebo jiného modelu (enkodéru) pro získání vektorové reprezentace. Pro získávání pasáží by oproti přístupu v této práci, kdy jsou procházeny pouze relevantní články, mohla být vhodně zpracována a indexována celá Wikipedie, případně by mohly být zpracovány i zvláštní struktury, jako tabulky, kde se často nachází spousta relevantních informací. Při zpracování textu by mohl být vylepšen také převod na malá písmena, aby nedocházelo ke ztrátám kontextu.\par
 Co se týká modulu pro extrakci odpovědi, jsou cesty dalšího vývoje velmi otevřené. Prvním vylepšením by mohl být modul pro odhad předmětu otázky, aby došlo k lepší shodě při výběru odpovědi (otázka se ptá na datum -- uvažujme pouze odpovědi, které jsou také datum). Zajímavý by mohlo být také experimentovat s další variantou BERTa použitelného pro češtinu -- například Slavic BERT \cite{slavicBERT}. Mimo existující předtrénované ekodéry by měl být předmětem výzkumu hlavně předtrénink ryze české varianty například modelu ALBERT. Takový pokus již sice byl uskutečněn (například práce \cite{Zelina2020thesis}), model však nedosahoval dostatečných kvalit. Experimentovat by se dalo dále s přidáním abstraktivního readeru, jak je učiněno například v \cite{fajcik2021pruning}.\par
+Zajímavá by mohla být práce s datasetem COSTRA \cite{costra}, který se zaměřuje na embedding na úrovni vět, konkrétně pochopení jejich významu bez ohledu na drobné rozdíly v jejich formulaci. Modifikace, na které se dataset zaměřuje, jsou různé druhy parafrází, generalizace, konkretizace nebo převrácení významu. Dataset se původně zaměřuje na češtinu a mohl by pomoct k jejímu lepšímu pochopení.\par
 Přínosné by bylo také další rozšíření datasetu SQAD, nebo tvorba nového datasetu zaměřeného na otevřenou doménu, obsahující více reálných příkladů toho, na co se lidé ptají na internetu -- ať už pro trénink retrieveru (DPR), nebo pro reálnější vyhodnocení schopností takového systému.
 
 %=========================================================================
