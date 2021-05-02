@@ -43,11 +43,14 @@ potřebným pro běh aplikace. Ty je v případě potřeby možné také přepsa
  * wiki_titles - soubor s titulky článku 
 
 /notebooks
- * question_answering.ipynb 
+ * question_answering.ipynb
+   - experimenty a vyhodnocení modelu, zpracování dat
  * mbert_czech_squad_fine-tuning.ipynb 
- * albert_squad_fine-tuning.ipynb
- * czech_squad.py
- * czech_squad2.py
+   - natrénování vícejazyčného modelu bert
+ * albert_squad_fine-tuning.ipynb 
+   - natrénování anglického modelu albert
+ * czech_squad.py a czech_squad2.py 
+   - skripty pro knihovnu huggingface - datasets pro načtení českého překladu squad 1.1/2.0
 
 /source_tex
  * soubory latexu pro překlad odevzdaného pdf
