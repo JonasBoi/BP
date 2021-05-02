@@ -12,7 +12,7 @@ Potřebné knihovny jsou uvedeny v souboru /web_server/requirements.txt nebo
 v Jupyter notebooku /notebooks/question_answering.ipynb .  
 (Pro experimenty v notebooku je potřeba více knihoven, než pro spuštění serveru.)  
 
-### Spuštěn serveru pro demo-aplikaci
+### Spuštění serveru pro demo-aplikaci
 V adresáři web_server použít příkaz:
  * python3 server.py 
 
