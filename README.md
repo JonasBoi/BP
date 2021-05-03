@@ -7,10 +7,22 @@
 "Navrhněte a realizujte systém, který s využitím existujících implementací dokáže  
 odpovídat na otázky nad českou wikipedií, případně nad doplňkovými zdroji informací."
 
+
+
 ### Potřebné Python knihovny
+Testováno pro verzi Pythonu 3.6.9 (server) a 3.7.10 (experimenty)  
+
 Potřebné knihovny jsou uvedeny v souboru /web_server/requirements.txt nebo  
 v Jupyter notebooku /notebooks/question_answering.ipynb .  
 (Pro experimenty v notebooku je potřeba více knihoven, než pro spuštění serveru.)  
+
+Důvod instalace starší verze Tensorflow: knihovna deeppavlov, přesněji model používaný  
+pro NER má zastaralé závislosti, které to vyžadují.  
+
+**Knihovny:** torch, sentencepiece, datasets, transformers, wikipedia, rank_bm25,  
+corpy, tensorflow, deeppavlov, Flask, scipy  
+
+
 
 ### Spuštění serveru pro demo-aplikaci
 V adresáři web_server použít příkaz:
@@ -23,7 +35,22 @@ Pro úpravu (spuštění na jiném portu/hostname) je potřeba přepsat konfigur
 Při prvním spuštění je potřeba stáhnout deeppavlov NER model.  
 Pro vyhnutí se stahování je potřeba v souboru QA_responder.py, metodě __init__() přepsat parametr  
 pro inicializaci Retrieveru na *download_ner_mode=False*. Ve stejné metodě je nastavena cesta k datům  
-potřebným pro běh aplikace. Ty je v případě potřeby možné také přepsat.
+potřebným pro běh aplikace. Ty je v případě potřeby možné také přepsat.  
+Při spuštění serveru bude také načtení modelu pro NER vypisovat spoustu warningů, které lze ignorovat  
+a jsou způsobeny out-dated závislostmi modelu.  
+Schémata formátů JSON jsou v adresáři /app/api a je v nich možno případně upravit defaultní konfiguraci.  
+
+
+
+### Experimenty v notebooku
+Přiloženy jsou také notebooky pro trénink modelů, ty jsou z větší části vypůjčeny z notebooků Huggingface.  
+Pro trénink jsou přiloženy také skripty pro knihovnu datasets, které načtou českou verzi squad 1.1 a 2.0.  
+
+
+V notebooku question_answering.ipynb by měly být komentáře dostačující pro zopakování většiny experimentů.  
+Do běhového prostředí je potřeba doinstalovat knihovny a soubory, nebo k nim nastavit adekvátní cestu  
+(k souborů, z nichž většina je v adresáři data).
+
 
 
 ### Odevzdané soubory 
@@ -71,7 +98,3 @@ poster.pdf - plakát prezentující výsledky
 README - tento soubor   
 thesis.pdf - práce v pdf pro odevzdání do wis  
 thesis_print.pdf - práce určená pro tisk  
-
-
-
-
