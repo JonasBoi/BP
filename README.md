@@ -48,8 +48,8 @@ Pro trénink jsou přiloženy také skripty pro knihovnu datasets, které načto
 
 
 V notebooku question_answering.ipynb by měly být komentáře dostačující pro zopakování většiny experimentů.  
-Do běhového prostředí je potřeba doinstalovat knihovny a soubory, nebo k nim nastavit adekvátní cestu  
-(k souborů, z nichž většina je v adresáři data).
+Do běhového prostředí je potřeba doinstalovat knihovny a stáhnout soubory, nebo k nim nastavit adekvátní cestu  
+(k souborům, z nichž většina je v adresáři data).
 
 
 
