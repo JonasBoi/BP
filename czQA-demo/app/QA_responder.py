@@ -10,16 +10,16 @@ class qa_Responder:
         warnings.filterwarnings("ignore")
 
         # saved reader model
-        model_checkpoint = "./data/bert_finetuned_czech_squad2"
+        model_checkpoint = "./data/mbert_finetuned_czech_squad2"
         # files with additional saved data
-        dita_file = "./data/czech-morfflex-pdt-161115/czech-morfflex-pdt-161115.tagger"
-        wiki_titles = "./data/cswiki-latest-all-titles-in-ns0"
+        dita_file = "./data/czech-morfflex-morphodita/czech-morfflex-pdt-161115.tagger"
+        wiki_titles = "./data/wiki_titles"
         wiki_abstracts = "./data/wiki_abstracts_processed.json"
         index_file = "./data/abstracts_index.pkl"
 
         # create reader and retriever
         self.reader = Reader(model_checkpoint)
-        self.retriever = Retriever(wiki_abstracts, wiki_titles, dita_file, index_file, download_ner_model=False)
+        self.retriever = Retriever(wiki_abstracts, wiki_titles, dita_file, index_file, download_ner_model=True)
 
     def find_answer(self, question, configuration):
         """

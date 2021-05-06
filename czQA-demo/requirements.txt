@@ -1,10 +1,11 @@
-torch
+torch==1.8.1
 sentencepiece
-datasets transformers
-wikipedia
+datasets 
+transformers==4.5.1
+wikipedia==1.4.0
 rank_bm25
 corpy
-tensorflow-gpu==1.15.2
+tensorflow-gpu==1.14.0
 deeppavlov
 git+https://github.com/deepmipt/bert.git@feat/multi_gpu
 Flask==1.1.2

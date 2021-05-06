@@ -5,7 +5,7 @@
 **Vedoucí práce**: doc. RNDr. Pavel Smrž, Ph.D.  
 
 "Navrhněte a realizujte systém, který s využitím existujících implementací dokáže  
-odpovídat na otázky nad českou wikipedií, případně nad doplňkovými zdroji informací."
+odpovídat na otázky nad českou Wikipedií, případně nad doplňkovými zdroji informací."
 
 
 
@@ -15,6 +15,8 @@ Testováno pro verzi Pythonu 3.6.9 (server) a 3.7.10 (experimenty)
 Potřebné knihovny jsou uvedeny v souboru /web_server/requirements.txt nebo  
 v Jupyter notebooku /notebooks/question_answering.ipynb .  
 (Pro experimenty v notebooku je potřeba více knihoven, než pro spuštění serveru.)  
+Pro jejich instalaci je tedy možné použít příkaz  
+ * pip3 install -r requirements.txt
 
 Důvod instalace starší verze Tensorflow: knihovna deeppavlov, přesněji model používaný  
 pro NER má zastaralé závislosti, které to vyžadují.  
@@ -34,7 +36,7 @@ Pro úpravu (spuštění na jiném portu/hostname) je potřeba přepsat konfigur
 
 Při prvním spuštění je potřeba stáhnout deeppavlov NER model.  
 Pro vyhnutí se stahování je potřeba v souboru QA_responder.py, metodě __init__() přepsat parametr  
-pro inicializaci Retrieveru na *download_ner_mode=False*. Ve stejné metodě je nastavena cesta k datům  
+pro inicializaci Retrieveru na *download_ner_model=False*. Ve stejné metodě je nastavena cesta k datům  
 potřebným pro běh aplikace. Ty je v případě potřeby možné také přepsat.  
 Při spuštění serveru bude také načtení modelu pro NER vypisovat spoustu warningů, které lze ignorovat  
 a jsou způsobeny out-dated závislostmi modelu.  
@@ -49,7 +51,7 @@ Pro trénink jsou přiloženy také skripty pro knihovnu datasets, které načto
 
 V notebooku question_answering.ipynb by měly být komentáře dostačující pro zopakování většiny experimentů.  
 Do běhového prostředí je potřeba doinstalovat knihovny a stáhnout soubory, nebo k nim nastavit adekvátní cestu  
-(k souborům, z nichž většina je v adresáři data).
+(k souborům, z nichž většina je v adresáři data).  
 
 
 
@@ -80,7 +82,7 @@ Do běhového prostředí je potřeba doinstalovat knihovny a stáhnout soubory,
    - skripty pro knihovnu huggingface - datasets pro načtení českého překladu squad 1.1/2.0
 
 /source_tex
- * soubory latexu pro překlad odevzdaného pdf
+ * soubory latexu pro překlad odevzdaného pdf - lze přeložit pomocí příkazu make  
 
 /web_server
  * server.py
@@ -95,6 +97,6 @@ Do běhového prostředí je potřeba doinstalovat knihovny a stáhnout soubory,
    - QA_responder - třída pro inicializaci systému pro odpovídání
 
 poster.pdf - plakát prezentující výsledky  
-README - tento soubor   
+README.md - tento soubor   
 thesis.pdf - práce v pdf pro odevzdání do wis  
 thesis_print.pdf - práce určená pro tisk  
