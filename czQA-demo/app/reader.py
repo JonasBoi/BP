@@ -84,7 +84,7 @@ class Reader:
                                 return_tensors='pt',
                                 truncation="only_second",
                                 max_length=self.max_length,  # to prevent cuda running out of memory
-                                stride=self.stride,  # overlap within splitted long
+                                stride=self.stride,  # overlap within splitted long docs
                                 return_offsets_mapping=True,
                                 return_overflowing_tokens=True,
                                 padding="max_length")

@@ -1,12 +1,11 @@
 torch==1.8.1
-sentencepiece
-datasets 
+sentencepiece==0.1.95
 transformers==4.5.1
 wikipedia==1.4.0
-rank_bm25
-corpy
+rank_bm25==0.2.1
+corpy==0.2.4
 tensorflow-gpu==1.14.0
-deeppavlov
+deeppavlov==0.14.1
 git+https://github.com/deepmipt/bert.git@feat/multi_gpu
 Flask==1.1.2
 scipy==1.5.4

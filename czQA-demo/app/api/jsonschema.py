@@ -5,21 +5,6 @@ SUPPORTED_MODELS_DICTIONARY = {
   "abstractive_reader": []
 }
 
-# Example:
-#
-# {
-#   "retriever_model": "dpr-pruned",
-#   "retriever_top_k": 100,
-#   "retriever_reranking": true,
-#   "reranker_model": "concat",
-#   "extractive_reader_model": "electra",
-#   "abstractive_reader_model": "fusion-in decoder",
-#   "reader_top_k_answers": 100,
-#   "reader_max_tokens_for_answer": 5,
-#   "reranking_and_fusion": true,
-#   "reranking_and_fusion_type": "readers fusion"
-# }
-#
 CONFIGURATION_JSON_SCHEMA = {
   "type": "object",
   "properties": {

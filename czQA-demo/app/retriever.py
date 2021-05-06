@@ -255,12 +255,12 @@ class Retriever:
             article = wikipedia.search(named_ERs[0], results=max_docs)
             if len(article) > 0:
                 doc_list.append(article[0])
-        # search based on best wiki title match
+        # search based on the best wiki title match
         if len(relevant_titles) > 0:
             article = wikipedia.search(relevant_titles[0], results=max_docs)
             if len(article) > 0:
                 doc_list.append(article[0])
-        # search based on best wiki abstract match
+        # search based on the best wiki abstract match
         if len(relevant_abstracts) > 0:
             article = wikipedia.search(relevant_abstracts[0], results=max_docs)
             if len(article) > 0:
@@ -270,7 +270,7 @@ class Retriever:
         article = wikipedia.search(question, results=max_docs)
         # simplify the search if its too bad and search recursively
         if len(article) == 0:
-            # extract important for wiki
+            # process for recursive wiki search (until we find something)
             tokens = self.delete_common(self.lemmatize(question.lower()))
             article = self.search_again(tokens)
         if len(article) > 0:
