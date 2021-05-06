@@ -16,10 +16,11 @@ Potřebné knihovny jsou uvedeny v souboru /web_server/requirements.txt nebo
 v Jupyter notebooku /notebooks/question_answering.ipynb .  
 (Pro experimenty v notebooku je potřeba více knihoven, než pro spuštění serveru.)  
 Pro jejich instalaci je tedy možné použít příkaz  
- * pip3 install -r requirements.txt
+ * pip3 install -r requirements.txt  
 
 Důvod instalace starší verze Tensorflow: knihovna deeppavlov, přesněji model používaný  
 pro NER má zastaralé závislosti, které to vyžadují.  
+Demonstrační aplikace běží na adrese http://r2d2.fit.vutbr.cz/.cs  
 
 **Knihovny:** torch, sentencepiece, datasets, transformers, wikipedia, rank_bm25,  
 corpy, tensorflow, deeppavlov, Flask, scipy  
