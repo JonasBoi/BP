@@ -66,7 +66,7 @@ Do běhového prostředí je potřeba doinstalovat knihovny a stáhnout soubory,
 * albert_squad2_finetuned - natrénovaný albert model (2.0)
 * mbert_finetuned_czech_squad - natrénovaný mbert model (1.1)
 * mbert_finetuned_czech_squad2 - natrénovaný mbert model (2.0)
-* czech-morfflex-morphodita - soubory pro analyzátor morphodita
+* sqad_processed.json - otázky a odpovědi datasetu sqad bez ano/ne
 * abstracts_index.pkl - index abstraktů pro načtení modulem pickle
 * wiki_abstracts_processed - zpracované abstrakty pro tvorbu indexu
 * wiki_titles - soubor s titulky článku
