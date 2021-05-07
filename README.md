@@ -23,7 +23,7 @@ Důvod instalace starší verze Tensorflow: knihovna deeppavlov, přesněji mode
 pro NER má zastaralé závislosti, které to vyžadují.\
 Demonstrační aplikace běží na adrese http://r2d2.fit.vutbr.cz/.cs
 
-**Knihovny:** torch, sentencepiece, transformers, wikipedia, rank_bm25,\
+**Knihovny:** torch, numpy, nltk, sentencepiece, transformers, wikipedia, rank_bm25,\
 corpy, tensorflow, deeppavlov, Flask, scipy
 
 ### Spuštění serveru pro demo-aplikaci
