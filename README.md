@@ -98,6 +98,7 @@ Do běhového prostředí je potřeba doinstalovat knihovny a stáhnout soubory,
   * reader.py
   * retriever.py
   * QA_responder - třída pro inicializaci systému pro odpovídání
+* /data - data potřebná pro spuštění serveru
 
 poster.pdf - plakát prezentující výsledky\
 README.md - tento soubor\
